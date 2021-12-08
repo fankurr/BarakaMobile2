@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.baraka.barakamobile">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".ui.config.AppController"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BarakaMobile">
+        <activity android:name=".ui.product.CateListAddEdit"></activity>
+        <activity
+            android:name=".ui.SignupCompActivity"
+            android:theme="@style/Theme.BarakaMobile.NoActionBar" />
+        <activity android:name=".ui.profile.ProfileActivity" />
+        <activity android:name=".ui.payout.PayoutAddActivity" />
+        <activity android:name=".ui.usermanaje.WorkerLogListActivity" />
+        <activity android:name=".ui.product.CateListActivity" />
+        <activity android:name=".ui.supplier.AddEditSplrActivity" />
+        <activity android:name=".ui.pos.InputPOSActivity" />
+        <activity android:name=".ui.product.AddEditPrdctActivity" />
+        <activity android:name=".ui.product.PrdctListActivity" />
+        <activity android:name=".ui.product.CateDetailActivity" />
+        <activity android:name=".ui.supplier.SupplierDetailActivity" />
+        <activity android:name=".ui.usermanaje.WorkerDetailActivity" />
+        <activity android:name=".ui.product.PrdctDetail" />
+        <activity
+            android:name=".ui.SignupActivity"
+            android:theme="@style/Theme.BarakaMobile.NoActionBar" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.BarakaMobile.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.pos.POSActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.BarakaMobile.NoActionBar" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>

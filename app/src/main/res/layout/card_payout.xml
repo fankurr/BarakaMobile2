@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="3dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginRight="3dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView78"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Jumlah: "
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textView79"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="Rp "
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewValPayoutList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView72"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Deskripsi: "
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewDescPayoutList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView76"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Tanggal: "
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewDAteTimePayoutList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView73"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Dibayar Oleh: "
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewSignByPayoutList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

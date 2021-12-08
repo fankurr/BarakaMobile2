@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardPrdctPosOutput"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
+    android:layout_marginLeft="15dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtIdPrdctPosOutput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu_mono"
+                android:text="id"
+                android:textColor="@color/colorDark"
+                android:textSize="21sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtViewNamePrdctPosOutput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu_mono"
+                android:text="name_product"
+                android:textColor="@color/colorDark"
+                android:textSize="21sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono"
+                    android:text="Rp"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtViewPricePrdctPosOutput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono_bold"
+                    android:text="00.000"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textView66"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono"
+                    android:text="X"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+
+                <TextView
+                    android:id="@+id/txtViewJmlhPrdctPosOutput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="3"
+                    android:fontFamily="@font/ubuntu_mono_bold"
+                    android:text="xx"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtViewUnitPrdctPosOutput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono"
+                    android:text="unit"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView36"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono"
+                    android:text="Jumlah:"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textViewRp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono"
+                    android:text="Rp"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txtViewPricePrdctPosOutputTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu_mono_bold"
+                    android:text="00.000"
+                    android:textColor="@color/colorDark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgDelItemPosOutput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/ic_twotone_cancel_24"
+            tools:ignore="VectorDrawableCompat" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"/>
+
+</LinearLayout>

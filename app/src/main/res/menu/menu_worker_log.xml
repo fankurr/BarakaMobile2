@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:toools="http://schemas.android.com/tools"
+    toools:context=".ui.usermanaje.WorkerLogListActivity">
+
+    <item
+        android:id="@+id/printLog"
+        android:icon="@drawable/ic_twotone_print_w_24"
+        android:title="@string/action_print"
+        app:showAsAction="always"/>
+
+</menu>

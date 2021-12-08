@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Nama:"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/textViewNameLogWorkerList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="name_worker"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Login:"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/textViewLoginLogWorkerList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="YYYY-MM-DD hh:mm:ss"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono_bold"
+            android:text="Logout:"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/textViewLogoutLogWorkerList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="0"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="YYYY-MM-DD hh:mm:ss"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Baraka Mobile</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_print">Print</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_product">Produk</string>
+    <string name="menu_purchase">Pengeluaran</string>
+    <string name="menu_sell">Penjualan</string>
+    <string name="menu_supplier">Supplier</string>
+    <string name="menu_user">Karyawan</string>
+    <string name="menu_logout">Logout</string>
+    <string name="point_of_sale">Point Of Sale</string>
+
+    <string name="lorem_ipsum_dolor">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget.</string>
+</resources>

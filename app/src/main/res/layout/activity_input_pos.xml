@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/shape_dialog_bg"
+    tools:context=".ui.pos.InputPOSActivity">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/default_image_small" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtIdPrdctPosInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="id"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewNamePrdctPosInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_medium"
+            android:text="nama_product"
+            android:textAlignment="center"
+            android:textColor="@color/colorDark"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu"
+                android:text="Rp"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textViewPricePrdctPosInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu_medium"
+                android:text="00.000"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView33"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu"
+                android:text="Stok:"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textViewStokPrdctPosInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu_medium"
+                android:text="xx"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textViewUnitPrdctPosInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu_medium"
+                android:text="unit"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView35"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/ubuntu"
+                android:text="Jumlah"
+                android:textAlignment="center"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/inputJumlahPembelianPrdct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:backgroundTint="@color/colorPrimary"
+                android:ems="10"
+                android:fontFamily="@font/ubuntu_medium"
+                android:hint="jumlah pembelian"
+                android:inputType="number"
+                android:textColor="@color/colorDark"
+                android:textSize="18sp"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnBatalPosInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="6dp"
+                android:layout_weight="1"
+                android:text="Batal"
+                android:textColor="@color/colorDark"
+                android:textSize="12sp"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="9dp"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="2dp" />
+
+            <Button
+                android:id="@+id/btnTambahPosInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="6dp"
+                android:layout_weight="1"
+                android:text="Tambah"
+                android:textColor="@color/whiteSmoke"
+                android:textSize="12sp"
+                app:cornerRadius="9dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtTotalPrdctPosInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_mono"
+            android:text="id"
+            android:textColor="@color/colorDark"
+            android:textSize="21sp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</LinearLayout>

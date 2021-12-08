@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#253A4A</color>
+    <color name="colorPrimaryLight">#1572E8</color>
+    <color name="colorSecondary">#2B80EC</color>
+    <color name="colorSecondaryLight">#11CDEF</color>
+    <color name="colorWarning">#FFAD46</color>
+    <color name="colorDanger">#F5365C</color>
+    <color name="colorSuccess">#2DCE89</color>
+    <color name="colorDark">#444444</color>
+    <color name="colorBackground">#F2F3F7</color>
+    <color name="colorBackground1">#F8F9FE</color>
+    <color name="colorBackground2">#F5F6FA</color>
+    <color name="colorBackground3">#F0F4F7</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="whiteSmoke">#F5F5F5</color>
+    <color name="colorMute">#999999</color>
+    <color name="greenWhatsapp">#25D366</color>
+</resources>
