@@ -78,11 +78,20 @@ public class LoginActivity extends AppCompatActivity {
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
+
     String tag_json_obj = "json_obj_req";
 
     SharedPreferences sharedPreferences;
     Boolean session = false;
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
+    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -121,6 +130,12 @@ public class LoginActivity extends AppCompatActivity {
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
 
+        codeComp = sharedPreferences.getString(CODE_COMP, null);
+        addrComp = sharedPreferences.getString(ADDR_COMP, null);
+        phoneComp = sharedPreferences.getString(PHONE_COMP, null);
+        emailComp = sharedPreferences.getString(EMAIL_COMP, null);
+        logoComp = sharedPreferences.getString(LOGO_COMP, null);
+
 //        if (email != null) {
 //            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //            startActivity(intent);
@@ -138,6 +153,11 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra(TAG_ACCESS, access);
             intent.putExtra(TAG_IDCOMP, idCompany);
             intent.putExtra(TAG_COMP, nameCompany);
+
+            intent.putExtra(CODE_COMP, codeComp);
+            intent.putExtra(ADDR_COMP, addrComp);
+            intent.putExtra(PHONE_COMP, phoneComp);
+            intent.putExtra(EMAIL_COMP, emailComp);
             finish();
             startActivity(intent);
         }
@@ -183,6 +203,10 @@ public class LoginActivity extends AppCompatActivity {
                                             access =  jsonObject.getString("access");
                                             idCompany =  jsonObject.getString("company");
                                             nameCompany = jsonObject.getString("nameCompany");
+                                            codeComp = jsonObject.getString("codeComp");
+                                            addrComp = jsonObject.getString("addrComp");
+                                            phoneComp = jsonObject.getString("phoneComp");
+                                            emailComp = jsonObject.getString("emailComp");
 
                                             sharedPreferences = getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
 
@@ -198,6 +222,10 @@ public class LoginActivity extends AppCompatActivity {
                                             editor.putString(TAG_ACCESS, access);
                                             editor.putString(TAG_IDCOMP, idCompany);
                                             editor.putString(TAG_COMP, nameCompany);
+                                            editor.putString(CODE_COMP, codeComp);
+                                            editor.putString(ADDR_COMP, addrComp);
+                                            editor.putString(PHONE_COMP, phoneComp);
+                                            editor.putString(EMAIL_COMP, emailComp);
                                             editor.commit();
 
                                             progressDialog.dismiss();
@@ -213,6 +241,11 @@ public class LoginActivity extends AppCompatActivity {
                                             intent.putExtra(TAG_ACCESS, access);
                                             intent.putExtra(TAG_IDCOMP, idCompany);
                                             intent.putExtra(TAG_COMP, nameCompany);
+
+                                            intent.putExtra(CODE_COMP, codeComp);
+                                            intent.putExtra(ADDR_COMP, addrComp);
+                                            intent.putExtra(PHONE_COMP, phoneComp);
+                                            intent.putExtra(EMAIL_COMP, emailComp);
                                             finish();
                                             startActivity(intent);
 

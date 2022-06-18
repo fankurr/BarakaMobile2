@@ -15,11 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BarakaMobile">
-        <activity android:name=".ui.product.CateListAddEdit"></activity>
+        <activity android:name=".ui.product.CateListAddEdit" />
         <activity
             android:name=".ui.SignupCompActivity"
             android:theme="@style/Theme.BarakaMobile.NoActionBar" />
         <activity android:name=".ui.profile.ProfileActivity" />
+        <activity android:name=".ui.profile.CompProActivity" />
         <activity android:name=".ui.payout.PayoutAddActivity" />
         <activity android:name=".ui.usermanaje.WorkerLogListActivity" />
         <activity android:name=".ui.product.CateListActivity" />

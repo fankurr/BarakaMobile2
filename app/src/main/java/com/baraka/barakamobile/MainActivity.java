@@ -40,14 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String my_shared_preferences = "my_shared_preferences";
 
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
-
-//    private final static String TAG_ID = "idUser";
-//    private final static String TAG_EMAIL = "emailUser";
-//    private final static String TAG_NAME = "nameUser";
-//    private final static String TAG_LEVEL = "lvlUser";
-//    private final static String TAG_ACCESS = "loginUser";
-//    private final static String TAG_IDCOMP = "compUser";
-//    private final static String TAG_COMP = "nameComp";
+    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -59,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG_ACCESS = "access";
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
+
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
 
 //    TextView txtNameComp;
 
@@ -82,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
         access = sharedPreferences.getString(TAG_ACCESS, access);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
         nameCompany = sharedPreferences.getString(TAG_COMP, nameCompany);
+
+        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
+        phoneComp = sharedPreferences.getString(PHONE_COMP, phoneComp);
+        emailComp = sharedPreferences.getString(EMAIL_COMP, emailComp);
+        logoComp = sharedPreferences.getString(LOGO_COMP, logoComp);
 
         id = getIntent().getStringExtra(TAG_ID);
         email = getIntent().getStringExtra(TAG_EMAIL);
@@ -151,6 +158,11 @@ public class MainActivity extends AppCompatActivity {
                 intentProfile.putExtra(TAG_ACCESS, access);
                 intentProfile.putExtra(TAG_IDCOMP, idCompany);
                 intentProfile.putExtra(TAG_COMP, nameCompany);
+
+                intentProfile.putExtra(CODE_COMP, codeComp);
+                intentProfile.putExtra(ADDR_COMP, addrComp);
+                intentProfile.putExtra(PHONE_COMP, phoneComp);
+                intentProfile.putExtra(EMAIL_COMP, emailComp);
                 startActivity(intentProfile);
 
             }
@@ -159,6 +171,28 @@ public class MainActivity extends AppCompatActivity {
         TextView txtNameUser = (TextView) headerView.findViewById(R.id.txtNameUser);
         name = getIntent().getStringExtra(TAG_NAME);
         txtNameUser.setText(name);
+        txtNameUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentProfile = new Intent(MainActivity.this, ProfileActivity.class);
+                intentProfile.putExtra(TAG_ID, id);
+                intentProfile.putExtra(TAG_EMAIL, email);
+                intentProfile.putExtra(TAG_NAME, name);
+                intentProfile.putExtra(TAG_ADDRESS, address);
+                intentProfile.putExtra(TAG_LEVEL, level);
+                intentProfile.putExtra(TAG_POST, postUser);
+                intentProfile.putExtra(TAG_TLP, phone);
+                intentProfile.putExtra(TAG_ACCESS, access);
+                intentProfile.putExtra(TAG_IDCOMP, idCompany);
+                intentProfile.putExtra(TAG_COMP, nameCompany);
+
+                intentProfile.putExtra(CODE_COMP, codeComp);
+                intentProfile.putExtra(ADDR_COMP, addrComp);
+                intentProfile.putExtra(PHONE_COMP, phoneComp);
+                intentProfile.putExtra(EMAIL_COMP, emailComp);
+                startActivity(intentProfile);
+            }
+        });
 
         TextView txtNameComp = (TextView) headerView.findViewById(R.id.txtNameComp);
         nameCompany = getIntent().getStringExtra(TAG_COMP);
