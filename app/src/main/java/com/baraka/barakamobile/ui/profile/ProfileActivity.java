@@ -3,6 +3,7 @@ package com.baraka.barakamobile.ui.profile;
 import static com.baraka.barakamobile.ui.product.ProductFragment.ADDR_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.DESC_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.EMAIL_SPLR;
+import static com.baraka.barakamobile.ui.product.ProductFragment.ID_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.ID_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.NAME_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.PHONE_SPLR;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.baraka.barakamobile.ui.profile.CompProActivity;
@@ -53,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
 
-    TextView txtnameUser, txtPostUser, txtAddrUser, txtPhoneUser, txtCompUser;
+    TextView txtnameUser, txtPostUser, txtAddrUser, txtPhoneUser, txtEmailUser, txtCompUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +87,14 @@ public class ProfileActivity extends AppCompatActivity {
         txtnameUser = findViewById(R.id.textViewNameUserDetail);
         txtPostUser = findViewById(R.id.textViewLvlUserDetail);
         txtAddrUser = findViewById(R.id.textViewAddrUserDetail);
+        txtEmailUser = findViewById(R.id.textViewEmailUserDetail);
         txtPhoneUser = findViewById(R.id.textViewTlpUserDetail);
         txtCompUser = findViewById(R.id.textViewNameCompUserDetail);
 
         txtnameUser.setText(name);
         txtPostUser.setText(postUser);
         txtAddrUser.setText(address);
+        txtEmailUser.setText(email);
         txtPhoneUser.setText(phone);
 
         txtCompUser.setText(nameCompany);
@@ -108,6 +112,23 @@ public class ProfileActivity extends AppCompatActivity {
                 intentCompPro.putExtra(PHONE_COMP, phoneComp);
                 intentCompPro.putExtra(EMAIL_COMP, emailComp);
                 startActivity(intentCompPro);
+            }
+        });
+
+        Button btnEditProfile = findViewById(R.id.btnEditUserDetail);
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentEditProfile = new Intent(ProfileActivity.this, EditProfileActivity.class);
+
+                intentEditProfile.putExtra(TAG_ID, id);
+                intentEditProfile.putExtra(TAG_NAME, name);
+                intentEditProfile.putExtra(TAG_POST, postUser);
+                intentEditProfile.putExtra(TAG_ADDRESS, address);
+                intentEditProfile.putExtra(TAG_TLP, phone);
+                intentEditProfile.putExtra(TAG_EMAIL, email);
+                intentEditProfile.putExtra(TAG_COMP, nameCompany);
+                startActivity(intentEditProfile);
             }
         });
 

@@ -184,7 +184,6 @@ public class PrdctDetail extends AppCompatActivity {
                 intentEdit.putExtra(ID_CATE, idCat);
                 intentEdit.putExtra(CATE_PRDCT, catPrdct);
                 intentEdit.putExtra(SPLR_PRDCT, nameSplrPrdct);
-
                 startActivity(intentEdit);
             }
         });
