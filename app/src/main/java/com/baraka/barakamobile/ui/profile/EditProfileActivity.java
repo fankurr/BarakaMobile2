@@ -104,12 +104,12 @@ public class EditProfileActivity extends AppCompatActivity {
         btnSaveProfileEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Merubah Data...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+//                progressDialog.setMessage("Merubah Data...");
+//                progressDialog.setCancelable(false);
+//                progressDialog.show();
 
                 editProfile();
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
             }
         });
 
