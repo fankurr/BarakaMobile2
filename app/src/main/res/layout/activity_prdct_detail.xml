@@ -1,254 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/SwipeRefreshPrdctDetail"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@color/colorBackground"
+    android:orientation="vertical"
     tools:context=".ui.product.PrdctDetail">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/imgPrdctDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/default_image_small" />
-
-        <TextView
-            android:id="@+id/textViewNamePrdctDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:fontFamily="@font/ubuntu_medium"
-            android:text="name_product"
-            android:textAlignment="center"
-            android:textColor="@color/colorDark"
-            android:textSize="30sp" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView62"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/ubuntu"
-                android:text="Kode"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp"  />
-
-            <TextView
-                android:id="@+id/textViewKodePrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="XXX"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView18"
+            <ImageView
+                android:id="@+id/imgPrdctDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/ubuntu"
-                android:text="Deskripsi"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/default_image_small" />
 
             <TextView
-                android:id="@+id/textViewDescPrdctDetail"
+                android:id="@+id/textViewNamePrdctDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:fontFamily="@font/ubuntu"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet.
-                Proin gravida dolor sit amet lacus accumsan et viverra justo commodo.
-                Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-                Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus pronin sapien nunc accuan eget."
-                android:textColor="@color/colorDark"
-                android:textSize="15sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/ubuntu"
-                android:text="Harga"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textView32"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="6dp"
-                android:layout_weight="0"
+                android:layout_margin="12dp"
                 android:fontFamily="@font/ubuntu_medium"
-                android:text="Rp"
-                android:textAlignment="viewEnd"
+                android:textAlignment="center"
                 android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textViewPricePrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="00.000"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textView29"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="/"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textViewUnitPricePrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="unit"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView24"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/ubuntu"
-                android:text="Stok"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textViewStockPrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="6dp"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="xx"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textViewUnitPrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="unit"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView27"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/ubuntu"
-                android:text="Kategori"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
-                android:id="@+id/textViewNameCatePrdctDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_medium"
-                android:text="categori_product"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="21sp" />
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSplrDetailPrdct"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="24dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="15dp">
-
+                android:textSize="30sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView62"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Kode"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewKodePrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Deskripsi"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewDescPrdctDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:textColor="@color/colorDark"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Harga"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textView32"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:text="Rp"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewPricePrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:text="/"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewUnitPricePrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:text="unit"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Stok"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewStockPrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewUnitPrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:text="unit"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView27"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Kategori"
+                    android:textColor="@color/colorDark"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/textViewNameCatePrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/ubuntu_medium"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="21sp" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSplrDetailPrdct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="15dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/imgSplrPrdctDetail"
@@ -258,88 +254,89 @@
                         android:scaleType="centerCrop"
                         app:srcCompat="@drawable/default_image_comp_small" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textViewNameSplrPrdctDetail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:fontFamily="@font/ubuntu_medium"
-                        android:text="name_supplier"
-                        android:textColor="@color/colorDark"
-                        android:textSize="24sp" />
-
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginRight="6dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/imgTlpSplrDetailPrdct"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_weight="0"
-                            android:maxWidth="50dp"
-                            android:maxHeight="60dp"
-                            app:srcCompat="@drawable/ic_baseline_phone_24"
-                            tools:ignore="VectorDrawableCompat" />
+                        <TextView
+                            android:id="@+id/textViewNameSplrPrdctDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="6dp"
+                            android:fontFamily="@font/ubuntu_medium"
+                            android:text="name_supplier"
+                            android:textColor="@color/colorDark"
+                            android:textSize="24sp" />
 
-                        <ImageView
-                            android:id="@+id/imgWASplrDetailPrdct"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_weight="0"
-                            android:maxWidth="50dp"
-                            android:maxHeight="60dp"
-                            app:srcCompat="@drawable/ic_whatsapp"
-                            tools:ignore="VectorDrawableCompat" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/imgEmailSplrDetailPrdct"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_weight="0"
-                            android:maxWidth="50dp"
-                            android:maxHeight="60dp"
-                            app:srcCompat="@drawable/ic_outline_email_24"
-                            tools:ignore="VectorDrawableCompat" />
+                            <ImageView
+                                android:id="@+id/imgTlpSplrDetailPrdct"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_marginRight="15dp"
+                                android:layout_weight="0"
+                                android:maxWidth="50dp"
+                                android:maxHeight="60dp"
+                                app:srcCompat="@drawable/ic_baseline_phone_24"
+                                tools:ignore="VectorDrawableCompat" />
+
+                            <ImageView
+                                android:id="@+id/imgWASplrDetailPrdct"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_marginRight="15dp"
+                                android:layout_weight="0"
+                                android:maxWidth="50dp"
+                                android:maxHeight="60dp"
+                                app:srcCompat="@drawable/ic_whatsapp"
+                                tools:ignore="VectorDrawableCompat" />
+
+                            <ImageView
+                                android:id="@+id/imgEmailSplrDetailPrdct"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_marginRight="15dp"
+                                android:layout_weight="0"
+                                android:maxWidth="50dp"
+                                android:maxHeight="60dp"
+                                app:srcCompat="@drawable/ic_outline_email_24"
+                                tools:ignore="VectorDrawableCompat" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <Button
-            android:id="@+id/btnEditPrdctDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginBottom="15dp"
-            android:layout_weight="1"
-            android:padding="6dp"
-            android:text="Edit"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:backgroundTint="#ffffff"
-            app:cornerRadius="5dp"
-            app:rippleColor="#33AAAAAA"
-            app:strokeColor="@color/colorPrimary"
-            app:strokeWidth="2dp" />
+            <Button
+                android:id="@+id/btnEditPrdctDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="1"
+                android:padding="6dp"
+                android:text="Edit"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="#ffffff"
+                app:cornerRadius="5dp"
+                app:rippleColor="#33AAAAAA"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="2dp" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

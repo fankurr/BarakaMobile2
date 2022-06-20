@@ -3,12 +3,16 @@ package com.baraka.barakamobile.ui.product;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,8 +21,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.profile.ProfileActivity;
 import com.baraka.barakamobile.ui.supplier.SupplierDetailActivity;
+import com.baraka.barakamobile.ui.util.DbConfig;
 
 import static com.baraka.barakamobile.ui.product.ProductFragment.ADDR_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.CATE_PRDCT;
@@ -37,9 +47,53 @@ import static com.baraka.barakamobile.ui.product.ProductFragment.SPLR_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.STOCK_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.UNIT_PRDCT;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class PrdctDetail extends AppCompatActivity {
 
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
+
+    public static final String ID_PRDCT = "idPrdct";
+    public static final String NAME_PRDCT = "namePrdct";
+    public static final String CODE_PRDCT = "codePrdct";
+    public static final String ID_CATE = "idCate";
+    public static final String CATE_PRDCT = "nameCat";
+    public static final String SPLR_PRDCT = "nameSplr";
+    public static final String DESC_PRDCT = "descPrdct";
+    public static final String PRICE_PRDCT = "unitPrice";
+    public static final String UNIT_PRDCT = "unitPrdct";
+    public static final String STOCK_PRDCT = "stockPrdct";
+
+    public static final String ID_SPLR = "idSplr";
+    public static final String COMP_SPLR= "idCompSplr";
+    public static final String NAME_SPLR= "nameSplr";
+    public static final String ADDR_SPLR = "addrSplr";
+    public static final String PHONE_SPLR = "phoneSplr";
+    public static final String EMAIL_SPLR = "emailSplr";
+    public static final String DESC_SPLR = "descSplr";
+    public static final String IMG_SPLR = "imgSplr";
+
+    private String urlPrdctDetail = DbConfig.URL_PRDCT + "idPrdct.php";
+
     String messagesWaSplr = " ";
+    String idPrdct, idCat, namePrdct, codePrdct, descPrdct, pricePrdct, unitPricePrdct, unitStockPrdct, stockPrdct, catPrdct, nameSplrPrdct;
+    String idSplr, nameSplr, descSplr, addrSplr, phoneSplr, emailSplr;
+
+    TextView textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    ProgressDialog progressDialog;
+    SharedPreferences sharedPreferences;
+    public static final String my_shared_preferences = "my_shared_preferences";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,45 +105,58 @@ public class PrdctDetail extends AppCompatActivity {
         progressDialog.setMessage("Memuat Data..");
         progressDialog.show();
 
+        sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+
         Intent intent = getIntent();
-        String idPrdct = intent.getStringExtra(ID_PRDCT);
-        String namePrdct = intent.getStringExtra(NAME_PRDCT);
-        String codePrdct = intent.getStringExtra(CODE_PRDCT);
-        String descPrdct = intent.getStringExtra(DESC_PRDCT);
-        String pricePrdct = intent.getStringExtra(PRICE_PRDCT);
-        String unitPricePrdct = intent.getStringExtra(UNIT_PRDCT);
-        String unitStockPrdct = intent.getStringExtra(UNIT_PRDCT);
-        String stockPrdct = intent.getStringExtra(STOCK_PRDCT);
-        String idCat = intent.getStringExtra(ID_CATE);
-        String catPrdct = intent.getStringExtra(CATE_PRDCT);
-        String nameSplrPrdct = intent.getStringExtra(SPLR_PRDCT);
+        idPrdct = intent.getStringExtra(ID_PRDCT);
+        namePrdct = intent.getStringExtra(NAME_PRDCT);
+        codePrdct = intent.getStringExtra(CODE_PRDCT);
+        descPrdct = intent.getStringExtra(DESC_PRDCT);
+        pricePrdct = intent.getStringExtra(PRICE_PRDCT);
+        unitPricePrdct = intent.getStringExtra(UNIT_PRDCT);
+        unitStockPrdct = intent.getStringExtra(UNIT_PRDCT);
+        stockPrdct = intent.getStringExtra(STOCK_PRDCT);
+        idCat = intent.getStringExtra(ID_CATE);
+        catPrdct = intent.getStringExtra(CATE_PRDCT);
+        nameSplrPrdct = intent.getStringExtra(SPLR_PRDCT);
 
-        String idSplr = intent.getStringExtra(ID_SPLR);
-        String nameSplr = intent.getStringExtra(NAME_SPLR);
-        String descSplr = intent.getStringExtra(DESC_SPLR);
-        String addrSplr = intent.getStringExtra(ADDR_SPLR);
-        String phoneSplr = intent.getStringExtra(PHONE_SPLR);
-        String emailSplr = intent.getStringExtra(EMAIL_SPLR);
+        idSplr = intent.getStringExtra(ID_SPLR);
+        nameSplr = intent.getStringExtra(NAME_SPLR);
+        descSplr = intent.getStringExtra(DESC_SPLR);
+        addrSplr = intent.getStringExtra(ADDR_SPLR);
+        phoneSplr = intent.getStringExtra(PHONE_SPLR);
+        emailSplr = intent.getStringExtra(EMAIL_SPLR);
 
-        TextView textViewNamePrdct = findViewById(R.id.textViewNamePrdctDetail);
-        TextView textViewCodePrdct = findViewById(R.id.textViewKodePrdctDetail);
-        TextView textViewDescPrdct = findViewById(R.id.textViewDescPrdctDetail);
-        TextView textViewPricePrdct = findViewById(R.id.textViewPricePrdctDetail);
-        TextView textViewUnitPricePrdct = findViewById(R.id.textViewUnitPricePrdctDetail);
-        TextView textViewUnitStockPrdct = findViewById(R.id.textViewUnitPrdctDetail);
-        TextView textViewStockPrdct = findViewById(R.id.textViewStockPrdctDetail);
-        TextView textViewCatPrdct = findViewById(R.id.textViewNameCatePrdctDetail);
-        TextView textViewNameSplr = findViewById(R.id.textViewNameSplrPrdctDetail);
+        textViewNamePrdct = findViewById(R.id.textViewNamePrdctDetail);
+        textViewCodePrdct = findViewById(R.id.textViewKodePrdctDetail);
+        textViewDescPrdct = findViewById(R.id.textViewDescPrdctDetail);
+        textViewPricePrdct = findViewById(R.id.textViewPricePrdctDetail);
+        textViewUnitPricePrdct = findViewById(R.id.textViewUnitPricePrdctDetail);
+        textViewUnitStockPrdct = findViewById(R.id.textViewUnitPrdctDetail);
+        textViewStockPrdct = findViewById(R.id.textViewStockPrdctDetail);
+        textViewCatPrdct = findViewById(R.id.textViewNameCatePrdctDetail);
+        textViewNameSplr = findViewById(R.id.textViewNameSplrPrdctDetail);
 
-        textViewNamePrdct.setText(namePrdct);
-        textViewCodePrdct.setText(codePrdct);
-        textViewDescPrdct.setText(descPrdct);
-        textViewPricePrdct.setText(pricePrdct);
-        textViewUnitPricePrdct.setText(unitPricePrdct);
-        textViewUnitStockPrdct.setText(unitStockPrdct);
-        textViewStockPrdct.setText(stockPrdct);
-        textViewCatPrdct.setText(catPrdct);
-        textViewNameSplr.setText(nameSplr);
+        prdctDetail();
+
+        swipeRefreshLayout = findViewById(R.id.SwipeRefreshPrdctDetail);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshItem();
+            }
+
+            private void refreshItem() {
+                prdctDetail();
+                onItemLoad();
+            }
+
+            private void onItemLoad() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+
 
 //        textViewCatPrdct.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -197,7 +264,60 @@ public class PrdctDetail extends AppCompatActivity {
 
     }
 
+    // Detail Profile
+    public void prdctDetail(){
+        progressDialog = new ProgressDialog(PrdctDetail.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.show();
 
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+
+        AndroidNetworking.post(urlPrdctDetail)
+                .addBodyParameter("idPrdct", idPrdct.toString())
+                .setTag("Load Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                                textViewNamePrdct.setText(jsonObject.getString("namePrdct"));
+                                textViewCodePrdct.setText(jsonObject.getString("codePrdct"));
+                                textViewDescPrdct.setText(jsonObject.getString("descPrdct"));
+                                textViewPricePrdct.setText(jsonObject.getString("unitPrice"));
+                                textViewUnitPricePrdct.setText(jsonObject.getString("unitPrdct"));
+                                textViewUnitStockPrdct.setText(jsonObject.getString("unitPrdct"));
+                                textViewStockPrdct.setText(jsonObject.getString("stockPrdct"));
+                                textViewCatPrdct.setText(jsonObject.getString("nameCategory"));
+                                textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
+
+                                getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(PrdctDetail.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(PrdctDetail.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
 
     // Whatsapp Install Check
     public boolean isWhatappInstalled(){
