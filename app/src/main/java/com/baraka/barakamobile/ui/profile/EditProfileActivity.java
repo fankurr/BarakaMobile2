@@ -25,6 +25,7 @@ import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.product.AddEditPrdctActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,6 +40,8 @@ public class EditProfileActivity extends AppCompatActivity {
     public static final String my_shared_preferences = "my_shared_preferences";
 
     private String urlEdit = DbConfig.URL + "editUser.php";
+
+    private String urlUserEdit = DbConfig.URL + "idUserComp.php";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -90,12 +93,14 @@ public class EditProfileActivity extends AppCompatActivity {
         inputTlpProfileEdit = findViewById(R.id.editTxtTlpProfileEdit);
         inputEmailProfileEdit = findViewById(R.id.editTxtEmailProfileEdit);
 
-        inputNameProfileEdit.setText(name);
-        txtViewCompProfileEdit.setText(nameCompany);
-        inputPostProfileEdit.setText(postUser);
-        inputAddrProfileEdit.setText(address);
-        inputEmailProfileEdit.setText(email);
-        inputTlpProfileEdit.setText(phone);
+//        inputNameProfileEdit.setText(name);
+//        txtViewCompProfileEdit.setText(nameCompany);
+//        inputPostProfileEdit.setText(postUser);
+//        inputAddrProfileEdit.setText(address);
+//        inputEmailProfileEdit.setText(email);
+//        inputTlpProfileEdit.setText(phone);
+
+        editDetailProfile();
 
         inputPostProfileEdit.setEnabled(false);
         inputPostProfileEdit.setFocusable(false);
@@ -160,9 +165,9 @@ public class EditProfileActivity extends AppCompatActivity {
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = getIntent();
-                                                setResult(RESULT_OK, intent);
-                                                EditProfileActivity.this.finish();
+                                                Intent intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
+                                                startActivity(intent);
+                                                finish();
                                             }
                                         })
                                         .show();
@@ -195,6 +200,60 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    // Detail Profile
+    public void editDetailProfile(){
+        progressDialog = new ProgressDialog(EditProfileActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(urlUserEdit)
+                .addBodyParameter("idUser", id.toString())
+                .setTag("Load Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                inputNameProfileEdit.setText(jsonObject.getString("name"));
+                                inputPostProfileEdit.setText(jsonObject.getString("postUser"));
+                                inputAddrProfileEdit.setText(jsonObject.getString("address"));
+                                inputEmailProfileEdit.setText(jsonObject.getString("email"));
+                                inputTlpProfileEdit.setText(jsonObject.getString("phone"));
+
+                                txtViewCompProfileEdit.setText(jsonObject.getString("nameCompany"));
+                                getSupportActionBar().setTitle(jsonObject.getString("name"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(EditProfileActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(EditProfileActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
