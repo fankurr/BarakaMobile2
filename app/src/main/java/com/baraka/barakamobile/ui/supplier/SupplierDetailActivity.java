@@ -2,6 +2,7 @@ package com.baraka.barakamobile.ui.supplier;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,10 +31,12 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.MainActivity;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.product.PrdctDetail;
 import com.baraka.barakamobile.ui.usermanaje.WorkerDetailActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,7 +69,7 @@ public class SupplierDetailActivity extends AppCompatActivity {
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
-
+    private String URL_SPLR_DETAIL = DbConfig.URL_SPLR + "idSplr.php";
     private String URL_SPLR_DEL = DbConfig.URL_SPLR + "delSplr.php";
     private String URL_SPLR_IMG_DETAIL = DbConfig.URL_SPLR + "imgSplr/";
 
@@ -75,10 +78,11 @@ public class SupplierDetailActivity extends AppCompatActivity {
     String messagesWaSplr = " ";
     String phonesWaSplr = "";
 
+    TextView textViewNameSplr, textViewDescSplr, textViewAddrSplr, textViewTlpSplr, textViewEmailSplr;
+    ImageView imgPhotoSplrDetail;
 
     ProgressDialog progressDialog;
-
-
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
@@ -97,12 +101,12 @@ public class SupplierDetailActivity extends AppCompatActivity {
         emailSplr = intent.getStringExtra(EMAIL_SPLR);
         imgSplr = intent.getStringExtra(IMG_SPLR);
 
-        TextView textViewNameSplr = findViewById(R.id.textViewNameSplrDetail);
-        TextView textViewDescSplr = findViewById(R.id.textViewDescSplrDetail);
-        TextView textViewAddrSplr = findViewById(R.id.textViewAddrSplrDetail);
-        TextView textViewTlpSplr = findViewById(R.id.textViewTlpSplrDetail);
-        TextView textViewEmailSplr = findViewById(R.id.textViewEmailSplrDetail);
-        ImageView imgPhotoSplrDetail = findViewById(R.id.imgPhotoSplrDetail);
+        textViewNameSplr = findViewById(R.id.textViewNameSplrDetail);
+        textViewDescSplr = findViewById(R.id.textViewDescSplrDetail);
+        textViewAddrSplr = findViewById(R.id.textViewAddrSplrDetail);
+        textViewTlpSplr = findViewById(R.id.textViewTlpSplrDetail);
+        textViewEmailSplr = findViewById(R.id.textViewEmailSplrDetail);
+        imgPhotoSplrDetail = findViewById(R.id.imgPhotoSplrDetail);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(nameSplr);
@@ -121,6 +125,34 @@ public class SupplierDetailActivity extends AppCompatActivity {
                 .into(imgPhotoSplrDetail);
 
         Log.e("ImgSplr", "Image: "+URL_SPLR_IMG_DETAIL+imgSplr);
+
+        swipeRefreshLayout = findViewById(R.id.SwipeRefreshSplrDetail);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshItem();
+            }
+
+            private void refreshItem() {
+                onItemLoad();
+                textViewNameSplr.setText(nameSplr);
+                textViewDescSplr.setText(descSplr);
+                textViewAddrSplr.setText(addrSplr);
+                textViewTlpSplr.setText(phoneSplr);
+                textViewEmailSplr.setText(emailSplr);
+                Picasso.get().load(URL_SPLR_IMG_DETAIL+imgSplr)
+                        .fit()
+                        .centerInside()
+                        .placeholder(R.drawable.default_image_comp_small)
+                        .error(R.drawable.default_image_comp_small)
+                        .into(imgPhotoSplrDetail);
+                splrDetail();
+            }
+
+            private void onItemLoad() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         Button btnAddEdit = findViewById(R.id.btnEditSplrDetail);
         btnAddEdit.setOnClickListener(new View.OnClickListener() {
@@ -208,6 +240,64 @@ public class SupplierDetailActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    // Detail Profile
+    public void splrDetail(){
+        progressDialog = new ProgressDialog(SupplierDetailActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+
+        AndroidNetworking.post(URL_SPLR_DETAIL)
+                .addBodyParameter("idSplr", idSplr.toString())
+                .setTag("Load Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                                textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
+                                textViewDescSplr.setText(jsonObject.getString("descSupplier"));
+                                textViewAddrSplr.setText(jsonObject.getString("addrSupplier"));
+                                textViewTlpSplr.setText(jsonObject.getString("phoneSupplier"));
+                                textViewEmailSplr.setText(jsonObject.getString("emailSupplier"));
+
+                                Picasso.get().load(URL_SPLR_IMG_DETAIL+imgSplr)
+                                        .fit()
+                                        .centerInside()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
+                                        .into(imgPhotoSplrDetail);
+
+                                getSupportActionBar().setTitle(jsonObject.getString("nameSupplier"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(SupplierDetailActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(SupplierDetailActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
     }
 
     private void delSplr() {

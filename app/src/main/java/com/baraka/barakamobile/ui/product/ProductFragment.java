@@ -208,15 +208,6 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 PrdctViewModel prdctViewModel = new PrdctViewModel(
-//                                        jsonObject.getInt("idProduct"),
-//                                        jsonObject.getString("nameProduct"),
-//                                        jsonObject.getString("description"),
-//                                        jsonObject.getString("category"),
-//                                        jsonObject.getString("supplierProduct"),
-//                                        jsonObject.getString("price"),
-//                                        jsonObject.getString("unit"),
-//                                        jsonObject.getString("stock"),
-//                                        jsonObject.getString("imageProduct")
 
                                         jsonObject.getString("idProduct"),
                                         jsonObject.getString("nameProduct"),
@@ -347,7 +338,7 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
         prdctDetailIntent.putExtra(ADDR_SPLR, clickedPrdct.getAddrSplr());
         prdctDetailIntent.putExtra(PHONE_SPLR, clickedPrdct.getPhoneSplr());
         prdctDetailIntent.putExtra(EMAIL_SPLR, clickedPrdct.getEmailSplr());
-//        prdctDetailIntent.putExtra(IMG_SPLR, clickedPrdct.getImgSplr());
+        prdctDetailIntent.putExtra(IMG_SPLR, clickedPrdct.getImgSplr());
 
         startActivity(prdctDetailIntent);
     }

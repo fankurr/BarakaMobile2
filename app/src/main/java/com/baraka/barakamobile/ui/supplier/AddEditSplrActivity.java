@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +25,9 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.product.AddEditPrdctActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,14 +58,16 @@ public class AddEditSplrActivity extends AppCompatActivity {
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
+    private String URL_SPLR_EDIT_DETAIL = DbConfig.URL_SPLR + "idSplr.php";
     private String URL_SPLR_EDIT = DbConfig.URL_SPLR + "editSplr.php";
     private String URL_SPLR_ADD = DbConfig.URL_SPLR + "addSplr.php";
 
     String id, email, name, level, access, idCompany, nameCompany;
-    String idSplr, nameSplr,descSplr,addrSplr, phoneSplr, emailSplr;
+    String idSplr, nameSplr,descSplr,addrSplr, phoneSplr, emailSplr, imgSplr;
     EditText inputNameSplr, inputAlamatSplr, inputTlpSplr, inputEmailSplr, inputDescSplr;
     Button btnUploadImgSplrAddEdit;
     TextView textPath;
+    ImageView imgPhotoSplrDetail;
 
     ProgressDialog progressDialog;
 
@@ -139,11 +144,13 @@ public class AddEditSplrActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setTitle(nameSplr);
 
-            inputNameSplr.setText(nameSplr);
-            inputAlamatSplr.setText(addrSplr);
-            inputTlpSplr.setText(phoneSplr);
-            inputEmailSplr.setText(emailSplr);
-            inputDescSplr.setText(descSplr);
+//            inputNameSplr.setText(nameSplr);
+//            inputAlamatSplr.setText(addrSplr);
+//            inputTlpSplr.setText(phoneSplr);
+//            inputEmailSplr.setText(emailSplr);
+//            inputDescSplr.setText(descSplr);
+
+            splrDetail();
 
             Button btnSimpanEdit = findViewById(R.id.btnSaveSplrAddEdit);
             btnSimpanEdit.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +167,66 @@ public class AddEditSplrActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    // Detail Profile
+    public void splrDetail(){
+        progressDialog = new ProgressDialog(AddEditSplrActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+
+        AndroidNetworking.post(URL_SPLR_EDIT_DETAIL)
+                .addBodyParameter("idSplr", idSplr.toString())
+                .setTag("Load Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+
+                                inputNameSplr.setText(jsonObject.getString("nameSupplier"));
+                                inputDescSplr.setText(jsonObject.getString("descSupplier"));
+                                inputAlamatSplr.setText(jsonObject.getString("addrSupplier"));
+                                inputTlpSplr.setText(jsonObject.getString("phoneSupplier"));
+                                inputEmailSplr.setText(jsonObject.getString("emailSupplier"));
+
+
+//                                Picasso.get().load(URL_SPLR_EDIT_DETAIL+imgSplr)
+//                                        .fit()
+//                                        .centerInside()
+//                                        .placeholder(R.drawable.default_image_comp_small)
+//                                        .error(R.drawable.default_image_comp_small)
+//                                        .into(imgPhotoSplrDetail);
+
+                                getSupportActionBar().setTitle(jsonObject.getString("nameSupplier"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(AddEditSplrActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(AddEditSplrActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
     }
 
     private void editSplr() {
