@@ -21,6 +21,7 @@
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.profile.EditProfileActivity" />
         <activity android:name=".ui.profile.CompProActivity" />
+        <activity android:name=".ui.profile.EditCompProActivity" />
         <activity android:name=".ui.payout.PayoutAddActivity" />
         <activity android:name=".ui.usermanaje.WorkerLogListActivity" />
         <activity android:name=".ui.product.CateListActivity" />

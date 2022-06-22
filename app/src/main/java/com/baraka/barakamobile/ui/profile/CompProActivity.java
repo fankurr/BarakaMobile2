@@ -4,16 +4,31 @@ import static com.baraka.barakamobile.ui.supplier.SupplierFragment.ID_SPLR;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.util.DbConfig;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CompProActivity extends AppCompatActivity {
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
@@ -39,9 +54,15 @@ public class CompProActivity extends AppCompatActivity {
     public static final String LOGO_COMP = "logoComp";
 
     TextView txtNameComp, txtAddrComp, txtTlpComp, txtEmailCOmp, txtCodeComp;
+    Button btnEditCompPro;
 
+    ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +71,14 @@ public class CompProActivity extends AppCompatActivity {
 
         sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
 
-//        idComp = sharedPreferences.getString(ID_COMP, idComp);
-//        nameComp = sharedPreferences.getString(NAME_COMP, nameComp);
-//        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
-//        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
-//        phoneComp = sharedPreferences.getString(PHONE_COMP, phoneComp);
-//        emailComp = sharedPreferences.getString(EMAIL_COMP, emailComp);
-//        logoComp = sharedPreferences.getString(LOGO_COMP, logoComp);
+        id = sharedPreferences.getString(TAG_ID, id);
+        level = sharedPreferences.getString(TAG_LEVEL, level);
+        idComp = sharedPreferences.getString(ID_COMP, idComp);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
 
         Intent intent = getIntent();
+        id = intent.getStringExtra(TAG_ID);
         level = intent.getStringExtra(TAG_LEVEL);
         idCompany = intent.getStringExtra(TAG_IDCOMP);
         nameCompany = intent.getStringExtra(TAG_COMP);
@@ -73,18 +93,52 @@ public class CompProActivity extends AppCompatActivity {
         txtEmailCOmp = findViewById(R.id.txtViewEmailCompProDetail);
         txtCodeComp = findViewById(R.id.txtViewCodeCompProDetail);
 
-        txtNameComp.setText(nameCompany);
-        txtAddrComp.setText(addrComp);
-        txtTlpComp.setText(phoneComp);
-        txtEmailCOmp.setText(emailComp);
-        txtCodeComp.setText(codeComp);
+//        txtNameComp.setText(nameCompany);
+//        txtAddrComp.setText(addrComp);
+//        txtTlpComp.setText(phoneComp);
+//        txtEmailCOmp.setText(emailComp);
+//        txtCodeComp.setText(codeComp);
 
-        if (level.equals("2")){
-            TextView labelCompPro = findViewById(R.id.txtViewLblCodeCompPro);
-//            labelCompPro.setVisibility(View.INVISIBLE);
-            TextView txtCodeCompPro = findViewById(R.id.txtViewCodeCompProDetail);
-            txtCodeCompPro.setText("Untuk mengetahui kode toko, silahkan hubungi Owner/Pemilik toko.");
-        }
+        detailComp();
+
+        swipeRefreshLayout = findViewById(R.id.SwipeRefreshCompPro);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshItem();
+            }
+
+            private void refreshItem() {
+                detailComp();
+                onItemLoad();
+            }
+
+            private void onItemLoad() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        btnEditCompPro = findViewById(R.id.btnEditCompProDetail);
+        btnEditCompPro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intenEditCompPro = new Intent(CompProActivity.this, EditCompProActivity.class);
+
+                intenEditCompPro.putExtra(TAG_ID, id);
+                intenEditCompPro.putExtra(TAG_LEVEL, level);
+                intenEditCompPro.putExtra(TAG_IDCOMP, idCompany);
+                intenEditCompPro.putExtra(CODE_COMP, codeComp);
+                startActivity(intenEditCompPro);
+
+            }
+        });
+
+//        if (level.equals("2")){
+//            TextView labelCompPro = findViewById(R.id.txtViewLblCodeCompPro);
+////            labelCompPro.setVisibility(View.INVISIBLE);
+//            TextView txtCodeComp = findViewById(R.id.txtViewCodeCompProDetail);
+//            txtCodeComp.setText("Untuk mengetahui kode toko, silahkan hubungi Owner/Pemilik toko.");
+//        }
 //        else {
 //            TextView labelCompPro = findViewById(R.id.txtViewLblCodeCompPro);
 //            labelCompPro.setVisibility(View.VISIBLE);
@@ -96,6 +150,72 @@ public class CompProActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(nameCompany);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
     }
+
+    // Detail CompPro
+    public void detailComp(){
+        progressDialog = new ProgressDialog(CompProActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Toko..");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+//        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(urlCompProDetail)
+                .addBodyParameter("idComp", idCompany.toString())
+                .addBodyParameter("codeComp", codeComp.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                txtNameComp.setText(jsonObject.getString("nameComp"));
+                                txtAddrComp.setText(jsonObject.getString("addrComp"));
+                                txtTlpComp.setText(jsonObject.getString("phoneComp"));
+                                txtEmailCOmp.setText(jsonObject.getString("emailComp"));
+
+
+                                if (level.equals("2")){
+                                    txtCodeComp = findViewById(R.id.txtViewCodeCompProDetail);
+                                    txtCodeComp.setText("Untuk mengetahui kode toko, silahkan hubungi Owner/Pemilik toko.");
+                                    btnEditCompPro = findViewById(R.id.btnEditCompProDetail);
+                                    btnEditCompPro.setEnabled(false);
+                                    btnEditCompPro.setBackgroundColor(Color.LTGRAY);
+                                    btnEditCompPro.setTextColor(Color.GRAY);
+                                }else{
+                                    txtCodeComp.setText(jsonObject.getString("codeComp"));
+                                }
+
+
+                                getSupportActionBar().setTitle(jsonObject.getString("nameComp"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(CompProActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(CompProActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

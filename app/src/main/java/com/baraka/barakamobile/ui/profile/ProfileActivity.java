@@ -84,17 +84,19 @@ public class ProfileActivity extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
 
         id = sharedPreferences.getString(TAG_ID, id);
+        level = sharedPreferences.getString(TAG_LEVEL, level);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
 //        email = sharedPreferences.getString(TAG_EMAIL, email);
 //        name = sharedPreferences.getString(TAG_NAME, name);
 //        address = sharedPreferences.getString(TAG_ADDRESS, address);
-//        level = sharedPreferences.getString(TAG_LEVEL, level);
 //        postUser = sharedPreferences.getString(TAG_POST, postUser);
 //        phone = sharedPreferences.getString(TAG_TLP, phone);
 //        access = sharedPreferences.getString(TAG_ACCESS, access);
 //        idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
 //        nameCompany = sharedPreferences.getString(TAG_COMP, nameCompany);
 //
-//        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+
 //        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
 //        phoneComp = sharedPreferences.getString(PHONE_COMP, phoneComp);
 //        emailComp = sharedPreferences.getString(EMAIL_COMP, emailComp);
@@ -139,13 +141,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentCompPro = new Intent(ProfileActivity.this, CompProActivity.class);
-                intentCompPro.putExtra(TAG_LEVEL, level);
                 intentCompPro.putExtra(TAG_IDCOMP, idCompany);
-                intentCompPro.putExtra(TAG_COMP, nameCompany);
                 intentCompPro.putExtra(CODE_COMP, codeComp);
-                intentCompPro.putExtra(ADDR_COMP, addrComp);
-                intentCompPro.putExtra(PHONE_COMP, phoneComp);
-                intentCompPro.putExtra(EMAIL_COMP, emailComp);
+                intentCompPro.putExtra(TAG_LEVEL, level);
                 startActivity(intentCompPro);
             }
         });
@@ -186,7 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void detailProfile(){
         progressDialog = new ProgressDialog(ProfileActivity.this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.setMessage("Memuat Detail Profil..");
         progressDialog.show();
 
         sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
@@ -194,7 +192,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         AndroidNetworking.post(urlUserDetail)
                 .addBodyParameter("idUser", id.toString())
-                .setTag("Load Data")
+                .setTag("Load Data..")
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
