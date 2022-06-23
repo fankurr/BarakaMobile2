@@ -37,7 +37,6 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
         onItemClickListenerPrdctDetail = listener;
     }
 
-
     public PrdctCardAdapter(List<PrdctViewModel> prdctViewModelList, Context context){
         this.prdctViewModelList = prdctViewModelList;
         this.context = context;
@@ -85,7 +84,7 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(onItemClickListenerPrdctDetail != null){
+                    if (onItemClickListenerPrdctDetail != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
                             onItemClickListenerPrdctDetail.onItemClick(position);

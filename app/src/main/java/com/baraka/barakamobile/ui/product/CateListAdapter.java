@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baraka.barakamobile.R;
@@ -17,8 +18,18 @@ import java.util.List;
 
 public class CateListAdapter extends RecyclerView.Adapter<CateListAdapter.MyViewHolder> {
 
-    List<CateViewModel> cateViewModelList;
-    Context context;
+    private List<CateViewModel> cateViewModelList;
+    private Context context;
+    private LayoutInflater layoutInflater;
+    private OnItemClickListener onItemClickListenerCatDetail;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        onItemClickListenerCatDetail = listener;
+    }
 
     public CateListAdapter(Context context, List<CateViewModel>cateViewModelList){
         this.cateViewModelList = cateViewModelList;
@@ -28,15 +39,16 @@ public class CateListAdapter extends RecyclerView.Adapter<CateListAdapter.MyView
     @NonNull
     @NotNull
     @Override
-    public CateListAdapter.MyViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+        View view;
+        view = LayoutInflater.from(context).inflate(R.layout.card_list_cate, parent, false);
+        MyViewHolder holder = new MyViewHolder(view);
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_list_cate, parent, false);
-        CateListAdapter.MyViewHolder holder = new CateListAdapter.MyViewHolder(view);
-        return new CateListAdapter.MyViewHolder(view);
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull CateListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull MyViewHolder holder, int position) {
         holder.nameCateList.setText(cateViewModelList.get(position).getNameCat());
         holder.descCateList.setText(cateViewModelList.get(position).getDescCat());
 
@@ -48,14 +60,28 @@ public class CateListAdapter extends RecyclerView.Adapter<CateListAdapter.MyView
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameCateList;
-        public TextView descCateList;
+        TextView nameCateList;
+        TextView descCateList;
+        CardView cardCateList;
 
         public MyViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
-            nameCateList = (TextView) itemView.findViewById(R.id.textViewNameCateList);
-            descCateList = (TextView) itemView.findViewById(R.id.textViewDescCateList);
+            nameCateList = itemView.findViewById(R.id.textViewNameCateList);
+            descCateList = itemView.findViewById(R.id.textViewDescCateList);
+            cardCateList = (CardView) itemView.findViewById(R.id.cardCateList);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onItemClickListenerCatDetail != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            onItemClickListenerCatDetail.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 }

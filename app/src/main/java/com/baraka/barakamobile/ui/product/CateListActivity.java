@@ -9,6 +9,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,9 +32,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CateListActivity extends AppCompatActivity {
+public class CateListActivity extends AppCompatActivity implements CateListAdapter.OnItemClickListener {
     private CateViewModel cateViewModel;
-    //    private FragmentProductBinding binding;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private CateListAdapter cateListAdapter;
@@ -54,6 +54,14 @@ public class CateListActivity extends AppCompatActivity {
     public static final String NAME_CATE = "nameCat";
     public static final String DESC_CATE = "descCat";
     public static final String IMG_CATE = "imgCat";
+
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
 
     String id, email, name, level, access, idCompany, nameCompany;
 
@@ -156,7 +164,11 @@ public class CateListActivity extends AppCompatActivity {
                                         jsonObject.getString("imageCate")
 
                                 );
+
                                 cateViewModelList.add(cateViewModel);
+                                CateListAdapter cateListAdapter = new CateListAdapter(CateListActivity.this, cateViewModelList);
+                                recyclerView.setAdapter(cateListAdapter);
+                                cateListAdapter.setOnItemClickListener(CateListActivity.this);
                                 progressDialog.dismiss();
                             }
                         } catch (JSONException e) {
@@ -173,6 +185,22 @@ public class CateListActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 });
+    }
+
+    @Override
+    public void onItemClick(int position){
+        Intent cateDetailIntent = new Intent (CateListActivity.this, CateDetailActivity.class);
+        CateViewModel clickedCate = cateViewModelList.get(position);
+
+        cateDetailIntent.putExtra(ID_CATE, clickedCate.getIdCat());
+        cateDetailIntent.putExtra(ID_COMP_CATE, clickedCate.getIdCompCat());
+        cateDetailIntent.putExtra(NAME_CATE, clickedCate.getNameCat());
+        cateDetailIntent.putExtra(DESC_CATE, clickedCate.getDescCat());
+        cateDetailIntent.putExtra(IMG_CATE, clickedCate.getImgCat());
+
+        cateDetailIntent.putExtra(TAG_IDCOMP, clickedCate.getIdComp());
+
+        startActivity(cateDetailIntent);
     }
 
     @Override

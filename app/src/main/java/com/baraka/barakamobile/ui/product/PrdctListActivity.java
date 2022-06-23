@@ -34,7 +34,6 @@ import java.util.List;
 
 public class PrdctListActivity extends AppCompatActivity implements PrdctCardAdapter.OnItemClickListener {
     private ProductViewModel productViewModel;
-    //    private FragmentProductBinding binding;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private PrdctCardAdapter prdctCardAdapter;
@@ -46,12 +45,22 @@ public class PrdctListActivity extends AppCompatActivity implements PrdctCardAda
     public static final String ID_PRDCT = "idPrdct";
     public static final String NAME_PRDCT = "namePrdct";
     public static final String CODE_PRDCT = "codePrdct";
+    public static final String ID_CATE = "idCate";
     public static final String CATE_PRDCT = "nameCat";
     public static final String SPLR_PRDCT = "nameSplr";
     public static final String DESC_PRDCT = "descPrdct";
     public static final String PRICE_PRDCT = "unitPrice";
     public static final String UNIT_PRDCT = "unitPrdct";
     public static final String STOCK_PRDCT = "stockPrdct";
+
+    public static final String ID_SPLR = "idSplr";
+    public static final String COMP_SPLR= "idCompSplr";
+    public static final String NAME_SPLR= "nameSplr";
+    public static final String ADDR_SPLR = "addrSplr";
+    public static final String PHONE_SPLR = "phoneSplr";
+    public static final String EMAIL_SPLR = "emailSplr";
+    public static final String DESC_SPLR = "descSplr";
+    public static final String IMG_SPLR = "imgSplr";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -219,14 +228,24 @@ public class PrdctListActivity extends AppCompatActivity implements PrdctCardAda
         Intent prdctDetailIntent = new Intent(PrdctListActivity.this, PrdctDetail.class);
         PrdctViewModel clickedPrdct = prdctViewModelList.get(position);
 
+        prdctDetailIntent.putExtra(ID_PRDCT, clickedPrdct.getIdPrdct());
         prdctDetailIntent.putExtra(NAME_PRDCT, clickedPrdct.getNamePrdct());
         prdctDetailIntent.putExtra(CODE_PRDCT, clickedPrdct.getCodePrdct());
         prdctDetailIntent.putExtra(DESC_PRDCT, clickedPrdct.getDescPrdct());
         prdctDetailIntent.putExtra(PRICE_PRDCT, clickedPrdct.getUnitPrice());
         prdctDetailIntent.putExtra(UNIT_PRDCT, clickedPrdct.getUnitPrdct());
         prdctDetailIntent.putExtra(STOCK_PRDCT, clickedPrdct.getStockPrdct());
+        prdctDetailIntent.putExtra(ID_CATE, clickedPrdct.getIdCat());
         prdctDetailIntent.putExtra(CATE_PRDCT, clickedPrdct.getNameCat());
         prdctDetailIntent.putExtra(SPLR_PRDCT, clickedPrdct.getNameSplr());
+
+        prdctDetailIntent.putExtra(ID_SPLR, clickedPrdct.getIdSplr());
+        prdctDetailIntent.putExtra(NAME_SPLR, clickedPrdct.getNameSplr());
+        prdctDetailIntent.putExtra(DESC_SPLR, clickedPrdct.getDescSplr());
+        prdctDetailIntent.putExtra(ADDR_SPLR, clickedPrdct.getAddrSplr());
+        prdctDetailIntent.putExtra(PHONE_SPLR, clickedPrdct.getPhoneSplr());
+        prdctDetailIntent.putExtra(EMAIL_SPLR, clickedPrdct.getEmailSplr());
+        prdctDetailIntent.putExtra(IMG_SPLR, clickedPrdct.getImgSplr());
 
         startActivity(prdctDetailIntent);
     }

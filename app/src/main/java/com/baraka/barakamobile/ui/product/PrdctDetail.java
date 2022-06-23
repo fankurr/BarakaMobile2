@@ -334,9 +334,6 @@ public class PrdctDetail extends AppCompatActivity {
         return whatsappInstalled;
     }
 
-    public void getPrdctDetail(){
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
