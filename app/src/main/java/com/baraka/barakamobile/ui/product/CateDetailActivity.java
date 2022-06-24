@@ -12,6 +12,8 @@ import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,7 @@ public class CateDetailActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     TextView txtViewNameCatDetail, txtViewDescCatDetail;
     Image imgCateDetail;
+    Button btnEditCateEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class CateDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         idCat = intent.getStringExtra(ID_CATE);
-        idCompCat = intent.getStringExtra(idCompCat);
+        idCompCat = intent.getStringExtra(ID_COMP_CATE);
         nameCat = intent.getStringExtra(NAME_CATE);
         descCat = intent.getStringExtra(DESC_CATE);
         imgCat = intent.getStringExtra(IMG_CATE);
@@ -102,6 +105,22 @@ public class CateDetailActivity extends AppCompatActivity {
 
             private void onItemLoad() {
                 swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        btnEditCateEdit = findViewById(R.id.btnEditCateDetail);
+        btnEditCateEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentEditCate = new Intent(CateDetailActivity.this, AddEditCateActivity.class);
+                intentEditCate.putExtra(ID_CATE, idCat);
+                intentEditCate.putExtra(ID_COMP_CATE, idCompCat);
+                intentEditCate.putExtra(NAME_CATE, nameCat);
+                intentEditCate.putExtra(DESC_CATE, descCat);
+                intentEditCate.putExtra(IMG_CATE, imgCat);
+                intentEditCate.putExtra(TAG_IDCOMP, idCompany);
+
+                startActivity(intentEditCate);
             }
         });
 

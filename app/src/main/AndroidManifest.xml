@@ -30,6 +30,7 @@
         <activity android:name=".ui.product.AddEditPrdctActivity" />
         <activity android:name=".ui.product.PrdctListActivity" />
         <activity android:name=".ui.product.CateDetailActivity" />
+        <activity android:name=".ui.product.AddEditCateActivity" />
         <activity android:name=".ui.supplier.SupplierDetailActivity" />
         <activity android:name=".ui.usermanaje.WorkerDetailActivity" />
         <activity android:name=".ui.product.PrdctDetail" />
