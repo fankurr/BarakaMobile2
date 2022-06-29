@@ -94,13 +94,13 @@ public class AddEditSplrActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        idSplr = intent.getStringExtra(ID_SPLR);
-        nameSplr = intent.getStringExtra(NAME_SPLR);
-        descSplr = intent.getStringExtra(DESC_SPLR);
-        addrSplr = intent.getStringExtra(ADDR_SPLR);
-        phoneSplr = intent.getStringExtra(PHONE_SPLR);
-        emailSplr = intent.getStringExtra(EMAIL_SPLR);
+        Intent intentSplr = getIntent();
+        idSplr = intentSplr.getStringExtra(ID_SPLR);
+        nameSplr = intentSplr.getStringExtra(NAME_SPLR);
+        descSplr = intentSplr.getStringExtra(DESC_SPLR);
+        addrSplr = intentSplr.getStringExtra(ADDR_SPLR);
+        phoneSplr = intentSplr.getStringExtra(PHONE_SPLR);
+        emailSplr = intentSplr.getStringExtra(EMAIL_SPLR);
 
         inputNameSplr = findViewById(R.id.editTextNameSplrAddEdit);
         inputAlamatSplr = findViewById(R.id.editTextMultiAlamatSplrAddEdit);
@@ -144,13 +144,13 @@ public class AddEditSplrActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setTitle(nameSplr);
 
-//            inputNameSplr.setText(nameSplr);
-//            inputAlamatSplr.setText(addrSplr);
-//            inputTlpSplr.setText(phoneSplr);
-//            inputEmailSplr.setText(emailSplr);
-//            inputDescSplr.setText(descSplr);
+            inputNameSplr.setText(nameSplr);
+            inputAlamatSplr.setText(addrSplr);
+            inputTlpSplr.setText(phoneSplr);
+            inputEmailSplr.setText(emailSplr);
+            inputDescSplr.setText(descSplr);
 
-            splrDetail();
+//            splrDetail();
 
             Button btnSimpanEdit = findViewById(R.id.btnSaveSplrAddEdit);
             btnSimpanEdit.setOnClickListener(new View.OnClickListener() {
@@ -170,64 +170,64 @@ public class AddEditSplrActivity extends AppCompatActivity {
     }
 
     // Detail Profile
-    public void splrDetail(){
-        progressDialog = new ProgressDialog(AddEditSplrActivity.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Memuat Detail Profil");
-        progressDialog.show();
-
-        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
-
-        AndroidNetworking.post(URL_SPLR_EDIT_DETAIL)
-                .addBodyParameter("idSplr", idSplr.toString())
-                .setTag("Load Data")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            int success = response.getInt("success");
-                            if (success==1){
-                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
-
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-
-
-                                inputNameSplr.setText(jsonObject.getString("nameSupplier"));
-                                inputDescSplr.setText(jsonObject.getString("descSupplier"));
-                                inputAlamatSplr.setText(jsonObject.getString("addrSupplier"));
-                                inputTlpSplr.setText(jsonObject.getString("phoneSupplier"));
-                                inputEmailSplr.setText(jsonObject.getString("emailSupplier"));
-
-
-//                                Picasso.get().load(URL_SPLR_EDIT_DETAIL+imgSplr)
-//                                        .fit()
-//                                        .centerInside()
-//                                        .placeholder(R.drawable.default_image_comp_small)
-//                                        .error(R.drawable.default_image_comp_small)
-//                                        .into(imgPhotoSplrDetail);
-
-                                getSupportActionBar().setTitle(jsonObject.getString("nameSupplier"));
-
-                                progressDialog.dismiss();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(AddEditSplrActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Toast.makeText(AddEditSplrActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-                        Log.d("ERROR","error => "+ anError.toString());
-                        progressDialog.dismiss();
-
-                    }
-                });
-    }
+//    public void splrDetail(){
+//        progressDialog = new ProgressDialog(AddEditSplrActivity.this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setMessage("Memuat Detail Profil");
+//        progressDialog.show();
+//
+//        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+//
+//        AndroidNetworking.post(URL_SPLR_EDIT_DETAIL)
+//                .addBodyParameter("idSplr", idSplr.toString())
+//                .setTag("Load Data")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                        try {
+//                            int success = response.getInt("success");
+//                            if (success==1){
+//                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//
+//                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+//
+//
+//                                inputNameSplr.setText(jsonObject.getString("nameSupplier"));
+//                                inputDescSplr.setText(jsonObject.getString("descSupplier"));
+//                                inputAlamatSplr.setText(jsonObject.getString("addrSupplier"));
+//                                inputTlpSplr.setText(jsonObject.getString("phoneSupplier"));
+//                                inputEmailSplr.setText(jsonObject.getString("emailSupplier"));
+//
+//
+////                                Picasso.get().load(URL_SPLR_EDIT_DETAIL+imgSplr)
+////                                        .fit()
+////                                        .centerInside()
+////                                        .placeholder(R.drawable.default_image_comp_small)
+////                                        .error(R.drawable.default_image_comp_small)
+////                                        .into(imgPhotoSplrDetail);
+//
+//                                getSupportActionBar().setTitle(jsonObject.getString("nameSupplier"));
+//
+//                                progressDialog.dismiss();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(AddEditSplrActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        Toast.makeText(AddEditSplrActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                        Log.d("ERROR","error => "+ anError.toString());
+//                        progressDialog.dismiss();
+//
+//                    }
+//                });
+//    }
 
     private void editSplr() {
 
@@ -266,9 +266,13 @@ public class AddEditSplrActivity extends AppCompatActivity {
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = getIntent();
-                                                setResult(RESULT_OK, intent);
-                                                AddEditSplrActivity.this.finish();
+//                                                Intent intent = getIntent();
+//                                                setResult(RESULT_OK, intent);
+//                                                AddEditSplrActivity.this.finish();
+                                                Intent intentSplr = new Intent(AddEditSplrActivity.this, SupplierDetailActivity.class);
+                                                intentSplr.putExtra(ID_SPLR, idSplr);
+                                                finish();
+                                                startActivity(intentSplr);
                                             }
                                         })
                                         .show();

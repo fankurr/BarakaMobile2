@@ -87,7 +87,7 @@ public class PrdctDetail extends AppCompatActivity {
     String idPrdct, idCat, namePrdct, codePrdct, descPrdct, pricePrdct, unitPricePrdct, unitStockPrdct, stockPrdct, catPrdct, nameSplrPrdct;
     String idSplr, nameSplr, descSplr, addrSplr, phoneSplr, emailSplr;
 
-    TextView textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
+    TextView textViewIdPrdct, textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -127,6 +127,7 @@ public class PrdctDetail extends AppCompatActivity {
         phoneSplr = intent.getStringExtra(PHONE_SPLR);
         emailSplr = intent.getStringExtra(EMAIL_SPLR);
 
+//        textViewIdPrdct = findViewById(R.id.textViewIdPrdctDetail);
         textViewNamePrdct = findViewById(R.id.textViewNamePrdctDetail);
         textViewCodePrdct = findViewById(R.id.textViewKodePrdctDetail);
         textViewDescPrdct = findViewById(R.id.textViewDescPrdctDetail);
@@ -251,6 +252,8 @@ public class PrdctDetail extends AppCompatActivity {
                 intentEdit.putExtra(ID_CATE, idCat);
                 intentEdit.putExtra(CATE_PRDCT, catPrdct);
                 intentEdit.putExtra(SPLR_PRDCT, nameSplrPrdct);
+
+                finish();
                 startActivity(intentEdit);
             }
         });
@@ -289,6 +292,7 @@ public class PrdctDetail extends AppCompatActivity {
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
 
+//                                textViewIdPrdct.setText(jsonObject.getString("idPrdct"));
                                 textViewNamePrdct.setText(jsonObject.getString("namePrdct"));
                                 textViewCodePrdct.setText(jsonObject.getString("codePrdct"));
                                 textViewDescPrdct.setText(jsonObject.getString("descPrdct"));

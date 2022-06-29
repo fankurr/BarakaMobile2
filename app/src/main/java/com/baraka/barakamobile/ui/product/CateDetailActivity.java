@@ -120,6 +120,7 @@ public class CateDetailActivity extends AppCompatActivity {
                 intentEditCate.putExtra(IMG_CATE, imgCat);
                 intentEditCate.putExtra(TAG_IDCOMP, idCompany);
 
+                finish();
                 startActivity(intentEditCate);
             }
         });

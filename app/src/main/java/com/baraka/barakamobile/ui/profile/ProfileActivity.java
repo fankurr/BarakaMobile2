@@ -161,6 +161,8 @@ public class ProfileActivity extends AppCompatActivity {
                 intentEditProfile.putExtra(TAG_TLP, phone);
                 intentEditProfile.putExtra(TAG_EMAIL, email);
                 intentEditProfile.putExtra(TAG_COMP, nameCompany);
+
+                finish();
                 startActivity(intentEditProfile);
             }
         });

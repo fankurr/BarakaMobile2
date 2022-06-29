@@ -92,14 +92,14 @@ public class SupplierDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supplier_detail);
 
-        Intent intent = getIntent();
-        idSplr = intent.getStringExtra(ID_SPLR);
-        nameSplr = intent.getStringExtra(NAME_SPLR);
-        descSplr = intent.getStringExtra(DESC_SPLR);
-        addrSplr = intent.getStringExtra(ADDR_SPLR);
-        phoneSplr = intent.getStringExtra(PHONE_SPLR);
-        emailSplr = intent.getStringExtra(EMAIL_SPLR);
-        imgSplr = intent.getStringExtra(IMG_SPLR);
+        Intent intentSplr = getIntent();
+        idSplr = intentSplr.getStringExtra(ID_SPLR);
+        nameSplr = intentSplr.getStringExtra(NAME_SPLR);
+        descSplr = intentSplr.getStringExtra(DESC_SPLR);
+        addrSplr = intentSplr.getStringExtra(ADDR_SPLR);
+        phoneSplr = intentSplr.getStringExtra(PHONE_SPLR);
+        emailSplr = intentSplr.getStringExtra(EMAIL_SPLR);
+        imgSplr = intentSplr.getStringExtra(IMG_SPLR);
 
         textViewNameSplr = findViewById(R.id.textViewNameSplrDetail);
         textViewDescSplr = findViewById(R.id.textViewDescSplrDetail);
@@ -125,6 +125,8 @@ public class SupplierDetailActivity extends AppCompatActivity {
                 .into(imgPhotoSplrDetail);
 
         Log.e("ImgSplr", "Image: "+URL_SPLR_IMG_DETAIL+imgSplr);
+
+        splrDetail();
 
         swipeRefreshLayout = findViewById(R.id.SwipeRefreshSplrDetail);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -158,16 +160,17 @@ public class SupplierDetailActivity extends AppCompatActivity {
         btnAddEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent splrDetailIntent = new Intent(SupplierDetailActivity.this, AddEditSplrActivity.class);
+                Intent intentSplr = new Intent(SupplierDetailActivity.this, AddEditSplrActivity.class);
 
-                splrDetailIntent.putExtra(ID_SPLR, idSplr);
-                splrDetailIntent.putExtra(NAME_SPLR, nameSplr);
-                splrDetailIntent.putExtra(DESC_SPLR, descSplr);
-                splrDetailIntent.putExtra(ADDR_SPLR, addrSplr);
-                splrDetailIntent.putExtra(PHONE_SPLR, phoneSplr);
-                splrDetailIntent.putExtra(EMAIL_SPLR, emailSplr);
+                intentSplr.putExtra(ID_SPLR, idSplr);
+                intentSplr.putExtra(NAME_SPLR, nameSplr);
+                intentSplr.putExtra(DESC_SPLR, descSplr);
+                intentSplr.putExtra(ADDR_SPLR, addrSplr);
+                intentSplr.putExtra(PHONE_SPLR, phoneSplr);
+                intentSplr.putExtra(EMAIL_SPLR, emailSplr);
 
-                startActivity(splrDetailIntent);
+                finish();
+                startActivity(intentSplr);
             }
         });
 

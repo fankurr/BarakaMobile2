@@ -128,6 +128,8 @@ public class CompProActivity extends AppCompatActivity {
                 intenEditCompPro.putExtra(TAG_LEVEL, level);
                 intenEditCompPro.putExtra(TAG_IDCOMP, idCompany);
                 intenEditCompPro.putExtra(CODE_COMP, codeComp);
+
+                finish();
                 startActivity(intenEditCompPro);
 
             }

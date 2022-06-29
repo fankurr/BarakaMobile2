@@ -97,7 +97,10 @@ public class AddEditCateActivity extends AppCompatActivity {
         btnBackCateEdit = findViewById(R.id.btnBackCateEdit);
         btnSaveCateEdit = findViewById(R.id.btnSaveCateEdit);
 
-        cateDetailEdit();
+        inputNameCateEdit.setText(nameCat);
+        inputDescCateEdit.setText(descCat);
+
+//        cateDetailEdit();
 
         btnSaveCateEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,57 +119,58 @@ public class AddEditCateActivity extends AppCompatActivity {
         progressDialogLoad.dismiss();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(nameCat);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
     }
 
 
     // Detail Category Edit
-    public void cateDetailEdit(){
-        progressDialog = new ProgressDialog(AddEditCateActivity.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Memuat Detail Kategori..");
-        progressDialog.show();
-
-        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
-
-        AndroidNetworking.post(urlCatDetailEdit)
-                .addBodyParameter("idCat", idCat.toString())
-                .setTag("Load Data..")
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        try {
-                            int success = response.getInt("success");
-                            if (success==1){
-                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
-
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-
-                                inputNameCateEdit.setText(jsonObject.getString("nameCat"));
-                                inputDescCateEdit.setText(jsonObject.getString("descCat"));
-
-                                getSupportActionBar().setTitle(jsonObject.getString("nameCat"));
-
-                                progressDialog.dismiss();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(AddEditCateActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Toast.makeText(AddEditCateActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-                        Log.d("ERROR","error => "+ anError.toString());
-                        progressDialog.dismiss();
-
-                    }
-                });
-    }
+//    public void cateDetailEdit(){
+//        progressDialog = new ProgressDialog(AddEditCateActivity.this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setMessage("Memuat Detail Kategori..");
+//        progressDialog.show();
+//
+//        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+//
+//        AndroidNetworking.post(urlCatDetailEdit)
+//                .addBodyParameter("idCat", idCat.toString())
+//                .setTag("Load Data..")
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                        try {
+//                            int success = response.getInt("success");
+//                            if (success==1){
+//                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//
+//                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+//
+//                                inputNameCateEdit.setText(jsonObject.getString("nameCat"));
+//                                inputDescCateEdit.setText(jsonObject.getString("descCat"));
+//
+//                                getSupportActionBar().setTitle(jsonObject.getString("nameCat"));
+//
+//                                progressDialog.dismiss();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(AddEditCateActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        Toast.makeText(AddEditCateActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                        Log.d("ERROR","error => "+ anError.toString());
+//                        progressDialog.dismiss();
+//
+//                    }
+//                });
+//    }
 
 
     //Edit Category
