@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+
+    MediaPlayer mediaPlayerLogout;
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -99,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         access = getIntent().getStringExtra(TAG_ACCESS);
         idCompany = getIntent().getStringExtra(TAG_IDCOMP);
         nameCompany = getIntent().getStringExtra(TAG_COMP);
+
+        mediaPlayerLogout = MediaPlayer.create(this, R.raw.sound_logout);
 
         Log.e("Profile: ", "ID User: " + id +
                 ", Name: " + name +
@@ -233,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
 
                         Toast.makeText(MainActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                        mediaPlayerLogout.start();
                     }
                 });
                 dialog.show();

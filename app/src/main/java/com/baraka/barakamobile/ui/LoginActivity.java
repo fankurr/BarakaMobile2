@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -88,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
     String tag_json_obj = "json_obj_req";
 
+    MediaPlayer mediaPlayerLogin;
     SharedPreferences sharedPreferences;
     Boolean session = false;
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
@@ -104,6 +106,8 @@ public class LoginActivity extends AppCompatActivity {
         InputPassLogin = (EditText) findViewById(R.id.inputPassLogin);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnDaftar = (Button) findViewById(R.id.btnDaftar);
+
+        mediaPlayerLogin = MediaPlayer.create(this, R.raw.sound_login);
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -189,7 +193,8 @@ public class LoginActivity extends AppCompatActivity {
                                         Log.d("email", jsonArray.getJSONObject(0).getString("email")); //mengambil data username dari json yg sudah diinput
 
 
-                                        Toast.makeText(LoginActivity.this, "Login Success ", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "Berhasil login!", Toast.LENGTH_SHORT).show();
+                                        mediaPlayerLogin.start();
 
                                         for (int i = 0; i < jsonArray.length(); i++) {
                                             JSONObject jsonObject = jsonArray.getJSONObject(i);

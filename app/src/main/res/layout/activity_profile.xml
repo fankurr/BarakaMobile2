@@ -53,7 +53,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            app:srcCompat="@drawable/default_image_person_small" />
+                            app:srcCompat="@drawable/default_image_person_small"
+                            android:fitsSystemWindows="true"
+                            app:layout_collapseMode="parallax"
+                            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <TextView
