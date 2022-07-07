@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +70,10 @@ public class SignupActivity extends AppCompatActivity {
     private static final String TAG_MESSAGE = "message";
 
     String tag_json_obj = "json_obj_req";
+    String WorkerNo = "1";
+    String WorkerYes = "2";
+
+    Switch swSignupWorker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +98,7 @@ public class SignupActivity extends AppCompatActivity {
         inputPhoneRegist = (EditText) findViewById(R.id.inputPhoneRegist);
         inputCompRegist = (EditText) findViewById(R.id.inputCompRegist);
         inputLevelRegist = (EditText) findViewById(R.id.inputLevelRegist);
-
+        swSignupWorker = findViewById(R.id.swSignupWorker);
 
 
         Intent intentComp = getIntent();
@@ -108,6 +114,27 @@ public class SignupActivity extends AppCompatActivity {
         btnDaftarSignup = (Button) findViewById(R.id.btnDaftarSignup);
 
         btnUploadPhoto = (Button)findViewById(R.id.btnUploadPhotoRegist);
+
+        swSignupWorker.setChecked(false);
+        swSignupWorker.setText("Tidak");
+
+        swSignupWorker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(swSignupWorker.isChecked()){
+                    swSignupWorker.setText("Ya");
+                }
+                else {
+                    swSignupWorker.setText("Tidak");
+                }
+            }
+        });
+
+//        if (swSignupWorker.isChecked()){
+//            swSignupWorker.setText("Ya");
+//        }else {
+//            swSignupWorker.setText("Tidak");
+//        }
 
         txtSignupComp = (TextView)findViewById(R.id.txtSignupComp);
         txtSignupComp.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +160,10 @@ public class SignupActivity extends AppCompatActivity {
         btnBackSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+//                onBackPressed();
+                Intent intentBackSingup = new Intent(SignupActivity.this, LoginActivity.class);
+                finish();
+                startActivity(intentBackSingup);
             }
         });
 
@@ -162,7 +192,13 @@ public class SignupActivity extends AppCompatActivity {
                     if (connectivityManager.getActiveNetworkInfo() != null
                             && connectivityManager.getActiveNetworkInfo().isAvailable()
                             && connectivityManager.getActiveNetworkInfo().isConnected()) {
-                        addUser();
+                        if (swSignupWorker.isChecked()){
+//                            swSignupWorker.setText("Ya");
+                            addUserWorker();
+                        }else{
+                            addUserOwner();
+                        }
+//                        addUserOwner();
                     } else {
                         Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
                     }
@@ -171,7 +207,8 @@ public class SignupActivity extends AppCompatActivity {
         });
 
     }
-    private void addUser() {
+
+    private void addUserOwner() {
 
 //        if (TextUtils.isEmpty(inputNameComp.getText().toString())
 //                && TextUtils.isEmpty(inputAddrComp.getText().toString())
@@ -192,7 +229,90 @@ public class SignupActivity extends AppCompatActivity {
                 .addBodyParameter("addrUser", inputAddrRegist.getText().toString())
                 .addBodyParameter("compUser", inputCompRegist.getText().toString())
                 .addBodyParameter("postUser", inputLevelRegist.getText().toString())
-                .addBodyParameter("lvlUser", String.valueOf(lvlUser))
+                .addBodyParameter("lvlUser", WorkerNo)
+                .addBodyParameter("phoneUser", inputPhoneRegist.getText().toString())
+                .setTag("Tambah Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        progressDialog.dismiss();
+                        Log.d("Respon Add",""+data);
+
+                        try {
+                            Boolean status = data.getBoolean("status");
+                            if (status == true){
+                                new AlertDialog.Builder(SignupActivity.this)
+                                        .setMessage("Pendaftaran Toko Anda Berhasil!")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = getIntent();
+                                                setResult(RESULT_OK, intent);
+                                                SignupActivity.this.finish();
+                                            }
+                                        })
+                                        .show();
+                            }else{
+                                new AlertDialog.Builder(SignupActivity.this)
+                                        .setMessage("Pendaftaran Toko Anda Gagal!")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Log.i("Input", "Data: "+inputNameRegist+", " +
+                                                        ""+inputEmailRegist+", " +
+                                                        ""+inputAddrRegist+", " +
+                                                        ""+inputCompRegist+", " +
+                                                        ""+inputLevelRegist+", " +
+                                                        ""+inputPhoneRegist.toString());
+                                                Intent i = getIntent();
+                                                setResult(RESULT_CANCELED,i);
+                                                SignupActivity.this.finish();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(SignupActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+
+    }
+
+    private void addUserWorker() {
+
+//        if (TextUtils.isEmpty(inputNameComp.getText().toString())
+//                && TextUtils.isEmpty(inputAddrComp.getText().toString())
+//                && TextUtils.isEmpty(inputPhoneComp.getText().toString())) {
+//
+//        }else{
+//            lvlUser = 2;
+//        }
+
+        ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Produk");
+
+        AndroidNetworking.post(url)
+                .addBodyParameter("nameUser", inputNameRegist.getText().toString())
+                .addBodyParameter("emailUser", inputEmailRegist.getText().toString())
+                .addBodyParameter("pwUser", inputPwRegist.getText().toString())
+                .addBodyParameter("addrUser", inputAddrRegist.getText().toString())
+                .addBodyParameter("compUser", inputCompRegist.getText().toString())
+                .addBodyParameter("postUser", inputLevelRegist.getText().toString())
+                .addBodyParameter("lvlUser", WorkerYes)
                 .addBodyParameter("phoneUser", inputPhoneRegist.getText().toString())
                 .setTag("Tambah Data")
                 .setPriority(Priority.MEDIUM)

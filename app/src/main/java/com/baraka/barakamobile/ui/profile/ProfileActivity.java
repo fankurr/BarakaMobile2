@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.LoginActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 import com.google.android.material.card.MaterialCardView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +46,7 @@ import org.json.JSONObject;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
+    String id, email, name, address, level, postUser, phone, access, imgProfile, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -54,6 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
     public static final String my_shared_preferences = "my_shared_preferences";
 
     private String urlUserDetail = DbConfig.URL + "idUserComp.php";
+    private String URL_USER_IMG_DETAIL = DbConfig.URL + "imgUser/";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -75,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
     public static final String LOGO_COMP = "logoComp";
 
     TextView txtnameUser, txtPostUser, txtAddrUser, txtPhoneUser, txtEmailUser, txtCompUser;
+    ImageView imgPhotoUserDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtEmailUser = findViewById(R.id.textViewEmailUserDetail);
         txtPhoneUser = findViewById(R.id.textViewTlpUserDetail);
         txtCompUser = findViewById(R.id.textViewNameCompUserDetail);
+        imgPhotoUserDetail = findViewById(R.id.imgUserDetail);
 
         detailProfile();
 
@@ -127,6 +132,7 @@ public class ProfileActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
 
 //        txtnameUser.setText(name);
 //        txtPostUser.setText(postUser);
@@ -214,8 +220,17 @@ public class ProfileActivity extends AppCompatActivity {
                                 txtEmailUser.setText(jsonObject.getString("email"));
                                 txtPhoneUser.setText(jsonObject.getString("phone"));
 
+                                Picasso.get().load(URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"))
+                                        .fit()
+                                        .centerInside()
+                                        .placeholder(R.drawable.default_image_person_small)
+                                        .error(R.drawable.default_image_person_small)
+                                        .into(imgPhotoUserDetail);
+
                                 txtCompUser.setText(jsonObject.getString("nameCompany"));
                                 getSupportActionBar().setTitle(jsonObject.getString("name"));
+
+                                Log.i("ImgUser", "Image: "+URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"));
 
                                 progressDialog.dismiss();
                             }
