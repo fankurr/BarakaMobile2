@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
+    ImageView imgUser;
+
     MediaPlayer mediaPlayerLogout;
 
     private final static String TAG_ID = "id";
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         View headerView = navigationView.getHeaderView(0);
-        ImageView imgUser = (ImageView) headerView.findViewById(R.id.imgUser);
+        imgUser = (ImageView) headerView.findViewById(R.id.imgUser);
         imgUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

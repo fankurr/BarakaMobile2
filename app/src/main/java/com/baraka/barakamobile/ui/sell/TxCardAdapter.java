@@ -39,6 +39,7 @@ public class TxCardAdapter extends RecyclerView.Adapter<TxCardAdapter.TxViewHold
         holder.namePrdctTx.setText(txViewModelList.get(position).getNamePrdct());
         holder.qtyTx.setText(txViewModelList.get(position).getQtyTx());
         holder.unitTx.setText(txViewModelList.get(position).getUnitPrdct());
+        holder.valTx.setText(txViewModelList.get(position).getValueTx());
         holder.datetimeTx.setText(txViewModelList.get(position).getDatetimeTx());
     }
 
@@ -51,6 +52,7 @@ public class TxCardAdapter extends RecyclerView.Adapter<TxCardAdapter.TxViewHold
         public TextView namePrdctTx;
         public TextView qtyTx;
         public TextView unitTx;
+        public TextView valTx;
         public TextView datetimeTx;
 
         public TxViewHolder(@NonNull @NotNull View itemView) {
@@ -59,6 +61,7 @@ public class TxCardAdapter extends RecyclerView.Adapter<TxCardAdapter.TxViewHold
             namePrdctTx = (TextView) itemView.findViewById(R.id.textViewNamePrdctTx);
             qtyTx = (TextView) itemView.findViewById(R.id.textViewQtyTx);
             unitTx = (TextView) itemView.findViewById(R.id.textViewUnitTx);
+            valTx = (TextView) itemView.findViewById(R.id.textViewValTx);
             datetimeTx = (TextView) itemView.findViewById(R.id.textViewDateTimeTx);
         }
     }

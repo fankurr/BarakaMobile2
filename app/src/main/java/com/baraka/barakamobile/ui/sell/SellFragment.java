@@ -220,6 +220,7 @@ public class SellFragment extends Fragment {
                                         jsonObject.getString("Product"),
                                         jsonObject.getString("qtyTransaction"),
                                         jsonObject.getString("unit"),
+                                        jsonObject.getString("valueTx"),
                                         jsonObject.getString("dateTime")
 
                                 );

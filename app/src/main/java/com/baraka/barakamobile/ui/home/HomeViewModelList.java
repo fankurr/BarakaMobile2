@@ -1,6 +1,22 @@
-package com.baraka.barakamobile.ui.sell;
+package com.baraka.barakamobile.ui.home;
 
-public class TxViewModel {
+public class HomeViewModelList {
+
+    private String idPay;
+    private String idCompPay;
+    private String valPay;
+    private String descPay;
+    private String datetimePay;
+    private String signPay;
+
+    private String idUser;
+    private String emailUser;
+    private String nameUser;
+    private String addrUser;
+    private String lvlUser;
+    private String phoneUser;
+
+
     private int idTx;
     private int idCompTx;
     private int idPrdctTx;
@@ -30,15 +46,26 @@ public class TxViewModel {
     private String descPrdct;
     private String imgPrdct;
 
-    public TxViewModel(int idTx,
-                       int idCompTx,
-                       String nameComp,
-                       int idPrdctTx,
-                       String namePrdct,
-                       String qtyTx,
-                       String unitPrdct,
-                       String valueTx,
-                       String datetimeTx) {
+    public HomeViewModelList(String idPay,
+                             String valPay,
+                             String descPay,
+                             String datetimePay,
+                             String nameUser,
+                             int idTx,
+                             int idCompTx,
+                             String nameComp,
+                             int idPrdctTx,
+                             String namePrdct,
+                             String qtyTx,
+                             String unitPrdct,
+                             String valueTx,
+                             String datetimeTx){
+        this.idPay = idPay;
+        this.valPay = valPay;
+        this.descPay = descPay;
+        this.datetimePay = datetimePay;
+        this.nameUser = nameUser;
+
         this.idTx = idTx;
         this.idCompTx = idCompTx;
         this.idPrdctTx = idPrdctTx;
@@ -48,6 +75,106 @@ public class TxViewModel {
         this.datetimeTx = datetimeTx;
         this.nameComp = nameComp;
         this.namePrdct = namePrdct;
+
+    }
+
+    //Getter Setter
+
+
+    public String getIdPay() {
+        return idPay;
+    }
+
+    public void setIdPay(String idPay) {
+        this.idPay = idPay;
+    }
+
+    public String getIdCompPay() {
+        return idCompPay;
+    }
+
+    public void setIdCompPay(String idCompPay) {
+        this.idCompPay = idCompPay;
+    }
+
+    public String getValPay() {
+        return valPay;
+    }
+
+    public void setValPay(String valPay) {
+        this.valPay = valPay;
+    }
+
+    public String getDescPay() {
+        return descPay;
+    }
+
+    public void setDescPay(String descPay) {
+        this.descPay = descPay;
+    }
+
+    public String getDatetimePay() {
+        return datetimePay;
+    }
+
+    public void setDatetimePay(String datetimePay) {
+        this.datetimePay = datetimePay;
+    }
+
+    public String getSignPay() {
+        return signPay;
+    }
+
+    public void setSignPay(String signPay) {
+        this.signPay = signPay;
+    }
+
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getEmailUser() {
+        return emailUser;
+    }
+
+    public void setEmailUser(String emailUser) {
+        this.emailUser = emailUser;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
+    }
+
+    public String getAddrUser() {
+        return addrUser;
+    }
+
+    public void setAddrUser(String addrUser) {
+        this.addrUser = addrUser;
+    }
+
+    public String getLvlUser() {
+        return lvlUser;
+    }
+
+    public void setLvlUser(String lvlUser) {
+        this.lvlUser = lvlUser;
+    }
+
+    public String getPhoneUser() {
+        return phoneUser;
+    }
+
+    public void setPhoneUser(String phoneUser) {
+        this.phoneUser = phoneUser;
     }
 
     public int getIdTx() {
