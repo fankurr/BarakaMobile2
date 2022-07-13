@@ -45,7 +45,7 @@
                     app:cardElevation="0dp" >
 
                     <ImageView
-                        android:id="@+id/imageView4"
+                        android:id="@+id/imgUserEdit"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"

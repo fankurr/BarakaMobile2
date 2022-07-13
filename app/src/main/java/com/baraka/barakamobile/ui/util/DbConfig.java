@@ -12,6 +12,8 @@ public class DbConfig {
     public static final String URL_LOG = "http://192.168.1.43/posbaraka/apiLog/";
     public static final String URL_PAY = "http://192.168.1.43/posbaraka/apiPay/";
     public static final String URL_COMP = "http://192.168.1.43/posbaraka/apiComp/";
+    public static final String URL_HOME = "http://192.168.1.43/posbaraka/apiHome/";
+    public static final String URL_TX = "http://192.168.1.43/posbaraka/apiTx/";
 
     public static final String URL = "http://192.168.1.43/posbaraka/apiUser/";
 //    public static Retrofit retrofit;

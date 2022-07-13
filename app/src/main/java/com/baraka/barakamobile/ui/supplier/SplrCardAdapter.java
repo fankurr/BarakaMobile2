@@ -76,8 +76,8 @@ public class SplrCardAdapter extends RecyclerView.Adapter<SplrCardAdapter.SplrVi
 
 
         Picasso.get().load(URL_SPLR_IMG+imgSplrPath)
-                .fit()
-                .centerInside()
+                .resize(450, 450)
+                .centerCrop()
                 .placeholder(R.drawable.default_image_comp_small)
                 .error(R.drawable.default_image_comp_small)
                 .into(holder.imgSplr);

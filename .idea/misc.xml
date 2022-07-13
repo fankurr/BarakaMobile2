@@ -9,9 +9,11 @@
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_comp_pro.xml" value="0.25" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_detail_worker.xml" value="0.1403985507246377" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_edit_comp_pro.xml" value="0.16757246376811594" />
-        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_edit_profile.xml" value="0.16757246376811594" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_edit_profile.xml" value="0.33" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_input_pos.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_login.xml" value="0.1403985507246377" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_main.xml" value="0.1403985507246377" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_pos.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_prdct_detail.xml" value="0.17" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_prdct_list.xml" value="0.1" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/activity_profile.xml" value="0.1403985507246377" />
@@ -21,14 +23,18 @@
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_list_cate.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_payout.xml" value="0.33" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_payout_home.xml" value="0.25" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_pos_output.xml" value="0.33" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_prdct.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_supplier.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_tx.xml" value="0.25" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/card_worker.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/content_comp_pro.xml" value="0.1403985507246377" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/fragment_home.xml" value="0.1793478260869565" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/fragment_payout.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/fragment_product.xml" value="0.16757246376811594" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/list_pos.xml" value="0.1403985507246377" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/nav_header_main.xml" value="0.1403985507246377" />
+        <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/layout/pos_output.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/menu/activity_main_drawer.xml" value="0.209375" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/menu/main.xml" value="0.209375" />
         <entry key="..\:/Users/fan/AndroidStudioProjects/BarakaMobile2/app/src/main/res/menu/main_print.xml" value="0.209375" />

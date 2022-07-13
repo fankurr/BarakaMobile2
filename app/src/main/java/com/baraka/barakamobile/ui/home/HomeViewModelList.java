@@ -46,20 +46,17 @@ public class HomeViewModelList {
     private String descPrdct;
     private String imgPrdct;
 
-    public HomeViewModelList(String idPay,
+    public HomeViewModelList(int idTx,
+                             int idCompTx,
+                             String namePrdct,
+                             String qtyTx,
+                             String valueTx,
+                             String datetimeTx,
+                             String idPay,
                              String valPay,
                              String descPay,
                              String datetimePay,
-                             String nameUser,
-                             int idTx,
-                             int idCompTx,
-                             String nameComp,
-                             int idPrdctTx,
-                             String namePrdct,
-                             String qtyTx,
-                             String unitPrdct,
-                             String valueTx,
-                             String datetimeTx){
+                             String nameUser){
         this.idPay = idPay;
         this.valPay = valPay;
         this.descPay = descPay;

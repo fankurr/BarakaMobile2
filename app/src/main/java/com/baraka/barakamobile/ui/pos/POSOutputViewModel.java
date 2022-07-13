@@ -31,16 +31,16 @@ public class POSOutputViewModel {
     private String unitPrdct;
 
 //    @ColumnInfo(name = Constant.stockPrdct)
-    private String stockPrdct;
+    private String qtyPrdct;
 
     private String total;
 
-    public POSOutputViewModel(String idPrdct, String namePrdct, String unitPrice, String unitPrdct, String stockPrdct, String total) {
+    public POSOutputViewModel(String idPrdct, String namePrdct, String unitPrice, String unitPrdct, String qtyPrdct, String total) {
         this.idPrdct = idPrdct;
         this.namePrdct = namePrdct;
         this.unitPrice = unitPrice;
         this.unitPrdct = unitPrdct;
-        this.stockPrdct = stockPrdct;
+        this.qtyPrdct = qtyPrdct;
         this.total = total;
     }
 
@@ -76,12 +76,12 @@ public class POSOutputViewModel {
         this.unitPrdct = unitPrdct;
     }
 
-    public String getStockPrdct() {
-        return stockPrdct;
+    public String getQtyPrdct() {
+        return qtyPrdct;
     }
 
-    public void setStockPrdct(String stockPrdct) {
-        this.stockPrdct = stockPrdct;
+    public void setQtyPrdct(String qtyPrdct) {
+        this.qtyPrdct = qtyPrdct;
     }
 
     public String getTotal() {
@@ -91,6 +91,54 @@ public class POSOutputViewModel {
     public void setTotal(String total) {
         this.total = total;
     }
+
+    //    public String getIdPrdct() {
+//        return idPrdct;
+//    }
+//
+//    public void setIdPrdct(String idPrdct) {
+//        this.idPrdct = idPrdct;
+//    }
+//
+//    public String getNamePrdct() {
+//        return namePrdct;
+//    }
+//
+//    public void setNamePrdct(String namePrdct) {
+//        this.namePrdct = namePrdct;
+//    }
+//
+//    public String getUnitPrice() {
+//        return unitPrice;
+//    }
+//
+//    public void setUnitPrice(String unitPrice) {
+//        this.unitPrice = unitPrice;
+//    }
+//
+//    public String getUnitPrdct() {
+//        return unitPrdct;
+//    }
+//
+//    public void setUnitPrdct(String unitPrdct) {
+//        this.unitPrdct = unitPrdct;
+//    }
+//
+//    public String getQtyPrdct() {
+//        return qtyPrdct;
+//    }
+//
+//    public void setQtyPrdct(String stockPrdct) {
+//        this.qtyPrdct = stockPrdct;
+//    }
+//
+//    public String getTotal() {
+//        return total;
+//    }
+//
+//    public void setTotal(String total) {
+//        this.total = total;
+//    }
 
     //        private String idPrdct;
 //    private String idCompPrdct;

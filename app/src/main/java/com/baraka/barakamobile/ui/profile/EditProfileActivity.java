@@ -8,12 +8,15 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,25 +24,33 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.UploadProgressListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.product.AddEditPrdctActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EditProfileActivity extends AppCompatActivity {
-    String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
+    String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    // the activity result code
+    int SELECT_PICTURE = 200;
+
     EditText inputNameProfileEdit, inputPostProfileEdit, inputAddrProfileEdit, inputTlpProfileEdit, inputEmailProfileEdit;
     TextView txtViewCompProfileEdit;
+    ImageView imgUser;
+    Uri selectedImageUri;
 
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
 
     private String urlEdit = DbConfig.URL + "editUser.php";
+    private String URL_USER_IMG_EDIT = DbConfig.URL + "imgUser/";
 
     private String urlUserEdit = DbConfig.URL + "idUserComp.php";
 
@@ -51,6 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private final static String TAG_POST = "postUser";
     private final static String TAG_TLP = "phone";
     private final static String TAG_ACCESS = "access";
+    private final static String TAG_IMG = "image";
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
@@ -77,6 +89,7 @@ public class EditProfileActivity extends AppCompatActivity {
         postUser = intent.getStringExtra(TAG_POST);
         phone = intent.getStringExtra(TAG_TLP);
         access = intent.getStringExtra(TAG_ACCESS);
+        imageUser = intent.getStringExtra(TAG_IMG);
         level = intent.getStringExtra(TAG_LEVEL);
 
         idCompany = intent.getStringExtra(TAG_IDCOMP);
@@ -92,6 +105,20 @@ public class EditProfileActivity extends AppCompatActivity {
         inputAddrProfileEdit = findViewById(R.id.editTxtAddrProfileEdit);
         inputTlpProfileEdit = findViewById(R.id.editTxtTlpProfileEdit);
         inputEmailProfileEdit = findViewById(R.id.editTxtEmailProfileEdit);
+        imgUser = findViewById(R.id.imgUserEdit);
+
+        imgUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                imageChooser();
+
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("*/*");
+//                startActivityForResult(intent, 7);
+
+            }
+        });
 
 //        inputNameProfileEdit.setText(name);
 //        txtViewCompProfileEdit.setText(nameCompany);
@@ -131,6 +158,47 @@ public class EditProfileActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
     }
 
+    // this function is triggered when
+    // the Select Image Button is clicked
+    void imageChooser() {
+
+        // create an instance of the
+        // intent of the type image
+        Intent intent = new Intent();
+        intent.setType("*/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // pass the constant to compare it
+        // with the returned requestCode
+        startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
+    }
+
+    // this function is triggered when user
+    // selects the image from the imageChooser
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+
+                    Picasso.get().load(selectedImageUri)
+                            .resize(450, 450)
+                            .centerCrop()
+                            .into(imgUser);
+
+//                    imgUser.setImageURI(selectedImageUri);
+                }
+            }
+        }
+    }
+
     // Edit Profile
     public void editProfile(){
         progressDialog = new ProgressDialog(EditProfileActivity.this);
@@ -141,12 +209,36 @@ public class EditProfileActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
+//        AndroidNetworking.upload(urlEdit)
+//                .addMultipartFile("imgUser", imgUser)
+//                .addMultipartParameter("key","value")
+//                .setTag("uploadTest")
+//                .setPriority(Priority.HIGH)
+//                .build()
+//                .setUploadProgressListener(new UploadProgressListener() {
+//                    @Override
+//                    public void onProgress(long bytesUploaded, long totalBytes) {
+//                        // do anything with progress
+//                    }
+//                })
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        // do anything with response
+//                    }
+//                    @Override
+//                    public void onError(ANError error) {
+//                        // handle error
+//                    }
+//                });
+
         AndroidNetworking.post(urlEdit)
                 .addBodyParameter("idUser", id.toString())
                 .addBodyParameter("nameUser", inputNameProfileEdit.getText().toString())
                 .addBodyParameter("emailUser", inputEmailProfileEdit.getText().toString())
                 .addBodyParameter("addrUser", inputAddrProfileEdit.getText().toString())
                 .addBodyParameter("phoneUser", inputTlpProfileEdit.getText().toString())
+                .addBodyParameter("imgUser", String.valueOf(selectedImageUri))
                 .setTag("Update Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -232,6 +324,13 @@ public class EditProfileActivity extends AppCompatActivity {
                                 inputAddrProfileEdit.setText(jsonObject.getString("address"));
                                 inputEmailProfileEdit.setText(jsonObject.getString("email"));
                                 inputTlpProfileEdit.setText(jsonObject.getString("phone"));
+
+                                Picasso.get().load(URL_USER_IMG_EDIT+jsonObject.getString("imgProfile"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_person_small)
+                                        .error(R.drawable.default_image_person_small)
+                                        .into(imgUser);
 
                                 txtViewCompProfileEdit.setText(jsonObject.getString("nameCompany"));
                                 getSupportActionBar().setTitle(jsonObject.getString("name"));

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
 
-    String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
+    String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
     ImageView imgUser;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG_POST = "postUser";
     private final static String TAG_TLP = "phone";
     private final static String TAG_ACCESS = "access";
+    private final static String TAG_IMG = "image";
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         postUser = sharedPreferences.getString(TAG_POST, postUser);
         phone = sharedPreferences.getString(TAG_TLP, phone);
         access = sharedPreferences.getString(TAG_ACCESS, access);
+        imageUser = sharedPreferences.getString(TAG_IMG, imageUser);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
         nameCompany = sharedPreferences.getString(TAG_COMP, nameCompany);
 
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         postUser = getIntent().getStringExtra(TAG_POST);
         phone = getIntent().getStringExtra(TAG_TLP);
         access = getIntent().getStringExtra(TAG_ACCESS);
+        imageUser = getIntent().getStringExtra(TAG_IMG);
         idCompany = getIntent().getStringExtra(TAG_IDCOMP);
         nameCompany = getIntent().getStringExtra(TAG_COMP);
 
@@ -163,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 intentProfile.putExtra(TAG_POST, postUser);
                 intentProfile.putExtra(TAG_TLP, phone);
                 intentProfile.putExtra(TAG_ACCESS, access);
+                intentProfile.putExtra(TAG_IMG, imageUser);
                 intentProfile.putExtra(TAG_IDCOMP, idCompany);
                 intentProfile.putExtra(TAG_COMP, nameCompany);
 
@@ -189,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 intentProfile.putExtra(TAG_LEVEL, level);
                 intentProfile.putExtra(TAG_POST, postUser);
                 intentProfile.putExtra(TAG_TLP, phone);
+                intentProfile.putExtra(TAG_IMG, imageUser);
                 intentProfile.putExtra(TAG_ACCESS, access);
                 intentProfile.putExtra(TAG_IDCOMP, idCompany);
                 intentProfile.putExtra(TAG_COMP, nameCompany);

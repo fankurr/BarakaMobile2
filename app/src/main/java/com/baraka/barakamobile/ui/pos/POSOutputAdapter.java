@@ -61,7 +61,7 @@ public class POSOutputAdapter extends RecyclerView.Adapter<POSOutputAdapter.POSO
         holder.IdPrdctOutput.setText(posOutputViewModelList.get(position).getIdPrdct());
         holder.namePrdctOutput.setText(posOutputViewModelList.get(position).getNamePrdct());
         holder.pricePrdctOutput.setText(posOutputViewModelList.get(position).getUnitPrice());
-        holder.jmlhPrdctOutput.setText(posOutputViewModelList.get(position).getStockPrdct());
+        holder.jmlhPrdctOutput.setText(posOutputViewModelList.get(position).getQtyPrdct());
         holder.unitPrdctOutput.setText(posOutputViewModelList.get(position).getUnitPrdct());
         holder.pricePrdctOutputTotal.setText(posOutputViewModelList.get(position).getTotal());
         holder.delItemBtn.setOnClickListener(new View.OnClickListener() {

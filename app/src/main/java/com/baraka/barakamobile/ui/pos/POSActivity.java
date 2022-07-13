@@ -76,6 +76,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -138,6 +139,7 @@ public class POSActivity extends AppCompatActivity {
 
     private String URL_PRDCT = DbConfig.URL_PRDCT + "allPrdct.php";
     private String URL_CATE = DbConfig.URL_CATE + "allCat.php";
+    private String TX = DbConfig.URL_TX + "addTx.php";
 
     public static final String ID_PRDCT_POS = "idProduct";
     public static final String NAME_PRDCT_POS = "namePrdct";
@@ -165,10 +167,12 @@ public class POSActivity extends AppCompatActivity {
 
     String id, email, name, level, access, idCompany, nameCompany;
     TextView txtNamaPrdct,txtPricePrdct,txtUnitPrdct,txtIdPrdct,txtStockPrdct, totalPrdctIn;
+    TextView txtIdPrdctOut, txtPricePrdctOut, txtQtyOut, txtTotalOut;
     String totalPrdctPrice;
     EditText inputJumlah;
     TextView totalTxt;
 
+    POSOutputViewModel IdPrdct;
     POSOutputViewModel NamePrdct;
     POSOutputViewModel UnitPrice;
     POSOutputViewModel JmlhPrdct;
@@ -177,6 +181,10 @@ public class POSActivity extends AppCompatActivity {
     private File pdfFile;
     String pdfname;
     Context context;
+
+    Calendar calender;
+    SimpleDateFormat simpledateformat;
+    String date;
 
     private ArrayList<POSViewModel> posViewModelList;
 //    private ArrayList<POSOutputViewModel> posOutputViewModelList;
@@ -214,9 +222,18 @@ public class POSActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         posViewModelList = new ArrayList<>();
 
+        calender = Calendar.getInstance();
+        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        date = simpledateformat.format(calender.getTime());
+
         posCardAdapter = new POSCardAdapter(posViewModelList, this);
 
         totalTxt = (TextView) findViewById(R.id.textViewPosTotal);
+
+        txtIdPrdctOut = (TextView) findViewById(R.id.txtIdPrdctPosOutput);
+        txtPricePrdctOut = (TextView) findViewById(R.id.txtViewPricePrdctPosOutput);
+        txtQtyOut = (TextView) findViewById(R.id.txtViewJmlhPrdctPosOutput);
+        txtTotalOut = (TextView) findViewById(R.id.txtViewPricePrdctPosOutputTotal);
 
         //Fetch Data Produk
         getPrdct();
@@ -308,6 +325,14 @@ public class POSActivity extends AppCompatActivity {
                                         totalPrdctPrice
                                 );
 
+//                                Log.i("POS Out => ", "Items: "+IdPrdct.getIdPrdct()+
+//                                        ", "+NamePrdct.getNamePrdct()+
+//                                        ", "+UnitPrice.getUnitPrice()+
+//                                        ", "+Total.getTotal()+
+//                                        ", "+JmlhPrdct.getQtyPrdct().toString());
+
+
+
                                 float totalPrice = 0;
                                 totalPrice += currTotal;
                                 totalTxt.setText(String.valueOf(totalPrice));
@@ -318,12 +343,13 @@ public class POSActivity extends AppCompatActivity {
                                         float post = Float.parseFloat(posOutputViewModelList.get(i).getTotal());
                                         totalPrice += post;
 
-
                                         Toast.makeText(POSActivity.this, "Total: " + totalPrice, Toast.LENGTH_SHORT).show();
 
                                         Log.e("i", "= " + i);
                                         Log.e("posOutputViewModelList ", "= " + post);
                                         Log.e("size", "= " + posOutputViewModelList.size());
+
+
 
                                         totalTxt.setText(String.valueOf(totalPrice));
                                         posOutputAdapter.notifyDataSetChanged();
@@ -391,13 +417,14 @@ public class POSActivity extends AppCompatActivity {
         imgCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    createPdf();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    createPdf();
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (DocumentException e) {
+//                    e.printStackTrace();
+//                }
+                addTx();
             }
         });
 
@@ -449,6 +476,91 @@ public class POSActivity extends AppCompatActivity {
 //        totalTxt.setText(String.valueOf(currTotal));
 //    }
 
+    private void addTx(){
+
+//        for (int i = 0; i < posOutputViewModelList.size(); i++) {
+//            IdPrdct = posOutputViewModelList.get(i);
+//            NamePrdct = posOutputViewModelList.get(i);
+//            UnitPrice = posOutputViewModelList.get(i);
+//            JmlhPrdct = posOutputViewModelList.get(i);
+//            Total = posOutputViewModelList.get(i);
+//            String IdPrdctL = IdPrdct.getIdPrdct();
+//            String NamePrdctL = NamePrdct.getNamePrdct();
+//            String UnitPriceL = UnitPrice.getUnitPrice();
+//            String TotalL = Total.getTotal();
+//            String JumlahL = JmlhPrdct.getQtyPrdct();
+//        }
+
+        ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Proses Checkout..");
+        progressDialog.show();
+
+        sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(TX)
+                .addBodyParameter("idCompTx", idCompany)
+                .addBodyParameter("idPrdctTx", IdPrdct.getIdPrdct())
+                .addBodyParameter("qtyTx", JmlhPrdct.getQtyPrdct())
+                .addBodyParameter("valueTx", Total.getTotal())
+                .addBodyParameter("datetimeTx", date)
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progressDialog.dismiss();
+                        Log.d("Respon Edit",""+response);
+
+                        try {
+                            Boolean status = response.getBoolean("success");
+                            if (status == true){
+                                new android.app.AlertDialog.Builder(POSActivity.this)
+                                        .setMessage("Checkout Berhasil!")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Context context = POSActivity.this;
+                                                POSActivity.this.setResult(RESULT_OK);
+                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+                                                optionDialog.dismiss();
+                                                Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .show();
+                            }else{
+
+                                new android.app.AlertDialog.Builder(POSActivity.this)
+                                        .setMessage("Checkout Gagal!")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+//                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+                                                Context c = POSActivity.this;
+                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+                                                optionDialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        Log.i("Input", "Data: "+idCompany+", "+txtIdPrdctOut+", "+txtQtyOut+", "+txtTotalOut+", "+date.toString());
+                        progressDialog.dismiss();
+                    }
+                });
+    }
 
     private void getPrdct() {
         ProgressDialog progressDialog = new ProgressDialog(this);
@@ -584,7 +696,7 @@ public class POSActivity extends AppCompatActivity {
             String NamePrdctL = NamePrdct.getNamePrdct();
             String UnitPriceL = UnitPrice.getUnitPrice();
             String TotalL = Total.getTotal();
-            String JumlahL = JmlhPrdct.getStockPrdct();
+            String JumlahL = JmlhPrdct.getQtyPrdct();
             table.addCell(String.valueOf(i+1));
             table.addCell(String.valueOf(NamePrdctL));
             table.addCell(String.valueOf(UnitPriceL));

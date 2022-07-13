@@ -221,8 +221,8 @@ public class ProfileActivity extends AppCompatActivity {
                                 txtPhoneUser.setText(jsonObject.getString("phone"));
 
                                 Picasso.get().load(URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"))
-                                        .fit()
-                                        .centerInside()
+                                        .resize(450, 450)
+                                        .centerCrop()
                                         .placeholder(R.drawable.default_image_person_small)
                                         .error(R.drawable.default_image_person_small)
                                         .into(imgPhotoUserDetail);
