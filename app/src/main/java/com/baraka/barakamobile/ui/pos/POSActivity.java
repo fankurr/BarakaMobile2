@@ -345,9 +345,9 @@ public class POSActivity extends AppCompatActivity {
 
                                         Toast.makeText(POSActivity.this, "Total: " + totalPrice, Toast.LENGTH_SHORT).show();
 
-                                        Log.e("i", "= " + i);
-                                        Log.e("posOutputViewModelList ", "= " + post);
-                                        Log.e("size", "= " + posOutputViewModelList.size());
+                                        Log.i("i", "= " + i);
+                                        Log.i("posOutputViewModelList ", "= " + post);
+                                        Log.i("size", "= " + posOutputViewModelList.size());
 
 
 
@@ -392,6 +392,8 @@ public class POSActivity extends AppCompatActivity {
             }
         });
 
+        thread.start(); //memanggil thread (refresh textview)
+
 //sengaja ditaro disini, kalu di taru di Slidingup datanya ke delete terus
         recyclerView1 = (RecyclerView) findViewById(R.id.rvPosOutput);
 
@@ -417,6 +419,92 @@ public class POSActivity extends AppCompatActivity {
         imgCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //untuk menampung data posOutput agar bisa diupload banyak data
+//                ArrayList<String> idPrdct = new ArrayList<>();
+                ArrayList<String> namaProduct = new ArrayList<>();
+
+                String idPrdct = "";
+
+                if(!posOutputViewModelList.isEmpty()) {
+                    for (int i = 0; i < posOutputViewModelList.size(); i++) {
+//                        idPrdct.add(posOutputViewModelList.get(i).getIdPrdct());
+                        namaProduct.add(posOutputViewModelList.get(i).getNamePrdct());
+
+                        idPrdct = posOutputViewModelList.get(i).getIdPrdct()+ " ";
+                    }
+
+//                    ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
+//                    progressDialog.setCancelable(false);
+//                    progressDialog.setMessage("Proses Checkout..");
+//                    progressDialog.show();
+//
+//                    sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+//                    idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+//
+//                    String finalIdPrdct = idPrdct;
+//                    AndroidNetworking.post(TX)
+//                            .addBodyParameter("idPrdctTx", "5")
+//                            .setTag(this)
+//                            .setPriority(Priority.MEDIUM)
+//                            .build()
+//                            .getAsJSONObject(new JSONObjectRequestListener() {
+//                                @Override
+//                                public void onResponse(JSONObject response) {
+//                                    progressDialog.dismiss();
+//                                    Log.d("Respon Edit",""+response);
+//
+//                                    try {
+//                                        Boolean status = response.getBoolean("success");
+//                                        if (status == true){
+//                                            new android.app.AlertDialog.Builder(POSActivity.this)
+//                                                    .setMessage("Checkout Berhasil!")
+//                                                    .setCancelable(false)
+//                                                    .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            Context context = POSActivity.this;
+//                                                            POSActivity.this.setResult(RESULT_OK);
+//                                                            android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                            optionDialog.dismiss();
+//                                                            Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
+//                                                        }
+//                                                    })
+//                                                    .show();
+//                                        }else{
+//
+//                                            new android.app.AlertDialog.Builder(POSActivity.this)
+//                                                    .setMessage("Checkout Gagal!")
+//                                                    .setCancelable(false)
+//                                                    .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+////                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+//                                                            Context c = POSActivity.this;
+//                                                            android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                            optionDialog.dismiss();
+//                                                        }
+//                                                    })
+//                                                    .show();
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onError(ANError anError) {
+//                                    Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                                    Log.d("ERROR","error => "+ anError.toString());
+//                                    Log.i("Input", "Data: "+idCompany+", "+ finalIdPrdct.toString());
+//                                    progressDialog.dismiss();
+//                                }
+//                            });
+
+                    Log.i("Id Product",idPrdct.toString());
+                    Log.i("Nama Produk",namaProduct.toString());
+                }
+
 //                try {
 //                    createPdf();
 //                } catch (FileNotFoundException e) {
@@ -424,7 +512,7 @@ public class POSActivity extends AppCompatActivity {
 //                } catch (DocumentException e) {
 //                    e.printStackTrace();
 //                }
-                addTx();
+                addTx(idPrdct);
             }
         });
 
@@ -451,6 +539,36 @@ public class POSActivity extends AppCompatActivity {
 
     }
 
+    // untuk merefresh textview total belanja yang diinput(pos), setelah diahpus salah satu
+    Thread thread = new Thread() {
+        @Override
+        public void run() {
+            try {
+                while (!thread.isInterrupted()) {
+                    Thread.sleep(100);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // update TextView here!
+                            float totalPrice = 0;
+                            //                                totalTxt.setText(String.valueOf(totalPrice));
+                            for (int i = 0; i<posOutputViewModelList.size(); i++)
+                            {
+                                float post = Float.parseFloat(posOutputViewModelList.get(i).getTotal());
+                                totalPrice += post;
+                                posOutputAdapter.notifyDataSetChanged();
+                            }
+
+                            totalTxt.setText(String.valueOf(totalPrice));
+
+                        }
+                    });
+                }
+            } catch (InterruptedException e) {
+            }
+        }
+    };
+
     private SlidingUpPanelLayout.PanelSlideListener onSlideListener() {
         return new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -476,20 +594,7 @@ public class POSActivity extends AppCompatActivity {
 //        totalTxt.setText(String.valueOf(currTotal));
 //    }
 
-    private void addTx(){
-
-//        for (int i = 0; i < posOutputViewModelList.size(); i++) {
-//            IdPrdct = posOutputViewModelList.get(i);
-//            NamePrdct = posOutputViewModelList.get(i);
-//            UnitPrice = posOutputViewModelList.get(i);
-//            JmlhPrdct = posOutputViewModelList.get(i);
-//            Total = posOutputViewModelList.get(i);
-//            String IdPrdctL = IdPrdct.getIdPrdct();
-//            String NamePrdctL = NamePrdct.getNamePrdct();
-//            String UnitPriceL = UnitPrice.getUnitPrice();
-//            String TotalL = Total.getTotal();
-//            String JumlahL = JmlhPrdct.getQtyPrdct();
-//        }
+    private void addTx(String idPrdct){
 
         ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
         progressDialog.setCancelable(false);
@@ -499,12 +604,9 @@ public class POSActivity extends AppCompatActivity {
         sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
+        String finalIdPrdct = idPrdct;
         AndroidNetworking.post(TX)
-                .addBodyParameter("idCompTx", idCompany)
-                .addBodyParameter("idPrdctTx", IdPrdct.getIdPrdct())
-                .addBodyParameter("qtyTx", JmlhPrdct.getQtyPrdct())
-                .addBodyParameter("valueTx", Total.getTotal())
-                .addBodyParameter("datetimeTx", date)
+                .addBodyParameter("idPrdctTx", idPrdct)
                 .setTag(this)
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -556,10 +658,93 @@ public class POSActivity extends AppCompatActivity {
                     public void onError(ANError anError) {
                         Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
                         Log.d("ERROR","error => "+ anError.toString());
-                        Log.i("Input", "Data: "+idCompany+", "+txtIdPrdctOut+", "+txtQtyOut+", "+txtTotalOut+", "+date.toString());
+                        Log.i("Input", "Data: "+idCompany+", "+ finalIdPrdct.toString());
                         progressDialog.dismiss();
                     }
                 });
+
+//        for (int i = 0; i < posOutputViewModelList.size(); i++) {
+//            IdPrdct = posOutputViewModelList.get(i);
+//            NamePrdct = posOutputViewModelList.get(i);
+//            UnitPrice = posOutputViewModelList.get(i);
+//            JmlhPrdct = posOutputViewModelList.get(i);
+//            Total = posOutputViewModelList.get(i);
+//            String IdPrdctL = IdPrdct.getIdPrdct();
+//            String NamePrdctL = NamePrdct.getNamePrdct();
+//            String UnitPriceL = UnitPrice.getUnitPrice();
+//            String TotalL = Total.getTotal();
+//            String JumlahL = JmlhPrdct.getQtyPrdct();
+//        }
+
+//        ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setMessage("Proses Checkout..");
+//        progressDialog.show();
+//
+//        sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+//        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+//
+//        AndroidNetworking.post(TX)
+//                .addBodyParameter("idCompTx", idCompany)
+//                .addBodyParameter("idPrdctTx", IdPrdct.getIdPrdct())
+//                .addBodyParameter("qtyTx", JmlhPrdct.getQtyPrdct())
+//                .addBodyParameter("valueTx", Total.getTotal())
+//                .addBodyParameter("datetimeTx", date)
+//                .setTag(this)
+//                .setPriority(Priority.MEDIUM)
+//                .build()
+//                .getAsJSONObject(new JSONObjectRequestListener() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        progressDialog.dismiss();
+//                        Log.d("Respon Edit",""+response);
+//
+//                        try {
+//                            Boolean status = response.getBoolean("success");
+//                            if (status == true){
+//                                new android.app.AlertDialog.Builder(POSActivity.this)
+//                                        .setMessage("Checkout Berhasil!")
+//                                        .setCancelable(false)
+//                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                Context context = POSActivity.this;
+//                                                POSActivity.this.setResult(RESULT_OK);
+//                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                optionDialog.dismiss();
+//                                                Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        })
+//                                        .show();
+//                            }else{
+//
+//                                new android.app.AlertDialog.Builder(POSActivity.this)
+//                                        .setMessage("Checkout Gagal!")
+//                                        .setCancelable(false)
+//                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+////                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+//                                                Context c = POSActivity.this;
+//                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                optionDialog.dismiss();
+//                                            }
+//                                        })
+//                                        .show();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(ANError anError) {
+//                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                        Log.d("ERROR","error => "+ anError.toString());
+//                        Log.i("Input", "Data: "+idCompany+", "+txtIdPrdctOut+", "+txtQtyOut+", "+txtTotalOut+", "+date.toString());
+//                        progressDialog.dismiss();
+//                    }
+//                });
     }
 
     private void getPrdct() {

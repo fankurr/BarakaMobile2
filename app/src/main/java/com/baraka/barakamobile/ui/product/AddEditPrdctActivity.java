@@ -183,14 +183,14 @@ public class AddEditPrdctActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setTitle(namePrdct);
 
-//            editPrdctDetail();
-            inputNamePrdct.setText(namePrdct);
-            inputCodePrdct.setText(codePrdct);
-            inputDescPrdct.setText(descPrdct);
-            inputUnitPrdct.setText(unitPricePrdct);
-            inputPricePrdct.setText(pricePrdct);
-            inputStokPrdct.setText(stockPrdct);
-            textCate.setText(catPrdct);
+            editPrdctDetail();
+//            inputNamePrdct.setText(namePrdct);
+//            inputCodePrdct.setText(codePrdct);
+//            inputDescPrdct.setText(descPrdct);
+//            inputUnitPrdct.setText(unitPricePrdct);
+//            inputPricePrdct.setText(pricePrdct);
+//            inputStokPrdct.setText(stockPrdct);
+//            textCate.setText(catPrdct);
 
             cardCatAddEditPrdct.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -344,8 +344,8 @@ public class AddEditPrdctActivity extends AppCompatActivity {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 Intent intent = new Intent(AddEditPrdctActivity.this, PrdctDetail.class);
                                                 intent.putExtra(ID_PRDCT, idPrdct);
-                                                finish();
                                                 startActivity(intent);
+                                                finish();
                                             }
                                         })
                                         .show();
@@ -380,59 +380,59 @@ public class AddEditPrdctActivity extends AppCompatActivity {
 
     }
 
-    // Detail Profile
-//    public void editPrdctDetail(){
-//        progressDialog = new ProgressDialog(AddEditPrdctActivity.this);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setMessage("Memuat Detail Profil");
-//        progressDialog.show();
-//
-//        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
-//
-//        AndroidNetworking.post(urlEditPrdctDetail)
-//                .addBodyParameter("idPrdct", idPrdct.toString())
-//                .setTag("Load Data")
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//
-//                        try {
-//                            int success = response.getInt("success");
-//                            if (success==1){
-//                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
-//
-//                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-//
-//                                inputNamePrdct.setText(jsonObject.getString("namePrdct"));
-//                                inputCodePrdct.setText(jsonObject.getString("codePrdct"));
-//                                inputDescPrdct.setText(jsonObject.getString("descPrdct"));
-//                                inputPricePrdct.setText(jsonObject.getString("unitPrice"));
-//                                inputUnitPrdct.setText(jsonObject.getString("unitPrdct"));
-//                                inputStokPrdct.setText(jsonObject.getString("stockPrdct"));
-//                                textCate.setText(jsonObject.getString("nameCategory"));
-////                                textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
-//
-//                                getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
-//
-//                                progressDialog.dismiss();
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(AddEditPrdctActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError anError) {
-//                        Toast.makeText(AddEditPrdctActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-//                        Log.d("ERROR","error => "+ anError.toString());
-//                        progressDialog.dismiss();
-//
-//                    }
-//                });
-//    }
+//     Detail Profile
+    public void editPrdctDetail(){
+        progressDialog = new ProgressDialog(AddEditPrdctActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+
+        AndroidNetworking.post(urlEditPrdctDetail)
+                .addBodyParameter("idPrdct", idPrdct.toString())
+                .setTag("Load Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                                inputNamePrdct.setText(jsonObject.getString("namePrdct"));
+                                inputCodePrdct.setText(jsonObject.getString("codePrdct"));
+                                inputDescPrdct.setText(jsonObject.getString("descPrdct"));
+                                inputPricePrdct.setText(jsonObject.getString("unitPrice"));
+                                inputUnitPrdct.setText(jsonObject.getString("unitPrdct"));
+                                inputStokPrdct.setText(jsonObject.getString("stockPrdct"));
+                                textCate.setText(jsonObject.getString("nameCategory"));
+//                                textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
+
+                                getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(AddEditPrdctActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(AddEditPrdctActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

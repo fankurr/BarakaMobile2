@@ -14,7 +14,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BarakaMobile">
+        android:theme="@style/Theme.BarakaMobile"
+        android:largeHeap="true">
         <activity
             android:name=".ui.SignupCompActivity"
             android:theme="@style/Theme.BarakaMobile.NoActionBar" />

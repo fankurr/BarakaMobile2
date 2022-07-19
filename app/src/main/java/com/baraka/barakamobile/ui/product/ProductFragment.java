@@ -25,6 +25,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +50,7 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
 
     private String URL_PRDCT = DbConfig.URL_PRDCT + "allPrdct.php";
     private String URL_CATE = DbConfig.URL_CATE + "allCat.php";
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
 
     public static final String ID_PRDCT = "idPrdct";
@@ -61,6 +63,7 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
     public static final String PRICE_PRDCT = "unitPrice";
     public static final String UNIT_PRDCT = "unitPrdct";
     public static final String STOCK_PRDCT = "stockPrdct";
+    public static final String IMG_PRDCT = "imgPrdct";
 
     public static final String ID_SPLR = "idSplr";
     public static final String COMP_SPLR= "idCompSplr";
@@ -328,6 +331,7 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
         prdctDetailIntent.putExtra(PRICE_PRDCT, clickedPrdct.getUnitPrice());
         prdctDetailIntent.putExtra(UNIT_PRDCT, clickedPrdct.getUnitPrdct());
         prdctDetailIntent.putExtra(STOCK_PRDCT, clickedPrdct.getStockPrdct());
+        prdctDetailIntent.putExtra(IMG_PRDCT, clickedPrdct.getImgPrdct());
         prdctDetailIntent.putExtra(ID_CATE, clickedPrdct.getIdCat());
         prdctDetailIntent.putExtra(CATE_PRDCT, clickedPrdct.getNameCat());
         prdctDetailIntent.putExtra(SPLR_PRDCT, clickedPrdct.getNameSplr());

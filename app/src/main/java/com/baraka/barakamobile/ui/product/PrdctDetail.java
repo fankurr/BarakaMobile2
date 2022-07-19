@@ -29,6 +29,7 @@ import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.profile.ProfileActivity;
 import com.baraka.barakamobile.ui.supplier.SupplierDetailActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import static com.baraka.barakamobile.ui.product.ProductFragment.ADDR_SPLR;
 import static com.baraka.barakamobile.ui.product.ProductFragment.CATE_PRDCT;
@@ -71,6 +72,7 @@ public class PrdctDetail extends AppCompatActivity {
     public static final String PRICE_PRDCT = "unitPrice";
     public static final String UNIT_PRDCT = "unitPrdct";
     public static final String STOCK_PRDCT = "stockPrdct";
+    public static final String IMG_PRDCT = "imgPrdct";
 
     public static final String ID_SPLR = "idSplr";
     public static final String COMP_SPLR= "idCompSplr";
@@ -82,12 +84,14 @@ public class PrdctDetail extends AppCompatActivity {
     public static final String IMG_SPLR = "imgSplr";
 
     private String urlPrdctDetail = DbConfig.URL_PRDCT + "idPrdct.php";
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     String messagesWaSplr = " ";
-    String idPrdct, idCat, namePrdct, codePrdct, descPrdct, pricePrdct, unitPricePrdct, unitStockPrdct, stockPrdct, catPrdct, nameSplrPrdct;
+    String idPrdct, idCat, namePrdct, codePrdct, descPrdct, pricePrdct, unitPricePrdct, unitStockPrdct, stockPrdct, imgPrdct, catPrdct, nameSplrPrdct;
     String idSplr, nameSplr, descSplr, addrSplr, phoneSplr, emailSplr;
 
     TextView textViewIdPrdct, textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
+    ImageView imgPrdctDetail;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -116,6 +120,7 @@ public class PrdctDetail extends AppCompatActivity {
         unitPricePrdct = intent.getStringExtra(UNIT_PRDCT);
         unitStockPrdct = intent.getStringExtra(UNIT_PRDCT);
         stockPrdct = intent.getStringExtra(STOCK_PRDCT);
+        imgPrdct = intent.getStringExtra(IMG_PRDCT);
         idCat = intent.getStringExtra(ID_CATE);
         catPrdct = intent.getStringExtra(CATE_PRDCT);
         nameSplrPrdct = intent.getStringExtra(SPLR_PRDCT);
@@ -137,6 +142,8 @@ public class PrdctDetail extends AppCompatActivity {
         textViewStockPrdct = findViewById(R.id.textViewStockPrdctDetail);
         textViewCatPrdct = findViewById(R.id.textViewNameCatePrdctDetail);
         textViewNameSplr = findViewById(R.id.textViewNameSplrPrdctDetail);
+
+        imgPrdctDetail = findViewById(R.id.imgPrdctDetail);
 
         prdctDetail();
 
@@ -253,8 +260,8 @@ public class PrdctDetail extends AppCompatActivity {
                 intentEdit.putExtra(CATE_PRDCT, catPrdct);
                 intentEdit.putExtra(SPLR_PRDCT, nameSplrPrdct);
 
-                finish();
                 startActivity(intentEdit);
+                finish();
             }
         });
 
@@ -303,6 +310,13 @@ public class PrdctDetail extends AppCompatActivity {
                                 textViewCatPrdct.setText(jsonObject.getString("nameCategory"));
                                 textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
 
+                                Picasso.get().load(jsonObject.getString("imageProduct"))
+                                        .fit()
+                                        .placeholder(R.drawable.default_image_small)
+                                        .error(R.drawable.default_image_small)
+                                        .into(imgPrdctDetail);
+
+                                Log.e("ImgSplr", "Image: "+URL_PRDCT_IMG+jsonObject.getString("imageProduct"));
                                 getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
 
                                 progressDialog.dismiss();

@@ -117,12 +117,6 @@ public class SupplierDetailActivity extends AppCompatActivity {
         textViewAddrSplr.setText(addrSplr);
         textViewTlpSplr.setText(phoneSplr);
         textViewEmailSplr.setText(emailSplr);
-        Picasso.get().load(URL_SPLR_IMG_DETAIL+imgSplr)
-                .fit()
-                .centerInside()
-                .placeholder(R.drawable.default_image_comp_small)
-                .error(R.drawable.default_image_comp_small)
-                .into(imgPhotoSplrDetail);
 
         Log.e("ImgSplr", "Image: "+URL_SPLR_IMG_DETAIL+imgSplr);
 
@@ -168,6 +162,7 @@ public class SupplierDetailActivity extends AppCompatActivity {
                 intentSplr.putExtra(ADDR_SPLR, addrSplr);
                 intentSplr.putExtra(PHONE_SPLR, phoneSplr);
                 intentSplr.putExtra(EMAIL_SPLR, emailSplr);
+                intentSplr.putExtra(IMG_SPLR, imgSplr);
 
                 finish();
                 startActivity(intentSplr);
@@ -276,9 +271,10 @@ public class SupplierDetailActivity extends AppCompatActivity {
                                 textViewTlpSplr.setText(jsonObject.getString("phoneSupplier"));
                                 textViewEmailSplr.setText(jsonObject.getString("emailSupplier"));
 
-                                Picasso.get().load(URL_SPLR_IMG_DETAIL+imgSplr)
-                                        .fit()
-                                        .centerInside()
+
+                                Picasso.get().load(URL_SPLR_IMG_DETAIL+jsonObject.getString("imageSupplier"))
+                                        .resize(450, 450)
+                                        .centerCrop()
                                         .placeholder(R.drawable.default_image_comp_small)
                                         .error(R.drawable.default_image_comp_small)
                                         .into(imgPhotoSplrDetail);

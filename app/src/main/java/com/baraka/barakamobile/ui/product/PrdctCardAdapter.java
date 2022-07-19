@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.PrdctViewHolder> {
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
     private List<PrdctViewModel> prdctViewModelList;
     private Context context;
     private LayoutInflater layoutInflater;
@@ -59,6 +63,15 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
         holder.unitPrice.setText(prdctViewModelList.get(position).getUnitPrice());
         holder.unitPrdct.setText(prdctViewModelList.get(position).getUnitPrdct());
         holder.stockPrct.setText(prdctViewModelList.get(position).getStockPrdct());
+
+        Picasso.get().load(URL_PRDCT_IMG+prdctViewModelList.get(position).getImgPrdct())
+                .resize(450, 450)
+                .centerCrop()
+                .placeholder(R.drawable.default_image_comp_small)
+                .error(R.drawable.default_image_comp_small)
+                .into(holder.imgPrdct);
+
+        Log.e("ImgSplr", "Image: "+URL_PRDCT_IMG+prdctViewModelList.get(position).getImgPrdct());
     }
 
     @Override
@@ -71,6 +84,7 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
         TextView unitPrice;
         TextView unitPrdct;
         TextView stockPrct;
+        ImageView imgPrdct;
         CardView cardView;
         public PrdctViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -79,6 +93,7 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
             unitPrice = itemView.findViewById(R.id.textViewUnitPrice);
             unitPrdct = itemView.findViewById(R.id.textViewUnitPrdct);
             stockPrct = itemView.findViewById(R.id.textViewStockPrdct);
+            imgPrdct = itemView.findViewById(R.id.imgPrdct);
             cardView = (CardView) itemView.findViewById(R.id.cardPrdct);
 
             itemView.setOnClickListener(new View.OnClickListener() {

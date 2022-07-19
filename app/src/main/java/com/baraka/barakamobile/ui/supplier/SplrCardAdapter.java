@@ -68,14 +68,14 @@ public class SplrCardAdapter extends RecyclerView.Adapter<SplrCardAdapter.SplrVi
     public void onBindViewHolder(@NonNull @NotNull SplrCardAdapter.SplrViewHolder holder, int position) {
         Log.e("ImgSplr", "Image: "+URL_SPLR_IMG+splrViewModelList.get(position).getImgSplr());
 
-        String imgSplrPath = splrViewModelList.get(position).getImgSplr();
-        byte[] decodedString = Base64.decode(imgSplrPath, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//        String imgSplrPath = splrViewModelList.get(position).getImgSplr();
+//        byte[] decodedString = Base64.decode(imgSplrPath, Base64.DEFAULT);
+//        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
         holder.nameSplr.setText(splrViewModelList.get(position).getNameSplr());
 
 
-        Picasso.get().load(URL_SPLR_IMG+imgSplrPath)
+        Picasso.get().load(URL_SPLR_IMG+splrViewModelList.get(position).getImgSplr())
                 .resize(450, 450)
                 .centerCrop()
                 .placeholder(R.drawable.default_image_comp_small)

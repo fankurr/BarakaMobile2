@@ -3,14 +3,17 @@ package com.baraka.barakamobile.ui.profile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +37,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 public class EditProfileActivity extends AppCompatActivity {
     String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
@@ -44,12 +49,13 @@ public class EditProfileActivity extends AppCompatActivity {
     TextView txtViewCompProfileEdit;
     ImageView imgUser;
     Uri selectedImageUri;
+    File imgProfile;
 
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
 
-    private String urlEdit = DbConfig.URL + "editUser.php";
+    private String urlEdit = DbConfig.URL + "editProfile.php";
     private String URL_USER_IMG_EDIT = DbConfig.URL + "imgUser/";
 
     private String urlUserEdit = DbConfig.URL + "idUserComp.php";
@@ -164,13 +170,36 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // create an instance of the
         // intent of the type image
-        Intent intent = new Intent();
-        intent.setType("*/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        Intent intent = new Intent();
+//        intent.setType("*/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
 
         // pass the constant to compare it
         // with the returned requestCode
         startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
+//        startActivityForResult(intent, SELECT_PICTURE);
+    }
+
+    public String getRealPathFromURI(Uri contentURI, Activity context) {
+
+        String[] projection = { MediaStore.Images.Media.DATA };
+
+        @SuppressWarnings("deprecation")
+        Cursor cursor = context.managedQuery(contentURI, projection, null, null, null);
+        if (cursor == null)
+            return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(column_index);
+            // cursor.close();
+            return s;
+        }
+
+        // cursor.close();
+        return null;
+
     }
 
     // this function is triggered when user
@@ -192,6 +221,10 @@ public class EditProfileActivity extends AppCompatActivity {
                             .resize(450, 450)
                             .centerCrop()
                             .into(imgUser);
+
+                    String imagepath = getRealPathFromURI(selectedImageUri,EditProfileActivity.this);
+
+                    imgProfile = new File(imagepath);
 
 //                    imgUser.setImageURI(selectedImageUri);
                 }
@@ -232,24 +265,30 @@ public class EditProfileActivity extends AppCompatActivity {
 //                    }
 //                });
 
-        AndroidNetworking.post(urlEdit)
-                .addBodyParameter("idUser", id.toString())
-                .addBodyParameter("nameUser", inputNameProfileEdit.getText().toString())
-                .addBodyParameter("emailUser", inputEmailProfileEdit.getText().toString())
-                .addBodyParameter("addrUser", inputAddrProfileEdit.getText().toString())
-                .addBodyParameter("phoneUser", inputTlpProfileEdit.getText().toString())
-                .addBodyParameter("imgUser", String.valueOf(selectedImageUri))
+        AndroidNetworking.upload(urlEdit)
+                .addMultipartParameter("idUser", id.toString())
+                .addMultipartParameter("nameUser", inputNameProfileEdit.getText().toString())
+                .addMultipartParameter("emailUser", inputEmailProfileEdit.getText().toString())
+                .addMultipartParameter("addrUser", inputAddrProfileEdit.getText().toString())
+                .addMultipartParameter("phoneUser", inputTlpProfileEdit.getText().toString())
+                .addMultipartFile("imgUser", imgProfile)
                 .setTag("Update Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        // do anything with progress
+                    }
+                })
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
-                    public void onResponse(JSONObject data) {
+                    public void onResponse(JSONObject response) {
                         progressDialog.dismiss();
-                        Log.d("Respon Edit","" + data);
+                        Log.d("Respon Edit","" + response);
 
                         try {
-                            Boolean status = data.getBoolean("status");
+                            Boolean status = response.getBoolean("status");
                             if (status == true){
                                 new AlertDialog.Builder(EditProfileActivity.this)
                                         .setMessage("Berhasil Mengudate Data")
