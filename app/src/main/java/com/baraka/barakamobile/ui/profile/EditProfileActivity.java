@@ -106,7 +106,7 @@ public class EditProfileActivity extends AppCompatActivity {
         emailComp = intent.getStringExtra(EMAIL_COMP);
 
         inputNameProfileEdit = findViewById(R.id.editTxtNameProfileEdit);
-        txtViewCompProfileEdit = findViewById(R.id.txtViewCompProfileEdit);
+//        txtViewCompProfileEdit = findViewById(R.id.txtViewCompProfileEdit);
         inputPostProfileEdit = findViewById(R.id.editTxtPostProfileEdit);
         inputAddrProfileEdit = findViewById(R.id.editTxtAddrProfileEdit);
         inputTlpProfileEdit = findViewById(R.id.editTxtTlpProfileEdit);
@@ -371,7 +371,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                         .error(R.drawable.default_image_person_small)
                                         .into(imgUser);
 
-                                txtViewCompProfileEdit.setText(jsonObject.getString("nameCompany"));
+//                                txtViewCompProfileEdit.setText(jsonObject.getString("nameCompany"));
                                 getSupportActionBar().setTitle(jsonObject.getString("name"));
 
                                 progressDialog.dismiss();

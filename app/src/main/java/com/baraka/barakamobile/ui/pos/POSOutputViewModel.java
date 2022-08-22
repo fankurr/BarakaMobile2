@@ -17,6 +17,8 @@ public class POSOutputViewModel {
 //    @ColumnInfo(name = Constant.ID_Table)
 //    private int id_table;
 
+//    //    @ColumnInfo(name = Constant.id_prdct)
+//    private String idTx;
 
 //    @ColumnInfo(name = Constant.id_prdct)
     private String idPrdct;
@@ -36,6 +38,7 @@ public class POSOutputViewModel {
     private String total;
 
     public POSOutputViewModel(String idPrdct, String namePrdct, String unitPrice, String unitPrdct, String qtyPrdct, String total) {
+//        this.idTx = idT
         this.idPrdct = idPrdct;
         this.namePrdct = namePrdct;
         this.unitPrice = unitPrice;
@@ -43,6 +46,14 @@ public class POSOutputViewModel {
         this.qtyPrdct = qtyPrdct;
         this.total = total;
     }
+
+//    public String getIdTx() {
+//        return idTx;
+//    }
+//
+//    public void setIdTx(String idTx) {
+//        this.idTx = idTx;
+//    }
 
     public String getIdPrdct() {
         return idPrdct;

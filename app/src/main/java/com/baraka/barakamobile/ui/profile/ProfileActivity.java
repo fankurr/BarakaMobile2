@@ -57,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String urlUserDetail = DbConfig.URL + "idUserComp.php";
     private String URL_USER_IMG_DETAIL = DbConfig.URL + "imgUser/";
+    private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -78,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
     public static final String LOGO_COMP = "logoComp";
 
     TextView txtnameUser, txtPostUser, txtAddrUser, txtPhoneUser, txtEmailUser, txtCompUser;
-    ImageView imgPhotoUserDetail;
+    ImageView imgPhotoUserDetail, imgCompUserDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtPhoneUser = findViewById(R.id.textViewTlpUserDetail);
         txtCompUser = findViewById(R.id.textViewNameCompUserDetail);
         imgPhotoUserDetail = findViewById(R.id.imgUserDetail);
+        imgCompUserDetail = findViewById(R.id.imgCompUserDetail);
 
         detailProfile();
 
@@ -228,6 +230,14 @@ public class ProfileActivity extends AppCompatActivity {
                                         .into(imgPhotoUserDetail);
 
                                 txtCompUser.setText(jsonObject.getString("nameCompany"));
+
+                                Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
+                                        .fit()
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
+                                        .into(imgCompUserDetail);
+
                                 getSupportActionBar().setTitle(jsonObject.getString("name"));
 
                                 Log.i("ImgUser", "Image: "+URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"));

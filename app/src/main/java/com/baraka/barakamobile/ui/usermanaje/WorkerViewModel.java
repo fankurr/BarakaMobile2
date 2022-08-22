@@ -25,6 +25,7 @@ public class WorkerViewModel {
                            String lvlUser,
                            String phoneUser,
                            String loginUser,
+                           String imgUser,
                            String compUser,
                            String nameComp){
         this.idUser = idUser;
@@ -34,6 +35,7 @@ public class WorkerViewModel {
         this.lvlUser = lvlUser;
         this.phoneUser = phoneUser;
         this.loginUser = loginUser;
+        this.imgUser = imgUser;
         this.idComp = compUser;
         this.nameComp = nameComp;
     }

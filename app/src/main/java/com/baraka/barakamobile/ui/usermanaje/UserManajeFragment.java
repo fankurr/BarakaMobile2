@@ -47,6 +47,7 @@ import com.baraka.barakamobile.ui.product.PrdctListActivity;
 import com.baraka.barakamobile.ui.product.PrdctViewModel;
 import com.baraka.barakamobile.ui.product.ProductFragment;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -212,6 +213,7 @@ public class UserManajeFragment extends Fragment{
                                         jsonObject.getString("level"),
                                         jsonObject.getString("phone"),
                                         jsonObject.getString("access"),
+                                        jsonObject.getString("imgWorker"),
                                         jsonObject.getString("company"),
                                         jsonObject.getString("nameCompany")
                                 );

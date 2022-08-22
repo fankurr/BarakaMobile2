@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +57,7 @@ public class CompProActivity extends AppCompatActivity {
 
     TextView txtNameComp, txtAddrComp, txtTlpComp, txtEmailCOmp, txtCodeComp;
     Button btnEditCompPro;
+    ImageView imgComp;
 
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
@@ -63,6 +66,7 @@ public class CompProActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
+    private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,7 @@ public class CompProActivity extends AppCompatActivity {
         txtTlpComp = findViewById(R.id.txtViewTlpCompProDetail);
         txtEmailCOmp = findViewById(R.id.txtViewEmailCompProDetail);
         txtCodeComp = findViewById(R.id.txtViewCodeCompProDetail);
+        imgComp = findViewById(R.id.imgCompPro);
 
 //        txtNameComp.setText(nameCompany);
 //        txtAddrComp.setText(addrComp);
@@ -184,6 +189,13 @@ public class CompProActivity extends AppCompatActivity {
                                 txtAddrComp.setText(jsonObject.getString("addrComp"));
                                 txtTlpComp.setText(jsonObject.getString("phoneComp"));
                                 txtEmailCOmp.setText(jsonObject.getString("emailComp"));
+
+                                Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
+                                        .into(imgComp);
 
 
                                 if (level.equals("2")){

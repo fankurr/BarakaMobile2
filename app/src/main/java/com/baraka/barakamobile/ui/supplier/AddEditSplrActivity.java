@@ -69,7 +69,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
     private String URL_SPLR_EDIT_DETAIL = DbConfig.URL_SPLR + "idSplr.php";
     private String URL_SPLR_EDIT = DbConfig.URL_SPLR + "editSplr.php";
     private String URL_SPLR_ADD = DbConfig.URL_SPLR + "addSplr.php";
-    private String URL_SPLR_IMG_EDIT = DbConfig.URL + "imgSplr/";
+    private String URL_SPLR_IMG_EDIT = DbConfig.URL_SPLR + "imgSplr/";
 
     // the activity result code
     int SELECT_PICTURE = 200;
@@ -78,7 +78,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
     EditText inputNameSplr, inputAlamatSplr, inputTlpSplr, inputEmailSplr, inputDescSplr;
     Button btnUploadImgSplrAddEdit;
     TextView textPath;
-    ImageView imgPhotoSplrDetail;
+    ImageView imgPhotoSplrEditDetail;
     Uri selectedImageUri;
     File fileImgSupplier;
 
@@ -122,7 +122,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
         inputEmailSplr = findViewById(R.id.editTextEmailSplrAddEdit);
         inputDescSplr = findViewById(R.id.editTextDescSplrAddEdit);
 
-        imgPhotoSplrDetail = findViewById(R.id.imgViewAddEditSplr);
+        imgPhotoSplrEditDetail = findViewById(R.id.imgViewAddEditSplr);
 
         btnUploadImgSplrAddEdit = (Button) findViewById(R.id.btnUploadImgSplrAddEdit);
 
@@ -153,7 +153,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
                     .centerCrop()
                     .placeholder(R.drawable.default_image_person_small)
                     .error(R.drawable.default_image_person_small)
-                    .into(imgPhotoSplrDetail);
+                    .into(imgPhotoSplrEditDetail);
 
             Button btnSimpanAdd = findViewById(R.id.btnSaveSplrAddEdit);
             btnSimpanAdd.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +184,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
 //                    .error(R.drawable.default_image_person_small)
 //                    .into(imgPhotoSplrDetail);
 
-            splrDetail();
+            splrDetailEdit();
 
             Button btnSimpanEdit = findViewById(R.id.btnSaveSplrAddEdit);
             btnSimpanEdit.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +261,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
                     Picasso.get().load(selectedImageUri)
                             .resize(450, 450)
                             .centerCrop()
-                            .into(imgPhotoSplrDetail);
+                            .into(imgPhotoSplrEditDetail);
 
                     String imagepath = getRealPathFromURI(selectedImageUri, this);
 
@@ -285,7 +285,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
     }
 
     // Detail Profile
-    public void splrDetail(){
+    public void splrDetailEdit(){
         progressDialog = new ProgressDialog(AddEditSplrActivity.this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Memuat Detail Profil");
@@ -308,8 +308,6 @@ public class AddEditSplrActivity extends AppCompatActivity {
                                 JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
-
-
                                 inputNameSplr.setText(jsonObject.getString("nameSupplier"));
                                 inputDescSplr.setText(jsonObject.getString("descSupplier"));
                                 inputAlamatSplr.setText(jsonObject.getString("addrSupplier"));
@@ -317,12 +315,12 @@ public class AddEditSplrActivity extends AppCompatActivity {
                                 inputEmailSplr.setText(jsonObject.getString("emailSupplier"));
 
 
-                                Picasso.get().load(jsonObject.getString("imageSupplier"))
+                                Picasso.get().load(URL_SPLR_IMG_EDIT+jsonObject.getString("imageSupplier"))
                                         .resize(450, 450)
                                         .centerCrop()
                                         .placeholder(R.drawable.default_image_comp_small)
                                         .error(R.drawable.default_image_comp_small)
-                                        .into(imgPhotoSplrDetail);
+                                        .into(imgPhotoSplrEditDetail);
 
                                 getSupportActionBar().setTitle(jsonObject.getString("nameSupplier"));
 

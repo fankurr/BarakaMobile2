@@ -1,9 +1,11 @@
 package com.baraka.barakamobile.ui.usermanaje;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.product.PrdctCardAdapter;
+import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +35,7 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
     public final static String TAG_LEVEL = "level";
     public final static String TAG_PHONE = "phone";
     public final static String TAG_ACCESS = "access";
+    public final static String TAG_IMAGE = "imgWorker";
     public final static String TAG_IDCOMP = "idCompany";
     public final static String TAG_COMP = "nameCompany";
 
@@ -38,6 +43,8 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
     private Context context;
     private LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListenerWorkerDetail;
+
+    private String URL_WORKER_IMG = DbConfig.URL + "imgUser/";
 
     String messagesWA = " ";
     String phonesWA = "";
@@ -67,7 +74,7 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull WorkerCardAdapter.WorkerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull WorkerCardAdapter.WorkerViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.nameWorker.setText(workerViewModelList.get(position).getNameUser());
         holder.lvlWorker.setText(workerViewModelList.get(position).getLvlUser());
         holder.cardWorker.setOnClickListener(new View.OnClickListener() {
@@ -82,12 +89,21 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
                 workerDetailIntent.putExtra(TAG_EMAIL, clickedWorker.getEmailUser());
                 workerDetailIntent.putExtra(TAG_ADDR, clickedWorker.getAddrUser());
                 workerDetailIntent.putExtra(TAG_LEVEL, clickedWorker.getLvlUser());
+                workerDetailIntent.putExtra(TAG_IMAGE, clickedWorker.getImgUser());
                 workerDetailIntent.putExtra(TAG_PHONE, clickedWorker.getPhoneUser());
                 workerDetailIntent.putExtra(TAG_ACCESS, clickedWorker.getLoginUser());
 
                 context.startActivity(workerDetailIntent);
             }
         });
+        Log.e("ImgSplr", "Image: "+URL_WORKER_IMG+workerViewModelList.get(position).getImgUser());
+        Picasso.get().load(URL_WORKER_IMG+workerViewModelList.get(position).getImgUser())
+                .resize(450, 450)
+                .centerCrop()
+                .placeholder(R.drawable.default_image_comp_small)
+                .error(R.drawable.default_image_comp_small)
+                .into(holder.imgWorker);
+
         holder.imgTlpWorker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,6 +170,7 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
 
             nameWorker = itemView.findViewById(R.id.textViewNameWorker);
             lvlWorker = itemView.findViewById(R.id.textViewJabatan);
+            imgWorker = itemView.findViewById(R.id.imgWorker);
             imgTlpWorker = itemView.findViewById(R.id.imgTlpWorker);
             imgWaWorker = itemView.findViewById(R.id.imgWAWorker);
             imgEmailWorker = itemView.findViewById(R.id.imgEmailWorker);

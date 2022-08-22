@@ -78,6 +78,7 @@ public class HomeFragment extends Fragment {
 
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     List<HomeViewModelList> homeViewModelLists;
 
@@ -163,6 +164,7 @@ public class HomeFragment extends Fragment {
                                         jsonObject.getInt("idTx"),
                                         jsonObject.getInt("idCompTx"),
                                         jsonObject.getString("namePrdct"),
+                                        jsonObject.getString("imageProduct"),
                                         jsonObject.getString("qtyTx"),
                                         jsonObject.getString("valueTx"),
                                         jsonObject.getString("datetimeTx"),

@@ -166,7 +166,7 @@ public class POSActivity extends AppCompatActivity {
     private final static String TAG_COMP = "nameCompany";
 
     String id, email, name, level, access, idCompany, nameCompany;
-    TextView txtNamaPrdct,txtPricePrdct,txtUnitPrdct,txtIdPrdct,txtStockPrdct, totalPrdctIn;
+    TextView txtIdTx, txtNamaPrdct,txtPricePrdct,txtUnitPrdct,txtIdPrdct,txtStockPrdct, totalPrdctIn;
     TextView txtIdPrdctOut, txtPricePrdctOut, txtQtyOut, txtTotalOut;
     String totalPrdctPrice;
     EditText inputJumlah;
@@ -185,6 +185,8 @@ public class POSActivity extends AppCompatActivity {
     Calendar calender;
     SimpleDateFormat simpledateformat;
     String date;
+
+    float valueTx, inputValTx, prdctPrice;
 
     private ArrayList<POSViewModel> posViewModelList;
 //    private ArrayList<POSOutputViewModel> posOutputViewModelList;
@@ -293,6 +295,7 @@ public class POSActivity extends AppCompatActivity {
                     totalPrdctIn = dialogPosInput.findViewById(R.id.txtTotalPrdctPosInput);
                     inputJumlah = dialogPosInput.findViewById(R.id.inputJumlahPembelianPrdct);
 
+
                     txtIdPrdct.setText(String.valueOf(posViewModelList.get(position).getIdPrdct()));
                     txtNamaPrdct.setText(posViewModelList.get(position).getNamePrdct());
                     txtPricePrdct.setText(posViewModelList.get(position).getUnitPrice());
@@ -317,6 +320,7 @@ public class POSActivity extends AppCompatActivity {
                                 totalPrdctPrice = String.valueOf(currTotal);
 
                                 POSOutputViewModel posOutputViewModel = new POSOutputViewModel(
+
                                         txtIdPrdct.getText().toString(),
                                         txtNamaPrdct.getText().toString(),
                                         txtPricePrdct.getText().toString(),
@@ -324,6 +328,80 @@ public class POSActivity extends AppCompatActivity {
                                         inputJumlah.getText().toString(),
                                         totalPrdctPrice
                                 );
+
+                                ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
+                                progressDialog.setCancelable(false);
+                                progressDialog.setMessage("Proses Checkout..");
+                                progressDialog.show();
+
+                                sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+                                idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+//                                inputValTx = Integer.parseInt(inputJumlah.getText().toString());
+//                                prdctPrice = Integer.parseInt(String.valueOf(price));
+//
+//                                valueTx = inputValTx * prdctPrice;
+
+                                AndroidNetworking.post(TX)
+                                        .addBodyParameter("idComp", idCompany)
+                                        .addBodyParameter("idPrdct", txtIdPrdct.getText().toString())
+                                        .addBodyParameter("qtyTx", inputJumlah.getText().toString())
+                                        .addBodyParameter("valueTx", String.valueOf(currTotal))
+                                        .addBodyParameter("datetimeTx", date)
+                                        .setTag(this)
+                                        .setPriority(Priority.MEDIUM)
+                                        .build()
+                                        .getAsJSONObject(new JSONObjectRequestListener() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                progressDialog.dismiss();
+                                                Log.d("Respon Edit", "" + response);
+
+                                                try {
+                                                    Boolean status = response.getBoolean("success");
+                                                    if (status == true) {
+                                                        new android.app.AlertDialog.Builder(POSActivity.this)
+                                                                .setMessage("Penambahan Data Belanja Berhasil!")
+                                                                .setCancelable(false)
+                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+
+//                                                                        Log.e("Input", "Data: "+idCompany+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+                                                                        Context context = POSActivity.this;
+                                                                        POSActivity.this.setResult(RESULT_OK);
+                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+                                                                        optionDialog.dismiss();
+                                                                        Toast.makeText(context, "Berhasil Menambah Data Belanja", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                })
+                                                                .show();
+                                                    } else {
+
+                                                        new android.app.AlertDialog.Builder(POSActivity.this)
+                                                                .setMessage("Penambahan Data Belanja Gagal!")
+                                                                .setCancelable(false)
+                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        Context c = POSActivity.this;
+                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+                                                                        optionDialog.dismiss();
+                                                                    }
+                                                                })
+                                                                .show();
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(ANError anError) {
+                                                Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                                                Log.i("ERROR", "error => " + anError.toString());
+                                                progressDialog.dismiss();
+                                            }
+                                        });
 
 //                                Log.i("POS Out => ", "Items: "+IdPrdct.getIdPrdct()+
 //                                        ", "+NamePrdct.getNamePrdct()+

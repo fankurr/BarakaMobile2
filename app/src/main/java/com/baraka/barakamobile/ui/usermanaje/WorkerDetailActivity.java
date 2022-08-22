@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -24,7 +25,9 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.profile.ProfileActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,20 +49,30 @@ public class WorkerDetailActivity extends AppCompatActivity {
     public final static String TAG_LEVEL = "level";
     public final static String TAG_PHONE = "phone";
     public final static String TAG_ACCESS = "access";
+    public final static String TAG_IMAGE = "imgWorker";
     public final static String TAG_IDCOMP = "idCompany";
     public final static String TAG_COMP = "nameCompany";
 
+    private String urlUserDetail = DbConfig.URL + "idUserComp.php";
     private String URL_WORKER_LOGIN = DbConfig.URL_WORKER + "editUserLogin.php";
+    private String URL_WORKER_IMG = DbConfig.URL + "imgUser/";
+
+    ProgressDialog progressDialog;
+    SharedPreferences sharedPreferences;
+    public static final String my_shared_preferences = "my_shared_preferences";
 
     String id, email, name, level, access, idCompany, nameCompany;
-    String nameUser, emailUser, addrUser, lvlUser, phoneUser, loginUser;
+    String nameUser, emailUser, addrUser, lvlUser, phoneUser, loginUser, imgUser;
 
     String loginOn = "1";
     String loginOff = "0";
     String messagesWA = " ";
     String phonesWA = "";
 
+    TextView textViewNameWorker, textViewEmailWorker, textViewAddrWorker, textViewLvlWorker, textViewPhoneWorker;
     Switch swLoginWorker;
+    ImageView imgWorkerDetail;
+
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -73,21 +86,30 @@ public class WorkerDetailActivity extends AppCompatActivity {
         emailUser = intent.getStringExtra(TAG_EMAIL);
         addrUser = intent.getStringExtra(TAG_ADDR);
         lvlUser = intent.getStringExtra(TAG_LEVEL);
+        imgUser = intent.getStringExtra(TAG_IMAGE);
         phoneUser = intent.getStringExtra(TAG_PHONE);
         loginUser = intent.getStringExtra(TAG_ACCESS);
 
-        TextView textViewNameWorker = findViewById(R.id.textViewNameWorkerDetail);
-        TextView textViewEmailWorker = findViewById(R.id.textViewEmailWorkerDetail);
-        TextView textViewAddrWorker = findViewById(R.id.textViewAddrWorkerDetail);
-        TextView textViewLvlWorker = findViewById(R.id.textViewLvlWorkerDetail);
-        TextView textViewPhoneWorker = findViewById(R.id.textViewTlpWorkerDetail);
+        textViewNameWorker = findViewById(R.id.textViewNameWorkerDetail);
+        textViewEmailWorker = findViewById(R.id.textViewEmailWorkerDetail);
+        textViewAddrWorker = findViewById(R.id.textViewAddrWorkerDetail);
+        textViewLvlWorker = findViewById(R.id.textViewLvlWorkerDetail);
+        textViewPhoneWorker = findViewById(R.id.textViewTlpWorkerDetail);
         swLoginWorker = findViewById(R.id.swLoginWorkerDetail);
+        imgWorkerDetail = findViewById(R.id.imgWorkerDetail);
 
-        textViewNameWorker.setText(nameUser);
-        textViewEmailWorker.setText(emailUser);
-        textViewAddrWorker.setText(addrUser);
-        textViewLvlWorker.setText(lvlUser);
-        textViewPhoneWorker.setText(phoneUser);
+//        textViewNameWorker.setText(nameUser);
+//        textViewEmailWorker.setText(emailUser);
+//        textViewAddrWorker.setText(addrUser);
+//        textViewLvlWorker.setText(lvlUser);
+//        textViewPhoneWorker.setText(phoneUser);
+//        Picasso.get().load(URL_WORKER_IMG+workerViewModelList.get(position).getImgUser())
+//                .resize(450, 450)
+//                .centerCrop()
+//                .placeholder(R.drawable.default_image_comp_small)
+//                .error(R.drawable.default_image_comp_small)
+//                .into(holder.imgWorker);
+        detailWorker();
 
         if (loginUser.equals("1")){
             swLoginWorker.setChecked(true);
@@ -265,6 +287,69 @@ public class WorkerDetailActivity extends AppCompatActivity {
                         Log.d("ERROR","error => "+ anError.toString());
 //                        Log.d(TAG, "onError errorDetail : " + error.getErrorDetail());
                         progressDialog.dismiss();
+                    }
+                });
+    }
+
+    // Detail Profile
+    public void detailWorker(){
+        progressDialog = new ProgressDialog(WorkerDetailActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Profil..");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(urlUserDetail)
+                .addBodyParameter("idUser", id.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                textViewNameWorker.setText(jsonObject.getString("name"));
+                                textViewEmailWorker.setText(jsonObject.getString("email"));
+                                textViewAddrWorker.setText(jsonObject.getString("address"));
+                                textViewLvlWorker.setText(jsonObject.getString("postUser"));
+                                textViewPhoneWorker.setText(jsonObject.getString("phone"));
+
+                                Picasso.get().load(URL_WORKER_IMG+jsonObject.getString("imgProfile"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_person_small)
+                                        .error(R.drawable.default_image_person_small)
+                                        .into(imgWorkerDetail);
+
+
+                                getSupportActionBar().setTitle(jsonObject.getString("name"));
+
+                                Log.i("ImgUser", "Image: "+URL_WORKER_IMG+jsonObject.getString("imgProfile"));
+
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(WorkerDetailActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(WorkerDetailActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
                     }
                 });
     }

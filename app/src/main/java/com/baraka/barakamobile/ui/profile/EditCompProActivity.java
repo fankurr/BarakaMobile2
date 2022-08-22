@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
@@ -24,6 +25,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +38,7 @@ public class EditCompProActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     Button btnBackEditCompPro, btnSaveEditCompPro;
+    ImageView imgCompEdit;
 
     public static final String my_shared_preferences = "my_shared_preferences";
 
@@ -60,6 +63,7 @@ public class EditCompProActivity extends AppCompatActivity {
 
     private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
     private String urlCompProEdit = DbConfig.URL_COMP + "editComp.php";
+    private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,7 @@ public class EditCompProActivity extends AppCompatActivity {
         inputTlpComp = findViewById(R.id.editTxtTlpCompProEdit);
         inputEmailCOmp = findViewById(R.id.editTxtEmailCompProEdit);
         inputCodeComp = findViewById(R.id.editTxtCodeCompProEdit);
+        imgCompEdit = findViewById(R.id.imgCompEdit);
 
         detailComp();
 
@@ -220,6 +225,13 @@ public class EditCompProActivity extends AppCompatActivity {
                                 inputTlpComp.setText(jsonObject.getString("phoneComp"));
                                 inputEmailCOmp.setText(jsonObject.getString("emailComp"));
                                 inputCodeComp.setText(jsonObject.getString("codeComp"));
+
+                                Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
+                                        .into(imgCompEdit);
 
                                 getSupportActionBar().setTitle(jsonObject.getString("nameComp"));
 

@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,10 +88,12 @@ public class AddEditPrdctActivity extends AppCompatActivity {
     Button btnUploadImgPrdctAddEdit;
     TextView textPath, textCate;
     CardView cardCatAddEditPrdct;
+    ImageView imgPrdctEditDetail;
 
     private String URL_PRDCT_ADD_EDIT = DbConfig.URL_PRDCT + "editPrdct.php";
     private String URL_CATE = DbConfig.URL_CATE + "allCat.php";
     private String urlEditPrdctDetail = DbConfig.URL_PRDCT + "idPrdct.php";
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     ProgressDialog progressDialog;
     AdapterSpinnerCatAddEdit adapterSpinnerCatAddEdit;
@@ -131,6 +135,7 @@ public class AddEditPrdctActivity extends AppCompatActivity {
         inputStokPrdct = findViewById(R.id.editTxtStokPrdctAddEdit);
         textCate = findViewById(R.id.textViewNameCatAddEditPrdct);
         cardCatAddEditPrdct = findViewById(R.id.cardCatAddEditPrdct);
+        imgPrdctEditDetail = findViewById(R.id.imgPrdctEditDetail);
 
         btnUploadImgPrdctAddEdit = (Button) findViewById(R.id.btnUploadPrdctAddEdit);
 
@@ -413,6 +418,13 @@ public class AddEditPrdctActivity extends AppCompatActivity {
                                 inputStokPrdct.setText(jsonObject.getString("stockPrdct"));
                                 textCate.setText(jsonObject.getString("nameCategory"));
 //                                textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
+
+                                Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imageProduct"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_small)
+                                        .error(R.drawable.default_image_small)
+                                        .into(imgPrdctEditDetail);
 
                                 getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
 

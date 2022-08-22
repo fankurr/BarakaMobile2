@@ -49,6 +49,7 @@ public class HomeViewModelList {
     public HomeViewModelList(int idTx,
                              int idCompTx,
                              String namePrdct,
+                             String imgPrdct,
                              String qtyTx,
                              String valueTx,
                              String datetimeTx,
@@ -72,6 +73,7 @@ public class HomeViewModelList {
         this.datetimeTx = datetimeTx;
         this.nameComp = nameComp;
         this.namePrdct = namePrdct;
+        this.imgPrdct = imgPrdct;
 
     }
 

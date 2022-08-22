@@ -310,8 +310,9 @@ public class PrdctDetail extends AppCompatActivity {
                                 textViewCatPrdct.setText(jsonObject.getString("nameCategory"));
                                 textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
 
-                                Picasso.get().load(jsonObject.getString("imageProduct"))
-                                        .fit()
+                                Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imageProduct"))
+                                        .resize(450, 450)
+                                        .centerCrop()
                                         .placeholder(R.drawable.default_image_small)
                                         .error(R.drawable.default_image_small)
                                         .into(imgPrdctDetail);
