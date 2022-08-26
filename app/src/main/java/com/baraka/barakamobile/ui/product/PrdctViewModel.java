@@ -50,7 +50,6 @@ public class PrdctViewModel {
                           String unitPrdct,
                           String stockPrdct,
                           String lastUpdate,
-                          String qtyUpdate,
                           String updateBy,
                           String descPrdct,
                           String imgPrdct,

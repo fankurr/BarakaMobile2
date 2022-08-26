@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -57,6 +59,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -67,9 +70,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -413,6 +418,25 @@ public class PayoutFragment extends Fragment {
 
         //Step 3
         document.open();
+
+
+
+        //set image for PDF Create
+//        try {
+//        InputStream ims = context.getResources().getAssets().open("images/header_pdf_app.png");
+//        Bitmap bmp = BitmapFactory.decodeStream(ims);
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        Image image = Image.getInstance(stream.toByteArray());
+//        image.scaleToFit(2000, 120);
+////            image.setWidthPercentage(100);
+////            image.scaleToFit(150.0f, 150.0f);
+//        image.setAlignment(Element.ALIGN_CENTER);
+//        document.add(image);
+//        } catch (IOException ex) {
+//            //Do something with the exception
+//            ex.printStackTrace();
+//        }
 
         //Step 4 Add content
 //        document.add((Element) new Paragraph("Test"));

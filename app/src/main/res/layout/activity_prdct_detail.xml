@@ -316,25 +316,53 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <Button
-                android:id="@+id/btnEditPrdctDetail"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="1"
-                android:padding="6dp"
-                android:text="Edit"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:backgroundTint="#ffffff"
-                app:cornerRadius="5dp"
-                app:rippleColor="#33AAAAAA"
-                app:strokeColor="@color/colorPrimary"
-                app:strokeWidth="2dp" />
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="60dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnEditPrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="1"
+                    android:padding="6dp"
+                    android:text="Edit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#ffffff"
+                    app:cornerRadius="5dp"
+                    app:rippleColor="#33AAAAAA"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="2dp" />
+
+                <Button
+                    android:id="@+id/btnDellPrdctDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="1"
+                    android:padding="6dp"
+                    android:text="Hapus"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorDanger"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#ffffff"
+                    app:cornerRadius="5dp"
+                    app:rippleColor="#33AAAAAA"
+                    app:strokeColor="@color/colorDanger"
+                    app:strokeWidth="2dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

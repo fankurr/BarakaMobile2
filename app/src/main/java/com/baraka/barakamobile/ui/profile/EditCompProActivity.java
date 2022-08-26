@@ -3,14 +3,18 @@ package com.baraka.barakamobile.ui.profile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 public class EditCompProActivity extends AppCompatActivity {
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
@@ -39,6 +45,11 @@ public class EditCompProActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     Button btnBackEditCompPro, btnSaveEditCompPro;
     ImageView imgCompEdit;
+    Uri selectedImageUri;
+    File imgProfileComp;
+
+    // the activity result code
+    int SELECT_PICTURE = 200;
 
     public static final String my_shared_preferences = "my_shared_preferences";
 
@@ -113,9 +124,84 @@ public class EditCompProActivity extends AppCompatActivity {
             }
         });
 
+        imgCompEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageChooser();
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Edit");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
+    }
+
+    // this function is triggered when
+    // the Select Image Button is clicked
+    void imageChooser() {
+
+        // create an instance of the
+        // intent of the type image
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        Intent intent = new Intent();
+//        intent.setType("*/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // pass the constant to compare it
+        // with the returned requestCode
+        startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
+//        startActivityForResult(intent, SELECT_PICTURE);
+    }
+
+    public String getRealPathFromURI(Uri contentURI, Activity context) {
+
+        String[] projection = { MediaStore.Images.Media.DATA };
+
+        @SuppressWarnings("deprecation")
+        Cursor cursor = context.managedQuery(contentURI, projection, null, null, null);
+        if (cursor == null)
+            return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(column_index);
+            // cursor.close();
+            return s;
+        }
+
+        // cursor.close();
+        return null;
+
+    }
+
+    // this function is triggered when user
+    // selects the image from the imageChooser
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+
+                    Picasso.get().load(selectedImageUri)
+                            .resize(450, 450)
+                            .centerCrop()
+                            .into(imgCompEdit);
+
+                    String imageCompPath = getRealPathFromURI(selectedImageUri,EditCompProActivity.this);
+
+                    imgProfileComp = new File(imageCompPath);
+
+//                    imgUser.setImageURI(selectedImageUri);
+                }
+            }
+        }
     }
 
     // Edit Profile
@@ -128,13 +214,14 @@ public class EditCompProActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
-        AndroidNetworking.post(urlCompProEdit)
-                .addBodyParameter("idComp", idCompany.toString())
-                .addBodyParameter("nameComp", inputNameComp.getText().toString())
-                .addBodyParameter("addrComp", inputAddrComp.getText().toString())
-                .addBodyParameter("phoneComp", inputTlpComp.getText().toString())
-                .addBodyParameter("emailComp", inputEmailCOmp.getText().toString())
-                .addBodyParameter("codeComp", inputCodeComp.getText().toString())
+        AndroidNetworking.upload(urlCompProEdit)
+                .addMultipartParameter("idComp", idCompany.toString())
+                .addMultipartParameter("nameComp", inputNameComp.getText().toString())
+                .addMultipartParameter("addrComp", inputAddrComp.getText().toString())
+                .addMultipartParameter("phoneComp", inputTlpComp.getText().toString())
+                .addMultipartParameter("emailComp", inputEmailCOmp.getText().toString())
+                .addMultipartParameter("codeComp", inputCodeComp.getText().toString())
+                .addMultipartFile("logoComp", imgProfileComp)
                 .setTag("Update Data..")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -145,8 +232,8 @@ public class EditCompProActivity extends AppCompatActivity {
                         Log.d("Respon Edit","" + data);
 
                         try {
-                            int status = data.getInt("success");
-                            if (status == 1){
+                            Boolean status = data.getBoolean("status");
+                            if (status == true){
                                 new AlertDialog.Builder(EditCompProActivity.this)
                                         .setMessage("Berhasil Mengudate Data")
                                         .setCancelable(false)

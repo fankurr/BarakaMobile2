@@ -18,9 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.ui.LoginActivity;
 import com.baraka.barakamobile.ui.pos.POSActivity;
 import com.baraka.barakamobile.ui.profile.ProfileActivity;
+import com.baraka.barakamobile.ui.util.DbConfig;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -32,6 +37,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.baraka.barakamobile.databinding.ActivityMainBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -40,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
 
-    String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany;
+    String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany, idLog;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
     ImageView imgUser;
@@ -67,8 +78,15 @@ public class MainActivity extends AppCompatActivity {
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
 
-//    TextView txtNameComp;
+    public static final String ID_LOG = "idLogin";
 
+    private String urlAddLogout = DbConfig.URL_LOG + "addLogout.php";
+
+    Calendar calender;
+    SimpleDateFormat simpledateformat;
+    String date;
+
+    String idLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         imageUser = sharedPreferences.getString(TAG_IMG, imageUser);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
         nameCompany = sharedPreferences.getString(TAG_COMP, nameCompany);
+        idLog = sharedPreferences.getString(ID_LOG, idLog);
 
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
         addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
@@ -109,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
         nameCompany = getIntent().getStringExtra(TAG_COMP);
 
         mediaPlayerLogout = MediaPlayer.create(this, R.raw.sound_logout);
+
+        calender = Calendar.getInstance();
+        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        date = simpledateformat.format(calender.getTime());
 
         Log.e("Profile: ", "ID User: " + id +
                 ", Name: " + name +
@@ -233,11 +256,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        calender = Calendar.getInstance();
+                        simpledateformat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+                        date = simpledateformat.format(calender.getTime());
+
+                        idLogout = id+"_"+idCompany+"_"+date;
+
                         SharedPreferences.Editor editor = sharedPreferences.edit();
 //                        editor.putBoolean(LoginActivity.session_status, false);
                         editor.putString(TAG_ID, null);
                         editor.putString(TAG_EMAIL, null);
                         editor.commit();
+
+                        addLogout(idLog, idLogout);
 
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         dialog.dismiss();
@@ -267,5 +298,44 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    //add login
+    public void addLogout(String idLogin, String datetimeLogout){
+
+        calender = Calendar.getInstance();
+        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        date = simpledateformat.format(calender.getTime());
+
+        AndroidNetworking.post(urlAddLogout)
+                .addBodyParameter("idLogin", idLogin)
+                .addBodyParameter("datetimeLogout", datetimeLogout)
+                .setTag("Update Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        Log.d("Respon Edit",""+data);
+
+                        try {
+                            Boolean status = data.getBoolean("success");
+                            if (status == true){
+                                Toast.makeText(MainActivity.this, "Logout Berhasil Tercatat!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(MainActivity.this, "Logout Gagal Tercatat!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(MainActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                    }
+                });
+
     }
 }

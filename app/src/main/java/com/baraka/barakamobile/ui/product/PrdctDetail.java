@@ -5,16 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -54,6 +60,14 @@ import org.json.JSONObject;
 
 public class PrdctDetail extends AppCompatActivity {
 
+    private final static String TAG_ID = "id";
+    private final static String TAG_EMAIL = "email";
+    private final static String TAG_NAME = "name";
+    private final static String TAG_LEVEL = "level";
+    private final static String TAG_ACCESS = "access";
+    private final static String TAG_IDCOMP = "idCompany";
+    private final static String TAG_COMP = "nameCompany";
+
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
@@ -84,14 +98,18 @@ public class PrdctDetail extends AppCompatActivity {
     public static final String IMG_SPLR = "imgSplr";
 
     private String urlPrdctDetail = DbConfig.URL_PRDCT + "idPrdct.php";
+    private String urlPrdctDel = DbConfig.URL_PRDCT + "delPrdct.php";
     private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     String messagesWaSplr = " ";
+    String id, email, name, level, access, idCompany, nameCompany;
+    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
     String idPrdct, idCat, namePrdct, codePrdct, descPrdct, pricePrdct, unitPricePrdct, unitStockPrdct, stockPrdct, imgPrdct, catPrdct, nameSplrPrdct;
     String idSplr, nameSplr, descSplr, addrSplr, phoneSplr, emailSplr;
 
     TextView textViewIdPrdct, textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
     ImageView imgPrdctDetail;
+    Button btnEdit, btnDell;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -109,7 +127,14 @@ public class PrdctDetail extends AppCompatActivity {
         progressDialog.setMessage("Memuat Data..");
         progressDialog.show();
 
-        sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+        sharedPreferences = PrdctDetail.this.getSharedPreferences(my_shared_preferences,Context.MODE_PRIVATE);
+        id = sharedPreferences.getString(TAG_ID, null);
+        email = sharedPreferences.getString(TAG_EMAIL, null);
+        name = sharedPreferences.getString(TAG_NAME, null);
+        level = sharedPreferences.getString(TAG_LEVEL, null);
+        access = sharedPreferences.getString(TAG_ACCESS, null);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+        nameCompany = sharedPreferences.getString(TAG_COMP, null);
 
         Intent intent = getIntent();
         idPrdct = intent.getStringExtra(ID_PRDCT);
@@ -242,7 +267,7 @@ public class PrdctDetail extends AppCompatActivity {
         });
 
         // Intent Edit
-        Button btnEdit = findViewById(R.id.btnEditPrdctDetail);
+        btnEdit = findViewById(R.id.btnEditPrdctDetail);
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,6 +287,40 @@ public class PrdctDetail extends AppCompatActivity {
 
                 startActivity(intentEdit);
                 finish();
+            }
+        });
+
+        btnDell = findViewById(R.id.btnDellPrdctDetail);
+        btnDell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Dialog dialogDel = new Dialog(PrdctDetail.this);
+
+                dialogDel.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogDel.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogDel.setContentView(R.layout.dialog_delete);
+
+                TextView textWarnDel = dialogDel.findViewById(R.id.textDelWarning);
+                textWarnDel.setText("Apa Anda yakin ingin menghapus [" +namePrdct+ "] dari data Anda?");
+
+                Button btnDelNo = dialogDel.findViewById(R.id.btnDelNo);
+                btnDelNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogDel.dismiss();
+                    }
+                });
+                Button btnDelYes = dialogDel.findViewById(R.id.btnDelYes);
+                btnDelYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        delPrdct();
+                        dialogDel.dismiss();
+                    }
+                });
+                dialogDel.show();
             }
         });
 
@@ -310,14 +369,14 @@ public class PrdctDetail extends AppCompatActivity {
                                 textViewCatPrdct.setText(jsonObject.getString("nameCategory"));
                                 textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
 
-                                Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imageProduct"))
+                                Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imgPrdct"))
                                         .resize(450, 450)
                                         .centerCrop()
                                         .placeholder(R.drawable.default_image_small)
                                         .error(R.drawable.default_image_small)
                                         .into(imgPrdctDetail);
 
-                                Log.e("ImgSplr", "Image: "+URL_PRDCT_IMG+jsonObject.getString("imageProduct"));
+                                Log.e("ImgSplr", "Image: "+URL_PRDCT_IMG+jsonObject.getString("imgPrdct"));
                                 getSupportActionBar().setTitle(jsonObject.getString("namePrdct"));
 
                                 progressDialog.dismiss();
@@ -325,6 +384,72 @@ public class PrdctDetail extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(PrdctDetail.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(PrdctDetail.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
+
+    private void delPrdct() {
+        ProgressDialog progressDialog = new ProgressDialog(PrdctDetail.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Produk");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+
+        AndroidNetworking.post(urlPrdctDel)
+                .addBodyParameter("idPrdct", idPrdct.toString())
+                .setTag("Update Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        progressDialog.dismiss();
+                        Log.d("Respon Edit",""+data);
+
+                        try {
+                            Boolean status = data.getBoolean("status");
+                            if (status == true){
+                                new AlertDialog.Builder(PrdctDetail.this)
+                                        .setMessage("Berhasil Menghapus Data")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = getIntent();
+                                                setResult(RESULT_OK, intent);
+                                                PrdctDetail.this.finish();
+                                                onBackPressed();
+                                            }
+                                        })
+                                        .show();
+                            }else{
+                                new AlertDialog.Builder(PrdctDetail.this)
+                                        .setMessage("Gagal Mengupdate Data")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent i = getIntent();
+                                                setResult(RESULT_CANCELED,i);
+                                                PrdctDetail.this.finish();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
 

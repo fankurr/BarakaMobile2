@@ -164,15 +164,6 @@ public class PrdctListActivity extends AppCompatActivity implements PrdctCardAda
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 PrdctViewModel prdctViewModel = new PrdctViewModel(
-//                                        jsonObject.getInt("idProduct"),
-//                                        jsonObject.getString("nameProduct"),
-//                                        jsonObject.getString("description"),
-//                                        jsonObject.getString("category"),
-//                                        jsonObject.getString("supplierProduct"),
-//                                        jsonObject.getString("price"),
-//                                        jsonObject.getString("unit"),
-//                                        jsonObject.getString("stock"),
-//                                        jsonObject.getString("imageProduct")
 
                                         jsonObject.getString("idProduct"),
                                         jsonObject.getString("nameProduct"),
@@ -182,7 +173,6 @@ public class PrdctListActivity extends AppCompatActivity implements PrdctCardAda
                                         jsonObject.getString("unit"),
                                         jsonObject.getString("stock"),
                                         jsonObject.getString("lastUpdate"),
-                                        jsonObject.getString("qtyUpdate"),
                                         jsonObject.getString("updateBy"),
                                         jsonObject.getString("description"),
                                         jsonObject.getString("imageProduct"),

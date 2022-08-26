@@ -309,7 +309,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Log.i("Input", "Data: "+id+", "+name+", "+postUser+", "+address+", "+email+", "+phone.toString());
+//                                                Log.i("Input", "Data: "+id+", "+name+", "+postUser+", "+address+", "+email+", "+phone.toString());
                                                 Intent i = getIntent();
                                                 setResult(RESULT_CANCELED,i);
                                                 EditProfileActivity.this.finish();

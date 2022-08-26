@@ -12,24 +12,24 @@ import com.baraka.barakamobile.R;
 
 import java.util.List;
 
-public class AdapterSpinnerCatAddEdit extends BaseAdapter {
+public class AdapterSpinnerSplrAddEdit extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
-    private List<DataSpinnerCate> cateDataSpinner;
+    private List<DataSpinnerSplr> splrDataSpinner;
 
-    public AdapterSpinnerCatAddEdit(Activity activity, List<DataSpinnerCate> cateDataSpinner){
+    public AdapterSpinnerSplrAddEdit(Activity activity, List<DataSpinnerSplr> splrDataSpinner){
         this.activity = activity;
-        this.cateDataSpinner = cateDataSpinner;
+        this.splrDataSpinner = splrDataSpinner;
     }
 
     @Override
     public int getCount() {
-        return cateDataSpinner.size();
+        return splrDataSpinner.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return cateDataSpinner.get(location);
+        return splrDataSpinner.get(location);
     }
 
     @Override
@@ -38,18 +38,18 @@ public class AdapterSpinnerCatAddEdit extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
 
         if (inflater == null)
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
-            convertView = inflater.inflate(R.layout.list_spinner_cat_add_edit, null);
-        TextView category = (TextView) convertView.findViewById(R.id.listSpinnerCatAddEdit);
+            convertView = inflater.inflate(R.layout.list_spinner_splr_add_edit, null);
+        TextView supplier = (TextView) convertView.findViewById(R.id.listSpinnerSplrAddEdit);
 
-        DataSpinnerCate dataSpinnerCate;
-        dataSpinnerCate = cateDataSpinner.get(position);
+        DataSpinnerSplr dataSpinnerSplr;
+        dataSpinnerSplr = splrDataSpinner.get(position);
 
-        category.setText(dataSpinnerCate.getNameCat());
+        supplier.setText(dataSpinnerSplr.getNameSplr());
 
 
         return convertView;

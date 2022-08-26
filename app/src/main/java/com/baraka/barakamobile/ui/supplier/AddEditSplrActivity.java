@@ -140,7 +140,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
         });
 
         if (nameSplr == null) {
-            setTitle("Tambah Produk");
+            setTitle("Tambah Supplier");
 
             inputNameSplr.setText(null);
             inputAlamatSplr.setText(null);
@@ -151,8 +151,8 @@ public class AddEditSplrActivity extends AppCompatActivity {
             Picasso.get().load(URL_SPLR_IMG_EDIT+imgSplr)
                     .fit()
                     .centerCrop()
-                    .placeholder(R.drawable.default_image_person_small)
-                    .error(R.drawable.default_image_person_small)
+                    .placeholder(R.drawable.default_image_comp_small)
+                    .error(R.drawable.default_image_comp_small)
                     .into(imgPhotoSplrEditDetail);
 
             Button btnSimpanAdd = findViewById(R.id.btnSaveSplrAddEdit);
@@ -161,7 +161,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     addSPlr();
 //                    onBackPressed();
-                    AddEditSplrActivity.this.finish();
+//                    AddEditSplrActivity.this.finish();
 
                 }
             });
@@ -439,16 +439,24 @@ public class AddEditSplrActivity extends AppCompatActivity {
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
 
-        AndroidNetworking.post(URL_SPLR_ADD)
-                .addBodyParameter("idCompSplr", idCompany)
-                .addBodyParameter("nameSplr", inputNameSplr.getText().toString())
-                .addBodyParameter("addrSplr", inputAlamatSplr.getText().toString())
-                .addBodyParameter("phoneSplr", inputTlpSplr.getText().toString())
-                .addBodyParameter("emailSplr", inputEmailSplr.getText().toString())
-                .addBodyParameter("descSplr", inputDescSplr.getText().toString())
+
+        AndroidNetworking.upload(URL_SPLR_ADD)
+                .addMultipartParameter("idCompSplr", idCompany)
+                .addMultipartParameter("nameSplr", inputNameSplr.getText().toString())
+                .addMultipartParameter("addrSplr", inputAlamatSplr.getText().toString())
+                .addMultipartParameter("phoneSplr", inputTlpSplr.getText().toString())
+                .addMultipartParameter("emailSplr", inputEmailSplr.getText().toString())
+                .addMultipartParameter("descSplr", inputDescSplr.getText().toString())
+                .addMultipartFile("imgSplr", fileImgSupplier)
                 .setTag("Update Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        // do anything with progress
+                    }
+                })
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject data) {
@@ -459,7 +467,7 @@ public class AddEditSplrActivity extends AppCompatActivity {
                             Boolean status = data.getBoolean("status");
                             if (status == true){
                                 new AlertDialog.Builder(AddEditSplrActivity.this)
-                                        .setMessage("Berhasil Mengudate Data")
+                                        .setMessage("Berhasil Menambah Supplier")
                                         .setCancelable(false)
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override

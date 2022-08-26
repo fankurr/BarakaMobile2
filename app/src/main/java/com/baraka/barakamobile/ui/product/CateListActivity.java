@@ -23,6 +23,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.supplier.AddEditSplrActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 
 import org.json.JSONArray;
@@ -63,6 +64,7 @@ public class CateListActivity extends AppCompatActivity implements CateListAdapt
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
 
+    ImageButton imgBtnAddCate;
     String id, email, name, level, access, idCompany, nameCompany;
 
     private List<CateViewModel> cateViewModelList;
@@ -79,10 +81,12 @@ public class CateListActivity extends AppCompatActivity implements CateListAdapt
         getSupportActionBar().setTitle("Semua Kategori");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
 
-        ImageButton imgBtnAddCate = (ImageButton) findViewById(R.id.imgBtnAddCate);
+        imgBtnAddCate = (ImageButton) findViewById(R.id.imgBtnAddCate);
         imgBtnAddCate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intentAddCate = new Intent(CateListActivity.this, AddEditCateActivity.class);
+                startActivity(intentAddCate);
 
             }
         });

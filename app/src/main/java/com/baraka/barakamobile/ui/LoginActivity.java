@@ -2,9 +2,11 @@ package com.baraka.barakamobile.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -31,6 +33,8 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.MainActivity;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.config.AppController;
+import com.baraka.barakamobile.ui.product.AddEditCateActivity;
+import com.baraka.barakamobile.ui.product.CateListActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
@@ -39,6 +43,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
     ConnectivityManager connectivityManager;
 
     private String url = DbConfig.URL + "login.php";
+    private String urlAddLog = DbConfig.URL_LOG + "addLog.php";
+
 
 //    private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -87,6 +95,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
 
+    public static final String ID_LOG = "idLogin";
+
     String tag_json_obj = "json_obj_req";
 
     MediaPlayer mediaPlayerLogin;
@@ -96,6 +106,11 @@ public class LoginActivity extends AppCompatActivity {
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
+    String idLog;
+
+    Calendar calender;
+    SimpleDateFormat simpledateformat;
+    String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +123,10 @@ public class LoginActivity extends AppCompatActivity {
         btnDaftar = (Button) findViewById(R.id.btnDaftar);
 
         mediaPlayerLogin = MediaPlayer.create(this, R.raw.sound_login);
+
+        calender = Calendar.getInstance();
+        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        date = simpledateformat.format(calender.getTime());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -213,6 +232,12 @@ public class LoginActivity extends AppCompatActivity {
                                             phoneComp = jsonObject.getString("phoneComp");
                                             emailComp = jsonObject.getString("emailComp");
 
+                                            calender = Calendar.getInstance();
+                                            simpledateformat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+                                            date = simpledateformat.format(calender.getTime());
+
+                                            idLog = id+"_"+idCompany+"_"+date;
+
                                             sharedPreferences = getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
 
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -231,6 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                                             editor.putString(ADDR_COMP, addrComp);
                                             editor.putString(PHONE_COMP, phoneComp);
                                             editor.putString(EMAIL_COMP, emailComp);
+                                            editor.putString(ID_LOG, idLog);
                                             editor.commit();
 
                                             progressDialog.dismiss();
@@ -246,6 +272,8 @@ public class LoginActivity extends AppCompatActivity {
                                             intent.putExtra(TAG_ACCESS, access);
                                             intent.putExtra(TAG_IDCOMP, idCompany);
                                             intent.putExtra(TAG_COMP, nameCompany);
+
+                                            addLog(idLog, idCompany, id);
 
                                             intent.putExtra(CODE_COMP, codeComp);
                                             intent.putExtra(ADDR_COMP, addrComp);
@@ -289,7 +317,6 @@ public class LoginActivity extends AppCompatActivity {
                                 // handle error
                                 Toast.makeText(LoginActivity.this, "Koneksi Gagal: " + error.toString(), Toast.LENGTH_SHORT).show();
                                 Log.d("ERROR","error => "+ error.toString());
-                                progressDialog.dismiss();
                             }
                         });
             }
@@ -304,5 +331,48 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    //add login
+    public void addLog(String idLogin, String idCompLog, String userLogin){
+
+        calender = Calendar.getInstance();
+        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        date = simpledateformat.format(calender.getTime());
+
+        AndroidNetworking.post(urlAddLog)
+                .addBodyParameter("idLogin", idLogin)
+                .addBodyParameter("idCompLogin", idCompLog)
+                .addBodyParameter("userLogin", userLogin)
+                .addBodyParameter("datetimeLogin", date)
+                .addBodyParameter("datetimeLogout", "")
+                .setTag("Update Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        Log.d("Respon Edit",""+data);
+
+                        try {
+                            Boolean status = data.getBoolean("success");
+                            if (status == true){
+                                Toast.makeText(LoginActivity.this, "Login Berhasil Tercatat!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Login Gagal Tercatat!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(LoginActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                    }
+                });
+
     }
 }

@@ -220,7 +220,6 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
                                         jsonObject.getString("unit"),
                                         jsonObject.getString("stock"),
                                         jsonObject.getString("lastUpdate"),
-                                        jsonObject.getString("qtyUpdate"),
                                         jsonObject.getString("updateBy"),
                                         jsonObject.getString("description"),
                                         jsonObject.getString("imageProduct"),

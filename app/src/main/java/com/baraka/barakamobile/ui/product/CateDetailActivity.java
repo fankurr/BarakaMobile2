@@ -4,16 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +29,9 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.supplier.SupplierDetailActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +63,8 @@ public class CateDetailActivity extends AppCompatActivity {
 
     public static final String my_shared_preferences = "my_shared_preferences";
     private String urlCatDetail = DbConfig.URL_CATE + "idCat.php";
+    private String urlCatDel = DbConfig.URL_CATE + "delCat.php";
+    private String URL_CATE_IMG = DbConfig.URL_CATE + "imgCat/";
     private SwipeRefreshLayout swipeRefreshLayout;
 
     String id, email, name, level, access, idCompany, nameCompany;
@@ -62,8 +73,8 @@ public class CateDetailActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     TextView txtViewNameCatDetail, txtViewDescCatDetail;
-    Image imgCateDetail;
-    Button btnEditCateEdit;
+    ImageView imgCateDetail;
+    Button btnEditCateEdit, btnDelCateDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +99,7 @@ public class CateDetailActivity extends AppCompatActivity {
 
         txtViewNameCatDetail = findViewById(R.id.textViewNameCatDetail);
         txtViewDescCatDetail = findViewById(R.id.textViewDescCatDetail);
+        imgCateDetail = findViewById(R.id.imgCateDetail);
 
         cateDetail();
 
@@ -105,6 +117,39 @@ public class CateDetailActivity extends AppCompatActivity {
 
             private void onItemLoad() {
                 swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        btnDelCateDetail = findViewById(R.id.btnDelCateDetail);
+        btnDelCateDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Dialog dialogDel = new Dialog(CateDetailActivity.this);
+
+                dialogDel.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogDel.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogDel.setContentView(R.layout.dialog_delete);
+
+                TextView textWarnDel = dialogDel.findViewById(R.id.textDelWarning);
+                textWarnDel.setText("Apa Anda yakin ingin menghapus [" +nameCat+ "] dari data Anda?");
+
+                Button btnDelNo = dialogDel.findViewById(R.id.btnDelNo);
+                btnDelNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogDel.dismiss();
+                    }
+                });
+                Button btnDelYes = dialogDel.findViewById(R.id.btnDelYes);
+                btnDelYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        delCate();
+                        dialogDel.dismiss();
+                    }
+                });
+                dialogDel.show();
             }
         });
 
@@ -160,6 +205,13 @@ public class CateDetailActivity extends AppCompatActivity {
                                 txtViewNameCatDetail.setText(jsonObject.getString("nameCat"));
                                 txtViewDescCatDetail.setText(jsonObject.getString("descCat"));
 
+                                Picasso.get().load(URL_CATE_IMG+jsonObject.getString("imgCat"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_small)
+                                        .error(R.drawable.default_image_small)
+                                        .into(imgCateDetail);
+
                                 getSupportActionBar().setTitle(jsonObject.getString("nameCat"));
 
                                 progressDialog.dismiss();
@@ -167,6 +219,72 @@ public class CateDetailActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(CateDetailActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(CateDetailActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
+
+    private void delCate() {
+        ProgressDialog progressDialog = new ProgressDialog(CateDetailActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Detail Produk");
+        progressDialog.show();
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+
+        AndroidNetworking.post(urlCatDel)
+                .addBodyParameter("idCat", idCat.toString())
+                .setTag("Update Data")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        progressDialog.dismiss();
+                        Log.d("Respon Edit",""+data);
+
+                        try {
+                            Boolean status = data.getBoolean("status");
+                            if (status == true){
+                                new AlertDialog.Builder(CateDetailActivity.this)
+                                        .setMessage("Berhasil Menghapus Data")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = getIntent();
+                                                setResult(RESULT_OK, intent);
+                                                CateDetailActivity.this.finish();
+                                                onBackPressed();
+                                            }
+                                        })
+                                        .show();
+                            }else{
+                                new AlertDialog.Builder(CateDetailActivity.this)
+                                        .setMessage("Gagal Mengupdate Data")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent i = getIntent();
+                                                setResult(RESULT_CANCELED,i);
+                                                CateDetailActivity.this.finish();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
 

@@ -221,7 +221,8 @@ public class SellFragment extends Fragment {
                                         jsonObject.getString("qtyTransaction"),
                                         jsonObject.getString("unit"),
                                         jsonObject.getString("valueTx"),
-                                        jsonObject.getString("dateTime")
+                                        jsonObject.getString("dateTime"),
+                                        jsonObject.getString("imageProduct")
 
                                 );
                                 txViewModelList.add(txViewModel);

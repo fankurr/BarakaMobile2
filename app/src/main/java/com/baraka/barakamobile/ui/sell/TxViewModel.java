@@ -38,7 +38,8 @@ public class TxViewModel {
                        String qtyTx,
                        String unitPrdct,
                        String valueTx,
-                       String datetimeTx) {
+                       String datetimeTx,
+                       String imgPrdct) {
         this.idTx = idTx;
         this.idCompTx = idCompTx;
         this.idPrdctTx = idPrdctTx;
@@ -48,6 +49,7 @@ public class TxViewModel {
         this.datetimeTx = datetimeTx;
         this.nameComp = nameComp;
         this.namePrdct = namePrdct;
+        this.imgPrdct = imgPrdct;
     }
 
     public int getIdTx() {
