@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
@@ -111,11 +112,15 @@ public class LoginActivity extends AppCompatActivity {
     Calendar calender;
     SimpleDateFormat simpledateformat;
     String date;
+    Locale locale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
 
         InputEmailLogin = (EditText) findViewById(R.id.inputEmailLogin);
         InputPassLogin = (EditText) findViewById(R.id.inputPassLogin);
@@ -338,7 +343,7 @@ public class LoginActivity extends AppCompatActivity {
     public void addLog(String idLogin, String idCompLog, String userLogin){
 
         calender = Calendar.getInstance();
-        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        simpledateformat = new SimpleDateFormat("EEEE, dd-MM-yyyy HH:mm:ss");
         date = simpledateformat.format(calender.getTime());
 
         AndroidNetworking.post(urlAddLog)

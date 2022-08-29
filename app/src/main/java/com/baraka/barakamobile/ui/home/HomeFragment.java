@@ -3,6 +3,7 @@ package com.baraka.barakamobile.ui.home;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,9 +29,11 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.databinding.FragmentHomeBinding;
+import com.baraka.barakamobile.ui.profile.CompProActivity;
 import com.baraka.barakamobile.ui.sell.TxCardAdapter;
 import com.baraka.barakamobile.ui.sell.TxViewModel;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +46,8 @@ public class HomeFragment extends Fragment {
 
 
     private String URL_DASHBOARD = DbConfig.URL_HOME + "allHome.php";
+    private String URL_DASHBOARD_PAY = DbConfig.URL_HOME + "totalPay.php";
+    private String URL_DASHBOARD_TX = DbConfig.URL_HOME + "totalSell.php";
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
@@ -82,6 +87,8 @@ public class HomeFragment extends Fragment {
 
     List<HomeViewModelList> homeViewModelLists;
 
+    TextView txtHomeTotalPayout, txtHomeTotalSell;
+
     String id, email, name, level, access, idCompany, nameCompany;
     String idPay, idCompPay,valPay,descPay, datetimePay, signPay;
 
@@ -101,6 +108,9 @@ public class HomeFragment extends Fragment {
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
 
 
+        txtHomeTotalPayout = (TextView) view.findViewById(R.id.txtHomeTotalPayout);
+        txtHomeTotalSell = (TextView) view.findViewById(R.id.txtHomeTotalSell);
+
         rViewHome = (RecyclerView) view.findViewById(R.id.recyclerViewHome);
         rViewHome.setLayoutManager(new LinearLayoutManager(getContext()));
         rViewHome.setHasFixedSize(true);
@@ -109,6 +119,8 @@ public class HomeFragment extends Fragment {
         rViewHome.setAdapter(homeCardAdapter);
 
         getHome();
+        txHome();
+        payoutHome();
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.SwipeRefreshHome);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -118,6 +130,9 @@ public class HomeFragment extends Fragment {
             }
 
             private void refreshItem() {
+                txHome();
+                payoutHome();
+
                 //Fetch Data TX
                 getHome();
 
@@ -134,6 +149,79 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
+    // Detail CompPro
+    public void txHome(){
+
+        AndroidNetworking.post(URL_DASHBOARD_TX)
+                .addBodyParameter("idCompTx", idCompany.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                txtHomeTotalSell.setText(jsonObject.getString("sumValTx"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(getContext(), "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+
+                    }
+                });
+    }
+
+    // Detail CompPro
+    public void payoutHome(){
+
+        AndroidNetworking.post(URL_DASHBOARD_PAY)
+                .addBodyParameter("idCompPay", idCompany.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                txtHomeTotalPayout.setText(jsonObject.getString("sumValPay"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(getContext(), "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+
+                    }
+                });
+    }
+
 
     private void getHome() {
         ProgressDialog progressDialog = new ProgressDialog(this.getContext());

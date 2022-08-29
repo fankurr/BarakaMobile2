@@ -1,33 +1,38 @@
 package com.baraka.barakamobile.ui.pos;
 
 
-import static com.baraka.barakamobile.ui.pos.POSCardAdapter.NAME_PRDCT;
-import static com.baraka.barakamobile.ui.pos.POSCardAdapter.PRICE_PRDCT;
-import static com.baraka.barakamobile.ui.pos.POSCardAdapter.STOCK_PRDCT;
-import static com.baraka.barakamobile.ui.pos.POSCardAdapter.UNIT_PRDCT;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,91 +43,58 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.baraka.barakamobile.BuildConfig;
-import com.baraka.barakamobile.MainActivity;
 import com.baraka.barakamobile.R;
-import com.baraka.barakamobile.ui.product.CateCardAdpater;
-import com.baraka.barakamobile.ui.product.CateViewModel;
-import com.baraka.barakamobile.ui.product.PrdctCardAdapter;
-import com.baraka.barakamobile.ui.product.PrdctDetail;
-import com.baraka.barakamobile.ui.product.PrdctViewModel;
-import com.baraka.barakamobile.ui.product.ProductFragment;
-import com.baraka.barakamobile.ui.product.ProductViewModel;
-import com.baraka.barakamobile.ui.supplier.SupplierDetailActivity;
-import com.baraka.barakamobile.ui.usermanaje.WorkerLogViewModel;
+import com.baraka.barakamobile.ui.usermanaje.WorkerLogListActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 // ============================================= //
 
 import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class POSActivity extends AppCompatActivity {
 
@@ -140,6 +112,8 @@ public class POSActivity extends AppCompatActivity {
     private String URL_PRDCT = DbConfig.URL_PRDCT + "allPrdct.php";
     private String URL_CATE = DbConfig.URL_CATE + "allCat.php";
     private String TX = DbConfig.URL_TX + "addTx.php";
+    private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
+    private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
     public static final String ID_PRDCT_POS = "idProduct";
     public static final String NAME_PRDCT_POS = "namePrdct";
@@ -165,7 +139,16 @@ public class POSActivity extends AppCompatActivity {
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
+
     String id, email, name, level, access, idCompany, nameCompany;
+    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
     TextView txtIdTx, txtNamaPrdct,txtPricePrdct,txtUnitPrdct,txtIdPrdct,txtStockPrdct, totalPrdctIn;
     TextView txtIdPrdctOut, txtPricePrdctOut, txtQtyOut, txtTotalOut;
     String totalPrdctPrice;
@@ -182,9 +165,15 @@ public class POSActivity extends AppCompatActivity {
     String pdfname;
     Context context;
 
-    Calendar calender;
-    SimpleDateFormat simpledateformat;
-    String date;
+    FloatingActionButton btnCheckout;
+
+    Calendar calender, calenderTTD;
+    SimpleDateFormat simpledateformat, simpledateformatTTD;
+    String date, dateTTD;
+    ImageView imgCompHeader;
+    Locale locale;
+
+    ImageView imgCompHeaderTx;
 
     float valueTx, inputValTx, prdctPrice;
 
@@ -197,10 +186,23 @@ public class POSActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
 
+    // constant code for runtime permissions
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISION_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pos);
+
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
+
+        verifyStoragePermission(this);
 
         slidingUpPanelLayoutPos = (SlidingUpPanelLayout) findViewById(R.id.sliding_pos);
         slidingUpPanelLayoutPos.addPanelSlideListener(onSlideListener());
@@ -209,7 +211,15 @@ public class POSActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.point_of_sale);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twotone_chevron_left_24);
 
-        sharedPreferences = getSharedPreferences(my_shared_preferences,Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+
+        id = sharedPreferences.getString(TAG_ID, id);
+        level = sharedPreferences.getString(TAG_LEVEL, level);
+        idComp = sharedPreferences.getString(ID_COMP, idComp);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
+        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+
         id = sharedPreferences.getString(TAG_ID, null);
         email = sharedPreferences.getString(TAG_EMAIL, null);
         name = sharedPreferences.getString(TAG_NAME, null);
@@ -217,6 +227,7 @@ public class POSActivity extends AppCompatActivity {
         access = sharedPreferences.getString(TAG_ACCESS, null);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
+
 
         recyclerView = (RecyclerView) findViewById(R.id.RecyclerViewPOS);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -228,6 +239,10 @@ public class POSActivity extends AppCompatActivity {
         simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
         date = simpledateformat.format(calender.getTime());
 
+        calenderTTD = Calendar.getInstance();
+        simpledateformatTTD = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        dateTTD = simpledateformatTTD.format(calenderTTD.getTime());
+
         posCardAdapter = new POSCardAdapter(posViewModelList, this);
 
         totalTxt = (TextView) findViewById(R.id.textViewPosTotal);
@@ -237,8 +252,11 @@ public class POSActivity extends AppCompatActivity {
         txtQtyOut = (TextView) findViewById(R.id.txtViewJmlhPrdctPosOutput);
         txtTotalOut = (TextView) findViewById(R.id.txtViewPricePrdctPosOutputTotal);
 
+        imgCompHeaderTx = (ImageView) findViewById(R.id.imgCompHeaderTx);
+
         //Fetch Data Produk
         getPrdct();
+        detailComp();
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshPOS);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -250,6 +268,7 @@ public class POSActivity extends AppCompatActivity {
             private void refreshItem() {
                 //Fetch Data Produk
                 getPrdct();
+                detailComp();
                 onItemLoad();
             }
 
@@ -359,36 +378,37 @@ public class POSActivity extends AppCompatActivity {
                                                 try {
                                                     Boolean status = response.getBoolean("success");
                                                     if (status == true) {
-                                                        new android.app.AlertDialog.Builder(POSActivity.this)
-                                                                .setMessage("Penambahan Data Belanja Berhasil!")
-                                                                .setCancelable(false)
-                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-
-//                                                                        Log.e("Input", "Data: "+idCompany+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
-                                                                        Context context = POSActivity.this;
-                                                                        POSActivity.this.setResult(RESULT_OK);
-                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-                                                                        optionDialog.dismiss();
-                                                                        Toast.makeText(context, "Berhasil Menambah Data Belanja", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                })
-                                                                .show();
+                                                        Toast.makeText(POSActivity.this, "Berhasil Menambah Data Belanja", Toast.LENGTH_SHORT).show();
+//                                                        new android.app.AlertDialog.Builder(POSActivity.this)
+//                                                                .setMessage("Penambahan Data Belanja Berhasil!")
+//                                                                .setCancelable(false)
+//                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                                                    @Override
+//                                                                    public void onClick(DialogInterface dialog, int which) {
+//
+////                                                                        Log.e("Input", "Data: "+idCompany+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+//                                                                        Context context = POSActivity.this;
+//                                                                        POSActivity.this.setResult(RESULT_OK);
+//                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                                        optionDialog.dismiss();
+//                                                                        Toast.makeText(context, "Berhasil Menambah Data Belanja", Toast.LENGTH_SHORT).show();
+//                                                                    }
+//                                                                })
+//                                                                .show();
                                                     } else {
-
-                                                        new android.app.AlertDialog.Builder(POSActivity.this)
-                                                                .setMessage("Penambahan Data Belanja Gagal!")
-                                                                .setCancelable(false)
-                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        Context c = POSActivity.this;
-                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-                                                                        optionDialog.dismiss();
-                                                                    }
-                                                                })
-                                                                .show();
+//
+//                                                        new android.app.AlertDialog.Builder(POSActivity.this)
+//                                                                .setMessage("Penambahan Data Belanja Gagal!")
+//                                                                .setCancelable(false)
+//                                                                .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
+//                                                                    @Override
+//                                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                                        Context c = POSActivity.this;
+//                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
+//                                                                        optionDialog.dismiss();
+//                                                                    }
+//                                                                })
+//                                                                .show();
                                                     }
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
@@ -493,8 +513,8 @@ public class POSActivity extends AppCompatActivity {
             }
         });
 
-        ImageView imgCheckout = (ImageView) findViewById(R.id.imgCheckout);
-        imgCheckout.setOnClickListener(new View.OnClickListener() {
+        btnCheckout = (FloatingActionButton) findViewById(R.id.btnCheckout);
+        btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -512,88 +532,66 @@ public class POSActivity extends AppCompatActivity {
                         idPrdct = posOutputViewModelList.get(i).getIdPrdct()+ " ";
                     }
 
-//                    ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
-//                    progressDialog.setCancelable(false);
-//                    progressDialog.setMessage("Proses Checkout..");
-//                    progressDialog.show();
-//
-//                    sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
-//                    idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
-//
-//                    String finalIdPrdct = idPrdct;
-//                    AndroidNetworking.post(TX)
-//                            .addBodyParameter("idPrdctTx", "5")
-//                            .setTag(this)
-//                            .setPriority(Priority.MEDIUM)
-//                            .build()
-//                            .getAsJSONObject(new JSONObjectRequestListener() {
-//                                @Override
-//                                public void onResponse(JSONObject response) {
-//                                    progressDialog.dismiss();
-//                                    Log.d("Respon Edit",""+response);
-//
-//                                    try {
-//                                        Boolean status = response.getBoolean("success");
-//                                        if (status == true){
-//                                            new android.app.AlertDialog.Builder(POSActivity.this)
-//                                                    .setMessage("Checkout Berhasil!")
-//                                                    .setCancelable(false)
-//                                                    .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-//                                                        @Override
-//                                                        public void onClick(DialogInterface dialog, int which) {
-//                                                            Context context = POSActivity.this;
-//                                                            POSActivity.this.setResult(RESULT_OK);
-//                                                            android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-//                                                            optionDialog.dismiss();
-//                                                            Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
-//                                                        }
-//                                                    })
-//                                                    .show();
-//                                        }else{
-//
-//                                            new android.app.AlertDialog.Builder(POSActivity.this)
-//                                                    .setMessage("Checkout Gagal!")
-//                                                    .setCancelable(false)
-//                                                    .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-//                                                        @Override
-//                                                        public void onClick(DialogInterface dialog, int which) {
-////                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
-//                                                            Context c = POSActivity.this;
-//                                                            android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-//                                                            optionDialog.dismiss();
-//                                                        }
-//                                                    })
-//                                                    .show();
-//                                        }
-//                                    } catch (JSONException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onError(ANError anError) {
-//                                    Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-//                                    Log.d("ERROR","error => "+ anError.toString());
-//                                    Log.i("Input", "Data: "+idCompany+", "+ finalIdPrdct.toString());
-//                                    progressDialog.dismiss();
-//                                }
-//                            });
-
                     Log.i("Id Product",idPrdct.toString());
                     Log.i("Nama Produk",namaProduct.toString());
                 }
 
-//                try {
-//                    createPdf();
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (DocumentException e) {
-//                    e.printStackTrace();
-//                }
                 addTx(idPrdct);
+                try {
+                    createPdf();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
+    }
+
+    private void verifyStoragePermission(Activity activity) {
+        int permission = ActivityCompat.checkSelfPermission(activity, WRITE_EXTERNAL_STORAGE);
+        if(SDK_INT >= Build.VERSION_CODES.R){
+            if(!Environment.isExternalStorageManager() && permission != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(
+                        activity,
+                        PERMISION_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE
+                );
+
+                Intent intent = new Intent();
+                intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+            }
+        }
+    }
+
+    // Access pdf from storage and using to Intent get options to view application in available applications.
+    private void openPDF(String pdfname) {
+
+        // Get the File location and file name.
+        File file = new File(Environment.getExternalStorageDirectory(), "POSBaraka/"+pdfname);
+        Log.d("pdfFIle", "" + file);
+
+        // Get the URI Path of file.
+        Uri uriPdfPath = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", file);
+        Log.d("pdfPath", "" + uriPdfPath);
+
+        // Start Intent to View PDF from the Installed Applications.
+        Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
+        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |  Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        try {
+            startActivity(pdfOpenIntent);
+        } catch (ActivityNotFoundException activityNotFoundException) {
+            Toast.makeText(this,"There is no app to load corresponding PDF",Toast.LENGTH_LONG).show();
+
+        }
     }
 
 //    public void clearOutpur() {
@@ -607,15 +605,6 @@ public class POSActivity extends AppCompatActivity {
 //        }
 //    }
 
-    private void getPrint(){
-//        posOutputViewModelList = posOutputAdapter.getPrintView();
-//        Document document = new Document(PageSize.A4);
-//        final File file = new File(getStorageDir("PDF"), "print.pdf");
-//        try {
-//            PdfWriter.getInstance
-//        }
-
-    }
 
     // untuk merefresh textview total belanja yang diinput(pos), setelah diahpus salah satu
     Thread thread = new Thread() {
@@ -697,35 +686,9 @@ public class POSActivity extends AppCompatActivity {
                         try {
                             Boolean status = response.getBoolean("success");
                             if (status == true){
-                                new android.app.AlertDialog.Builder(POSActivity.this)
-                                        .setMessage("Checkout Berhasil!")
-                                        .setCancelable(false)
-                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Context context = POSActivity.this;
-                                                POSActivity.this.setResult(RESULT_OK);
-                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-                                                optionDialog.dismiss();
-                                                Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .show();
+                                Toast.makeText(context, "Menambah Keranjang", Toast.LENGTH_SHORT).show();
                             }else{
 
-                                new android.app.AlertDialog.Builder(POSActivity.this)
-                                        .setMessage("Checkout Gagal!")
-                                        .setCancelable(false)
-                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-//                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
-                                                Context c = POSActivity.this;
-                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-                                                optionDialog.dismiss();
-                                            }
-                                        })
-                                        .show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -853,7 +816,8 @@ public class POSActivity extends AppCompatActivity {
                                         jsonObject.getString("nameProduct"),
                                         jsonObject.getString("price"),
                                         jsonObject.getString("unit"),
-                                        jsonObject.getString("stock")
+                                        jsonObject.getString("stock"),
+                                        jsonObject.getString("imageProduct")
 
 //                                        jsonObject.getInt("idProduct"),
 //                                        jsonObject.getString("nameProduct"),
@@ -914,7 +878,7 @@ public class POSActivity extends AppCompatActivity {
                 });
     }
 
-    private void createPdf() throws FileNotFoundException, DocumentException {
+    private void createPdf() throws IOException, DocumentException {
         File docsFolder = new File(Environment.getExternalStorageDirectory() + "/POSBaraka");
         if (!docsFolder.exists()) {
             docsFolder.mkdir();
@@ -924,7 +888,7 @@ public class POSActivity extends AppCompatActivity {
         Date date = new Date() ;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date);
 
-        pdfname = "Struk_" + nameCompany + "_" + timeStamp + ".pdf";
+        pdfname = "Laporan_TX_" + nameCompany + "_" + timeStamp + ".pdf";
         pdfFile = new File(docsFolder.getAbsolutePath(), pdfname);
 
         OutputStream output = new FileOutputStream(pdfFile);
@@ -932,6 +896,30 @@ public class POSActivity extends AppCompatActivity {
 //        BaseFont baseFont = BaseFont.createFont("res/font/ubuntu_mono.ttf", "UTF-8", BaseFont.EMBEDDED);
 //        Font urFontName = new Font(baseFont, 12);
         Document document = new Document(PageSize.A4);
+
+        Bitmap bmp = ((BitmapDrawable)imgCompHeaderTx.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        Image image = Image.getInstance(stream.toByteArray());
+        image.scaleToFit(60, 60);
+        image.setWidthPercentage(100);
+        image.setAlignment(Element.ALIGN_LEFT);
+
+
+        Font o = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.BOLD);
+        Font z = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.NORMAL);
+
+        Paragraph header = new Paragraph(nameCompany,o);
+        header.add(new Paragraph("\n"+addrComp,z));
+
+        PdfPTable tableHeader = new PdfPTable(new float[]{0.5f, 3});
+        tableHeader.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        tableHeader.getDefaultCell().setFixedHeight(50);
+        tableHeader.setTotalWidth(PageSize.A4.getWidth());
+        tableHeader.setWidthPercentage(100);
+        tableHeader.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+        tableHeader.addCell(image);
+        tableHeader.addCell(header);
 
         PdfPTable table = new PdfPTable(new float[]{1, 3, 3, 3, 3});
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -947,8 +935,22 @@ public class POSActivity extends AppCompatActivity {
         table.setHeaderRows(1);
 
         PdfPCell[] cells = table.getRow(0).getCells();
+        PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
+
+        Paragraph tglTTD = new Paragraph(addrComp+", "+dateTTD);
+        tglTTD.setAlignment(Element.ALIGN_RIGHT);
+
+        Paragraph userTTD = new Paragraph(name);
+        userTTD.setAlignment(Element.ALIGN_RIGHT);
+        userTTD.setIndentationRight(60);
+        userTTD.setSpacingBefore(60);
+
         for (int j = 0; j < cells.length; j++) {
             cells[j].setBackgroundColor(BaseColor.WHITE);
+        }
+
+        for (int j = 0; j < cellsHeader.length; j++) {
+            cellsHeader[j].setBorder(Rectangle.NO_BORDER);
         }
 
         for (int i = 0; i < posOutputViewModelList.size(); i++) {
@@ -972,18 +974,24 @@ public class POSActivity extends AppCompatActivity {
 
         //Step 3
         document.open();
+        document.add(tableHeader);
 
+        LineSeparator ls = new LineSeparator();
         //Step 4 Add content
 //        document.add((Element) new Paragraph("Test"));
 //        document.add((Element) new Paragraph("Test Test Test Test Test Test Test Test "));
 
-        Font f = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.UNDERLINE);
-        Font g = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.NORMAL);
-        Font h = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.NORMAL);
-        document.add(new Paragraph("Struk ", f));
-        document.add(new Paragraph(nameCompany, g));
+        Font f = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.UNDERLINE);
+        Font g = new Font(Font.FontFamily.TIMES_ROMAN, 10.0f, Font.NORMAL);
+        Font h = new Font(Font.FontFamily.TIMES_ROMAN, 5.0f, Font.NORMAL);
         document.add(new Paragraph(" ", h));
+        document.add(new Chunk(ls));
+        ls.setOffset(5);
+        document.add(new Paragraph("Laporan Transaksi ", f));
+        document.add(new Paragraph(" ", g));
         document.add(table);
+        document.add(tglTTD);
+        document.add(userTTD);
 
         //Step 5: Close the document
         document.close();
@@ -991,6 +999,82 @@ public class POSActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Pdf Generate!", Toast.LENGTH_SHORT).show();
 
+        openPDF(pdfname);
+    }
+
+    // Detail CompPro
+    public void detailComp(){
+
+        AndroidNetworking.post(urlCompProDetail)
+                .addBodyParameter("idComp", idCompany.toString())
+                .addBodyParameter("codeComp", codeComp.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                jsonObject.getString("logoComp");
+
+                                Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
+                                        .resize(30, 30)
+                                        .centerCrop()
+                                        .into(imgCompHeaderTx);
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.d("ERROR","error => "+ anError.toString());
+
+                    }
+                });
+    }
+
+    private boolean checkPermission() {
+        // checking of permissions.
+        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return  permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        // requesting permissions if not provided.
+        ActivityCompat.requestPermissions(POSActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+
+                // after requesting permissions we are showing
+                // users a toast message of permission granted.
+                boolean writeStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                if (writeStorage && readStorage) {
+                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }
     }
 
     @Override

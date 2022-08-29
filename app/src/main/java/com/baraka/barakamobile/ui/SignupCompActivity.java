@@ -3,13 +3,17 @@ package com.baraka.barakamobile.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,11 +36,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.Locale;
 import java.util.Random;
 
 public class SignupCompActivity extends AppCompatActivity {
     private String URL_COMP_REG = DbConfig.URL_COMP + "addComp.php";
     private String URL_COMP_CEK = DbConfig.URL_COMP + "idComp.php";
+    private String URL_COMP_IMG = DbConfig.URL_COMP + "imgUser/";
 
     EditText inputNameComp, inputCodeComp, inputAddrComp, inputPhoneComp, inputEmailComp;
     Button btnUploadPhotoComp, btnBackSignupComp, btnDaftarSignupComp;
@@ -55,13 +62,23 @@ public class SignupCompActivity extends AppCompatActivity {
     private static final String _CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     private static final int RANDOM_STR_LENGTH = 9;
 
+    int SELECT_PICTURE = 200;
+
     ProgressDialog progressDialog;
     ConnectivityManager connectivityManager;
+
+    Locale locale;
+
+    Uri selectedImageUri;
+    File imgRegistComp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_comp);
+
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -101,9 +118,11 @@ public class SignupCompActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
-                startActivityForResult(intent, 7);
+                imageChooser();
+
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("*/*");
+//                startActivityForResult(intent, 7);
             }
         });
 
@@ -143,6 +162,70 @@ public class SignupCompActivity extends AppCompatActivity {
         });
     }
 
+    void imageChooser() {
+
+        // create an instance of the
+        // intent of the type image
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
+    }
+
+    public String getRealPathFromURI(Uri contentURI, Activity context) {
+
+        String[] projection = { MediaStore.Images.Media.DATA };
+
+        @SuppressWarnings("deprecation")
+        Cursor cursor = context.managedQuery(contentURI, projection, null, null, null);
+        if (cursor == null)
+            return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(column_index);
+            // cursor.close();
+            return s;
+        }
+
+        // cursor.close();
+        return null;
+
+    }
+
+
+    // this function is triggered when user
+    // selects the image from the imageChooser
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        textPathComp = (TextView)findViewById(R.id.textViewPhotoRegistComp);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                selectedImageUri = data.getData();
+                String PathHolder = data.getData().getPath();
+                textPathComp.setText(PathHolder);
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+
+//                    Picasso.get().load(selectedImageUri)
+//                            .resize(450, 450)
+//                            .centerCrop()
+//                            .into(imgUser);
+
+                    String imagepath = getRealPathFromURI(selectedImageUri, SignupCompActivity.this);
+
+                    imgRegistComp = new File(imagepath);
+
+//                    imgUser.setImageURI(selectedImageUri);
+                }
+            }
+        }
+    }
+
     public String getRandomString(){
         StringBuffer randStr = new StringBuffer();
         for (int i = 0; i < RANDOM_STR_LENGTH; i++) {
@@ -176,13 +259,13 @@ public class SignupCompActivity extends AppCompatActivity {
         progressDialog.setMessage("Pendaftaran Toko Sedang Diproses..");
         progressDialog.show();
 
-        AndroidNetworking.post(URL_COMP_REG)
-                .addBodyParameter("nameComp", nameComp)
-                .addBodyParameter("codeComp", codeComp)
-                .addBodyParameter("addrComp", addrComp)
-                .addBodyParameter("phoneComp", phoneComp)
-                .addBodyParameter("emailComp", emailComp)
-                .addBodyParameter("logoComp", "")
+        AndroidNetworking.upload(URL_COMP_REG)
+                .addMultipartParameter("nameComp", nameComp)
+                .addMultipartParameter("codeComp", codeComp)
+                .addMultipartParameter("addrComp", addrComp)
+                .addMultipartParameter("phoneComp", phoneComp)
+                .addMultipartParameter("emailComp", emailComp)
+                .addMultipartFile("logoComp", imgRegistComp)
                 .setTag("Tambah Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -209,8 +292,10 @@ public class SignupCompActivity extends AppCompatActivity {
                                                 intentComp.putExtra(PHONE_COMP, phoneComp);
                                                 intentComp.putExtra(EMAIL_COMP, emailComp);
                                                 intentComp.putExtra(LOGO_COMP, logoComp);
-                                                setResult(RESULT_OK, intentComp);
+
+                                                Intent intentBackSingup = new Intent(SignupCompActivity.this, SignupActivity.class);
                                                 finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
@@ -222,9 +307,9 @@ public class SignupCompActivity extends AppCompatActivity {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 Log.i("Input", "Data: "+inputNameComp+", "+inputAddrComp+", "+inputPhoneComp+", "+inputEmailComp.toString());
-                                                Intent i = getIntent();
-                                                setResult(RESULT_CANCELED,i);
-                                                SignupCompActivity.this.finish();
+                                                Intent intentBackSingup = new Intent(SignupCompActivity.this, SignupActivity.class);
+                                                finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
@@ -247,19 +332,19 @@ public class SignupCompActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        textPathComp = (TextView)findViewById(R.id.textViewPhotoRegistComp);
-
-        switch (requestCode) {
-            case 7:
-                if (resultCode==RESULT_OK) {
-                    String PathHolder = data.getData().getPath();
-                    textPathComp.setText(PathHolder);
-                }
-                break;
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//        textPathComp = (TextView)findViewById(R.id.textViewPhotoRegistComp);
+//
+//        switch (requestCode) {
+//            case 7:
+//                if (resultCode==RESULT_OK) {
+//                    String PathHolder = data.getData().getPath();
+//                    textPathComp.setText(PathHolder);
+//                }
+//                break;
+//        }
+//    }
 }

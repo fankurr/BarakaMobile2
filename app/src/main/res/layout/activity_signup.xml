@@ -158,53 +158,82 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        app:boxStrokeColor="@color/colorPrimary">
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/inputCompRegist"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center"
-                            android:background="@color/colorBackground1"
-                            android:drawableStart="@drawable/ic_twotone_home_work_24"
-                            android:hint="Kode Toko"
-                            android:inputType="textShortMessage"
-                            android:maxLines="1"
-                            android:textSize="15sp" />
-
-                        <LinearLayout
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginBottom="15dp"
+                            app:boxStrokeColor="@color/colorPrimary">
 
-                            <TextView
-                                android:id="@+id/textView74"
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/inputCompRegist"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/ubuntu"
-                                android:text="Toko Anda Belum Terdaftar?"
-                                android:textColor="@color/colorDark"
-                                android:textSize="14sp" />
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center"
+                                android:background="@color/colorBackground1"
+                                android:drawableStart="@drawable/ic_twotone_home_work_24"
+                                android:hint="Kode Toko"
+                                android:inputType="textShortMessage"
+                                android:maxLines="1"
+                                android:textSize="15sp" />
 
-                            <TextView
-                                android:id="@+id/txtSignupComp"
-                                android:layout_width="match_parent"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="12dp"
-                                android:fontFamily="@font/ubuntu_bold"
-                                android:text="Daftar!"
-                                android:textColor="@color/colorPrimaryLight"
-                                android:textSize="14sp" />
-                        </LinearLayout>
+                                android:orientation="horizontal">
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                                <TextView
+                                    android:id="@+id/textView74"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/ubuntu"
+                                    android:text="Toko Anda Belum Terdaftar?"
+                                    android:textColor="@color/colorDark"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/txtSignupComp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="12dp"
+                                    android:fontFamily="@font/ubuntu_bold"
+                                    android:text="Daftar!"
+                                    android:textColor="@color/colorPrimaryLight"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/txtIdCompSearch"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="idComp"
+                                    android:visibility="gone"
+                                    tools:visibility="gone" />
+                            </LinearLayout>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/btnSearchComp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_weight="0"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@color/white"
+                            app:srcCompat="@drawable/ic_twotone_search_24"
+                            app:strokeColor="@color/colorPrimary"
+                            app:strokeWidth="3dp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 

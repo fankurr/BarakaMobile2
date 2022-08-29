@@ -14,9 +14,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <SearchView
+        <ImageView
+            android:id="@+id/imgCompHeaderSell"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher_foreground"
+            android:visibility="gone"
+            tools:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"

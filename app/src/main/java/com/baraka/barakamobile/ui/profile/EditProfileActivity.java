@@ -171,14 +171,7 @@ public class EditProfileActivity extends AppCompatActivity {
         // create an instance of the
         // intent of the type image
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        Intent intent = new Intent();
-//        intent.setType("*/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-
-        // pass the constant to compare it
-        // with the returned requestCode
         startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
-//        startActivityForResult(intent, SELECT_PICTURE);
     }
 
     public String getRealPathFromURI(Uri contentURI, Activity context) {

@@ -42,7 +42,8 @@ public class POSViewModel {
                         String namePrdct,
                         String unitPrice,
                         String unitPrdct,
-                        String stockPrdct) {
+                        String stockPrdct,
+                        String imgPrdct) {
         this.idPrdct = idPrdct;
         this.idCompPrdct = idCompPrdct;
         this.namePrdct = namePrdct;

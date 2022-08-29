@@ -3,57 +3,62 @@ package com.baraka.barakamobile.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
+import com.baraka.barakamobile.ui.profile.EditProfileActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.util.Locale;
 
 public class SignupActivity extends AppCompatActivity {
     Button btnUploadPhoto, btnBackSignup, btnDaftarSignup;
+    ImageButton btnSearchComp;
     Intent intent;
-    TextView textPath, txtSignupComp;
+    TextView textPath, txtSignupComp, txtIdCompSearch;
     ProgressDialog progressDialog;
     EditText inputNameRegist, inputEmailRegist, inputPwRegist, inputAddrRegist, inputPhoneRegist, inputCompRegist, inputLevelRegist;
     int lvlUser;
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
+    int SELECT_PICTURE = 200;
+
     int success;
     ConnectivityManager connectivityManager;
 
     private String url = DbConfig.URL + "regist.php";
-    private String URL_COMP_CEK = DbConfig.URL_COMP + "idComp.php";
+    private String URL_COMP_CEK = DbConfig.URL + "searchComp.php";
+    private String URL_USER_IMG_EDIT = DbConfig.URL + "imgUser/";
 
     private static final String TAG = SignupActivity.class.getSimpleName();
     private static final int SIGNUP_COMP_REQUEST_CODE = 0;
@@ -74,11 +79,18 @@ public class SignupActivity extends AppCompatActivity {
     String WorkerYes = "2";
 
     Switch swSignupWorker;
+    Locale locale;
+
+    Uri selectedImageUri;
+    File imgRegist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -99,6 +111,8 @@ public class SignupActivity extends AppCompatActivity {
         inputCompRegist = (EditText) findViewById(R.id.inputCompRegist);
         inputLevelRegist = (EditText) findViewById(R.id.inputLevelRegist);
         swSignupWorker = findViewById(R.id.swSignupWorker);
+        btnSearchComp = (ImageButton) findViewById(R.id.btnSearchComp);
+        txtIdCompSearch = (TextView) findViewById(R.id.txtIdCompSearch);
 
 
         Intent intentComp = getIntent();
@@ -114,6 +128,13 @@ public class SignupActivity extends AppCompatActivity {
         btnDaftarSignup = (Button) findViewById(R.id.btnDaftarSignup);
 
         btnUploadPhoto = (Button)findViewById(R.id.btnUploadPhotoRegist);
+
+        btnSearchComp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkComp();
+            }
+        });
 
         swSignupWorker.setChecked(false);
         swSignupWorker.setText("Tidak");
@@ -151,9 +172,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
-                startActivityForResult(intent, 7);
+                imageChooser();
+
+//                intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("*/*");
+//                startActivityForResult(intent, 7);
             }
         });
 
@@ -208,6 +231,70 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    void imageChooser() {
+
+        // create an instance of the
+        // intent of the type image
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), SELECT_PICTURE);
+    }
+
+    public String getRealPathFromURI(Uri contentURI, Activity context) {
+
+        String[] projection = { MediaStore.Images.Media.DATA };
+
+        @SuppressWarnings("deprecation")
+        Cursor cursor = context.managedQuery(contentURI, projection, null, null, null);
+        if (cursor == null)
+            return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        if (cursor.moveToFirst()) {
+            String s = cursor.getString(column_index);
+            // cursor.close();
+            return s;
+        }
+
+        // cursor.close();
+        return null;
+
+    }
+
+
+    // this function is triggered when user
+    // selects the image from the imageChooser
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        textPath = (TextView)findViewById(R.id.textViewPhotoRegist);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                selectedImageUri = data.getData();
+                String PathHolder = data.getData().getPath();
+                textPath.setText(PathHolder);
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+
+//                    Picasso.get().load(selectedImageUri)
+//                            .resize(450, 450)
+//                            .centerCrop()
+//                            .into(imgUser);
+
+                    String imagepath = getRealPathFromURI(selectedImageUri, SignupActivity.this);
+
+                    imgRegist = new File(imagepath);
+
+//                    imgUser.setImageURI(selectedImageUri);
+                }
+            }
+        }
+    }
+
     private void addUserOwner() {
 
 //        if (TextUtils.isEmpty(inputNameComp.getText().toString())
@@ -222,15 +309,16 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Memuat Detail Produk");
 
-        AndroidNetworking.post(url)
-                .addBodyParameter("nameUser", inputNameRegist.getText().toString())
-                .addBodyParameter("emailUser", inputEmailRegist.getText().toString())
-                .addBodyParameter("pwUser", inputPwRegist.getText().toString())
-                .addBodyParameter("addrUser", inputAddrRegist.getText().toString())
-                .addBodyParameter("compUser", inputCompRegist.getText().toString())
-                .addBodyParameter("postUser", inputLevelRegist.getText().toString())
-                .addBodyParameter("lvlUser", WorkerNo)
-                .addBodyParameter("phoneUser", inputPhoneRegist.getText().toString())
+        AndroidNetworking.upload(url)
+                .addMultipartParameter("nameUser", inputNameRegist.getText().toString())
+                .addMultipartParameter("emailUser", inputEmailRegist.getText().toString())
+                .addMultipartParameter("pwUser", inputPwRegist.getText().toString())
+                .addMultipartParameter("addrUser", inputAddrRegist.getText().toString())
+                .addMultipartParameter("compUser", txtIdCompSearch.getText().toString())
+                .addMultipartParameter("postUser", inputLevelRegist.getText().toString())
+                .addMultipartParameter("lvlUser", WorkerNo)
+                .addMultipartParameter("phoneUser", inputPhoneRegist.getText().toString())
+                .addMultipartFile("imgUser", imgRegist)
                 .setTag("Tambah Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -241,23 +329,24 @@ public class SignupActivity extends AppCompatActivity {
                         Log.d("Respon Add",""+data);
 
                         try {
-                            Boolean status = data.getBoolean("status");
+                            Boolean status = data.getBoolean("success");
                             if (status == true){
                                 new AlertDialog.Builder(SignupActivity.this)
-                                        .setMessage("Pendaftaran Toko Anda Berhasil!")
+                                        .setMessage("Pendaftaran Akun Anda Berhasil!")
                                         .setCancelable(false)
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = getIntent();
-                                                setResult(RESULT_OK, intent);
-                                                SignupActivity.this.finish();
+
+                                                Intent intentBackSingup = new Intent(SignupActivity.this, LoginActivity.class);
+                                                finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
                             }else{
                                 new AlertDialog.Builder(SignupActivity.this)
-                                        .setMessage("Pendaftaran Toko Anda Gagal!")
+                                        .setMessage("Pendaftaran Akun Anda Gagal!")
                                         .setCancelable(false)
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
@@ -268,9 +357,9 @@ public class SignupActivity extends AppCompatActivity {
                                                         ""+inputCompRegist+", " +
                                                         ""+inputLevelRegist+", " +
                                                         ""+inputPhoneRegist.toString());
-                                                Intent i = getIntent();
-                                                setResult(RESULT_CANCELED,i);
-                                                SignupActivity.this.finish();
+                                                Intent intentBackSingup = new Intent(SignupActivity.this, LoginActivity.class);
+                                                finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
@@ -305,15 +394,16 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Memuat Detail Produk");
 
-        AndroidNetworking.post(url)
-                .addBodyParameter("nameUser", inputNameRegist.getText().toString())
-                .addBodyParameter("emailUser", inputEmailRegist.getText().toString())
-                .addBodyParameter("pwUser", inputPwRegist.getText().toString())
-                .addBodyParameter("addrUser", inputAddrRegist.getText().toString())
-                .addBodyParameter("compUser", inputCompRegist.getText().toString())
-                .addBodyParameter("postUser", inputLevelRegist.getText().toString())
-                .addBodyParameter("lvlUser", WorkerYes)
-                .addBodyParameter("phoneUser", inputPhoneRegist.getText().toString())
+        AndroidNetworking.upload(url)
+                .addMultipartParameter("nameUser", inputNameRegist.getText().toString())
+                .addMultipartParameter("emailUser", inputEmailRegist.getText().toString())
+                .addMultipartParameter("pwUser", inputPwRegist.getText().toString())
+                .addMultipartParameter("addrUser", inputAddrRegist.getText().toString())
+                .addMultipartParameter("compUser", txtIdCompSearch.getText().toString())
+                .addMultipartParameter("postUser", inputLevelRegist.getText().toString())
+                .addMultipartParameter("lvlUser", WorkerYes)
+                .addMultipartParameter("phoneUser", inputPhoneRegist.getText().toString())
+                .addMultipartFile("imgUser", imgRegist)
                 .setTag("Tambah Data")
                 .setPriority(Priority.MEDIUM)
                 .build()
@@ -324,23 +414,23 @@ public class SignupActivity extends AppCompatActivity {
                         Log.d("Respon Add",""+data);
 
                         try {
-                            Boolean status = data.getBoolean("status");
+                            Boolean status = data.getBoolean("success");
                             if (status == true){
                                 new AlertDialog.Builder(SignupActivity.this)
-                                        .setMessage("Pendaftaran Toko Anda Berhasil!")
+                                        .setMessage("Pendaftaran Akun Anda Berhasil!")
                                         .setCancelable(false)
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = getIntent();
-                                                setResult(RESULT_OK, intent);
-                                                SignupActivity.this.finish();
+                                                Intent intentBackSingup = new Intent(SignupActivity.this, LoginActivity.class);
+                                                finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
                             }else{
                                 new AlertDialog.Builder(SignupActivity.this)
-                                        .setMessage("Pendaftaran Toko Anda Gagal!")
+                                        .setMessage("Pendaftaran Akun Anda Gagal!")
                                         .setCancelable(false)
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
@@ -351,9 +441,9 @@ public class SignupActivity extends AppCompatActivity {
                                                         ""+inputCompRegist+", " +
                                                         ""+inputLevelRegist+", " +
                                                         ""+inputPhoneRegist.toString());
-                                                Intent i = getIntent();
-                                                setResult(RESULT_CANCELED,i);
-                                                SignupActivity.this.finish();
+                                                Intent intentBackSingup = new Intent(SignupActivity.this, LoginActivity.class);
+                                                finish();
+                                                startActivity(intentBackSingup);
                                             }
                                         })
                                         .show();
@@ -379,33 +469,36 @@ public class SignupActivity extends AppCompatActivity {
 
         ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Pendaftaran Toko Sedang Diproses..");
+        progressDialog.setMessage("Pencarian Toko..");
 
         AndroidNetworking.post(URL_COMP_CEK)
-                .addBodyParameter("idComp", idComp)
+                .addBodyParameter("codeComp", inputCompRegist.getText().toString())
                 .setTag("Check Data Toko..")
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
-                    public void onResponse(JSONObject data) {
+                    public void onResponse(JSONObject response) {
                         progressDialog.dismiss();
-                        Log.i("Info", "Data: " + data.toString());
+                        Log.i("Info", "Data: " + response.toString());
 
                         try {
-                            JSONArray jsonArray = data.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                SignupCompViewModel signupCompViewModel = new SignupCompViewModel(
-                                        jsonObject.getString("idComp"),
-                                        jsonObject.getString("nameComp"),
-                                        jsonObject.getString("codeComp"),
-                                        jsonObject.getString("addrComp"),
-                                        jsonObject.getString("phoneComp"),
-                                        jsonObject.getString("emailComp"),
-                                        jsonObject.getString("logoComp")
+                            int success = response.getInt("success");
+                            if (success==1) {
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-                                );
+                                jsonObject.getString("idComp");
+                                jsonObject.getString("nameComp");
+                                jsonObject.getString("codeComp");
+                                jsonObject.getString("addrComp");
+                                jsonObject.getString("phoneComp");
+                                jsonObject.getString("emailComp");
+                                jsonObject.getString("logoComp");
+
+                                txtIdCompSearch.setText(jsonObject.getString("idComp"));
+
+                                Toast.makeText(SignupActivity.this, "Toko Terdaftar!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
                         } catch (JSONException e) {
@@ -434,52 +527,52 @@ public class SignupActivity extends AppCompatActivity {
             progressDialog.dismiss();
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        textPath = (TextView)findViewById(R.id.textViewPhotoRegist);
-
-        switch (requestCode) {
-            case 7:
-                if (resultCode==RESULT_OK) {
-                    String PathHolder = data.getData().getPath();
-                    textPath.setText(PathHolder);
-                }
-                break;
-        }
-
-        // Check that it is the SecondActivity with an OK result
-        if (requestCode == SIGNUP_COMP_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-
-//                checkComp();
-
-//                Intent intentComp = getIntent();
-                idComp = data.getStringExtra(ID_COMP);
-                nameComp = data.getStringExtra(NAME_COMP);
-                codeComp = data.getStringExtra(CODE_COMP);
-                addrComp = data.getStringExtra(ADDR_COMP);
-                phoneComp = data.getStringExtra(PHONE_COMP);
-                emailComp = data.getStringExtra(EMAIL_COMP);
-                logoComp = data.getStringExtra(LOGO_COMP);
-
-                Log.e("Comp: ", "Data: "+idComp+", "
-                        +nameComp+", "
-                        +codeComp+", "
-                        +addrComp+", "
-                        +phoneComp+", "
-                        +emailComp+", "
-                        +logoComp);
-
-                // Get String data from Intent
-                String returnString = data.getStringExtra(CODE_COMP);
-
-                inputCompRegist = (EditText) findViewById(R.id.inputCompRegist);
-                inputCompRegist.setText(returnString);
-                inputCompRegist.setEnabled(false);
-            }
-        }
-    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//        textPath = (TextView)findViewById(R.id.textViewPhotoRegist);
+//
+//        switch (requestCode) {
+//            case 7:
+//                if (resultCode==RESULT_OK) {
+//                    String PathHolder = data.getData().getPath();
+//                    textPath.setText(PathHolder);
+//                }
+//                break;
+//        }
+//
+//        // Check that it is the SecondActivity with an OK result
+//        if (requestCode == SIGNUP_COMP_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//
+////                checkComp();
+//
+////                Intent intentComp = getIntent();
+//                idComp = data.getStringExtra(ID_COMP);
+//                nameComp = data.getStringExtra(NAME_COMP);
+//                codeComp = data.getStringExtra(CODE_COMP);
+//                addrComp = data.getStringExtra(ADDR_COMP);
+//                phoneComp = data.getStringExtra(PHONE_COMP);
+//                emailComp = data.getStringExtra(EMAIL_COMP);
+//                logoComp = data.getStringExtra(LOGO_COMP);
+//
+//                Log.e("Comp: ", "Data: "+idComp+", "
+//                        +nameComp+", "
+//                        +codeComp+", "
+//                        +addrComp+", "
+//                        +phoneComp+", "
+//                        +emailComp+", "
+//                        +logoComp);
+//
+//                // Get String data from Intent
+//                String returnString = data.getStringExtra(CODE_COMP);
+//
+//                inputCompRegist = (EditText) findViewById(R.id.inputCompRegist);
+//                inputCompRegist.setText(returnString);
+//                inputCompRegist.setEnabled(false);
+//            }
+//        }
+//    }
 }

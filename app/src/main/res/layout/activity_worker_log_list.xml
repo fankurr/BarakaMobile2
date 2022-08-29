@@ -13,17 +13,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/imgCompHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </SearchView>
-        </LinearLayout>
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.product.PrdctCardAdapter;
+import com.baraka.barakamobile.ui.util.DbConfig;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +38,8 @@ public class POSCardAdapter extends RecyclerView.Adapter<POSCardAdapter.POSViewH
     private Context context;
     private LayoutInflater layoutInflater;
     private PrdctCardAdapter.OnItemClickListener onItemClickListenerPosInput;
+
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     public ArrayList<POSOutputViewModel> posOutputArrayList;
     POSOutputAdapter posOutputAdapter;
@@ -72,24 +76,13 @@ public class POSCardAdapter extends RecyclerView.Adapter<POSCardAdapter.POSViewH
         holder.unitPrice.setText(posViewModelList.get(position).getUnitPrice());
         holder.unitPrdct.setText(posViewModelList.get(position).getUnitPrdct());
         holder.stockPrct.setText(posViewModelList.get(position).getStockPrdct());
-//        holder.cardPos.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//                Intent inputPosIntent = new Intent(context, InputPOSActivity.class);
-//                POSViewModel posViewModel = posViewModelList.get(position);
-//
-//                inputPosIntent.putExtra(ID_PRDCT, String.valueOf(posViewModel.getIdPrdct()));
-//                inputPosIntent.putExtra(NAME_PRDCT, posViewModel.getNamePrdct());
-//                inputPosIntent.putExtra(PRICE_PRDCT, posViewModel.getUnitPrice());
-//                inputPosIntent.putExtra(UNIT_PRDCT, posViewModel.getUnitPrdct());
-//                inputPosIntent.putExtra(STOCK_PRDCT, posViewModel.getStockPrdct());
-//
-//                context.startActivity(inputPosIntent);
-//
-//            }
-//        });
+
+        Picasso.get().load(URL_PRDCT_IMG+posViewModelList.get(position).getImgPrdct())
+                .resize(450, 450)
+                .centerCrop()
+                .placeholder(R.drawable.default_image_comp_small)
+                .error(R.drawable.default_image_comp_small)
+                .into(holder.imgPOSPrdct);
     }
 
     @Override

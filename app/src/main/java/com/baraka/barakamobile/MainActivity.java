@@ -1,6 +1,7 @@
 package com.baraka.barakamobile;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,12 +37,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.baraka.barakamobile.databinding.ActivityMainBinding;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,10 +85,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String ID_LOG = "idLogin";
 
     private String urlAddLogout = DbConfig.URL_LOG + "addLogout.php";
+    private String urlUserDetail = DbConfig.URL + "idUserComp.php";
+    private String URL_USER_IMG_DETAIL = DbConfig.URL + "imgUser/";
 
     Calendar calender;
     SimpleDateFormat simpledateformat;
     String date;
+
+    Locale locale;
 
     String idLogout;
 
@@ -94,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
 
         sharedPreferences = getSharedPreferences(LoginActivity.my_shared_preferences, Context.MODE_PRIVATE);
 //        sharedPreferences = this.getSharedPreferences(my_shared_preferences, MODE_PRIVATE);
@@ -144,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 ", ID Comp: " +idCompany+
                 ", Company: "+nameCompany.toString());
 
+
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         View headerView = navigationView.getHeaderView(0);
         imgUser = (ImageView) headerView.findViewById(R.id.imgUser);
+        detailProfile();
         imgUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -286,6 +299,55 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Detail Profile
+    public void detailProfile(){
+
+        sharedPreferences = getSharedPreferences(my_shared_preferences,MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(urlUserDetail)
+                .addBodyParameter("idUser", id.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                                Picasso.get().load(URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"))
+                                        .resize(50, 50)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_person_small)
+                                        .error(R.drawable.default_image_person_small)
+                                        .into(imgUser);
+
+
+                                Log.i("ImgUser", "Image: "+URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"));
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, "Maaf, gagal Terhubung ke Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(MainActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+
+                    }
+                });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -304,12 +366,12 @@ public class MainActivity extends AppCompatActivity {
     public void addLogout(String idLogin, String datetimeLogout){
 
         calender = Calendar.getInstance();
-        simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
+        simpledateformat = new SimpleDateFormat("EEEE, dd-MM-yyyy HH:mm:ss");
         date = simpledateformat.format(calender.getTime());
 
         AndroidNetworking.post(urlAddLogout)
                 .addBodyParameter("idLogin", idLogin)
-                .addBodyParameter("datetimeLogout", datetimeLogout)
+                .addBodyParameter("datetimeLogout", date)
                 .setTag("Update Data")
                 .setPriority(Priority.MEDIUM)
                 .build()

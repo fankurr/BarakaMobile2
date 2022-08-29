@@ -62,6 +62,7 @@ import static com.baraka.barakamobile.ui.product.ProductFragment.PRICE_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.SPLR_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.STOCK_PRDCT;
 import static com.baraka.barakamobile.ui.product.ProductFragment.UNIT_PRDCT;
+import static com.itextpdf.text.pdf.PdfName.VIEW;
 
 public class AddEditPrdctActivity extends AppCompatActivity {
 
@@ -98,7 +99,7 @@ public class AddEditPrdctActivity extends AppCompatActivity {
     String idCateIntent, nameCateIntent;
     EditText inputNamePrdct, inputCodePrdct, inputDescPrdct, inputUnitPrdct, inputPricePrdct, inputStokPrdct, inputCatePrdct;
     Button btnUploadImgPrdctAddEdit;
-    TextView textPath, textCate, txtIdCateAddPrdct, textIdSplrAddPrdct;
+    TextView textPath, textCate, txtIdCateAddPrdct, textIdSplrAddPrdct, txtCateEditPrdct, txtSplrEditPrdct;
     CardView cardCatAddEditPrdct;
     ImageView imgPrdctEditDetail;
     Uri selectedImageUri;
@@ -172,6 +173,8 @@ public class AddEditPrdctActivity extends AppCompatActivity {
         imgPrdctEditDetail = findViewById(R.id.imgPrdctEditDetail);
         spinnerCat = findViewById(R.id.spinnerCatePrdctAddEdit);
         spinnerSplr = findViewById(R.id.spinnerSplrPrdctAddEdit);
+        txtCateEditPrdct = findViewById(R.id.txtCateEditPrdct);
+        txtSplrEditPrdct = findViewById(R.id.txtSplrEditPrdct);
 
         calender = Calendar.getInstance();
         simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
@@ -209,6 +212,9 @@ public class AddEditPrdctActivity extends AppCompatActivity {
                     .into(imgPrdctEditDetail);
 
             getCateList();
+
+            txtCateEditPrdct.setVisibility(View.GONE);
+            txtSplrEditPrdct.setVisibility(View.GONE);
 
             spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -568,6 +574,11 @@ public class AddEditPrdctActivity extends AppCompatActivity {
                                 inputStokPrdct.setText(jsonObject.getString("stockPrdct"));
                                 inputDescPrdct.setText(jsonObject.getString("descPrdct"));
 
+
+                                txtCateEditPrdct.setText(jsonObject.getString("nameCategory"));
+
+                                txtSplrEditPrdct.setText(jsonObject.getString("nameSupplier"));
+
                                 Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imgPrdct"))
                                         .resize(450, 450)
                                         .centerCrop()
@@ -580,6 +591,8 @@ public class AddEditPrdctActivity extends AppCompatActivity {
 
                                 getSplr();
 
+                                spinnerCat.setVisibility(View.GONE);
+                                spinnerSplr.setVisibility(View.GONE);
 
 
                                 spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

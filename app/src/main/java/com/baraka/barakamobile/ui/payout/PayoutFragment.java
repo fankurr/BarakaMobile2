@@ -1,9 +1,12 @@
 package com.baraka.barakamobile.ui.payout;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +15,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -27,17 +34,15 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -47,14 +52,10 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
-import com.baraka.barakamobile.databinding.FragmentPayoutBinding;
-import com.baraka.barakamobile.ui.pos.POSOutputViewModel;
-import com.baraka.barakamobile.ui.sell.TxCardAdapter;
-import com.baraka.barakamobile.ui.sell.TxViewModel;
-import com.baraka.barakamobile.ui.supplier.AddEditSplrActivity;
-import com.baraka.barakamobile.ui.supplier.SupplierDetailActivity;
+import com.baraka.barakamobile.ui.profile.CompProActivity;
 import com.baraka.barakamobile.ui.util.DbConfig;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -62,35 +63,48 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION;
 
 public class PayoutFragment extends Fragment {
 
     private String URL_PAYOUT = DbConfig.URL_PAY + "allPay.php";
     private String URL_PAYOUT_ADD = DbConfig.URL_PAY + "addPay.php";
+    private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
+    private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -100,7 +114,17 @@ public class PayoutFragment extends Fragment {
     private final static String TAG_IDCOMP = "idCompany";
     private final static String TAG_COMP = "nameCompany";
 
-    String id, email, name, level, access, idCompany, nameCompany;
+    public static final String ID_COMP = "idComp";
+    public static final String NAME_COMP = "nameComp";
+    public static final String CODE_COMP = "codeComp";
+    public static final String ADDR_COMP = "addrComp";
+    public static final String PHONE_COMP = "phoneComp";
+    public static final String EMAIL_COMP = "emailComp";
+    public static final String LOGO_COMP = "logoComp";
+
+    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
+    String printLogoComp = "";
 
     private PayoutViewModel purchaseViewModel;
     private FragmentPagerAdapter binding;
@@ -124,12 +148,19 @@ public class PayoutFragment extends Fragment {
     String pdfname;
     Context context;
 
-    Calendar calender;
-    SimpleDateFormat simpledateformat;
-    String date;
+    Calendar calender, calenderTTD;
+    SimpleDateFormat simpledateformat, simpledateformatTTD;
+    String date, dateTTD;
+    ImageView imgHeader;
+    Locale locale;
 
     // constant code for runtime permissions
     private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISION_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
 
     SharedPreferences sharedPreferences;
     public static final String my_shared_preferences = "my_shared_preferences";
@@ -138,9 +169,21 @@ public class PayoutFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_payout, container, false);
 
-        setHasOptionsMenu(true);
+        locale = new Locale("id","ID");
+        Locale.setDefault(locale);
 
-        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences,Context.MODE_PRIVATE);
+        setHasOptionsMenu(true);
+        verifyStoragePermission(getActivity());
+        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, MODE_PRIVATE);
+
+        id = sharedPreferences.getString(TAG_ID, id);
+        level = sharedPreferences.getString(TAG_LEVEL, level);
+        idComp = sharedPreferences.getString(ID_COMP, idComp);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
+        codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+
+
         id = sharedPreferences.getString(TAG_ID, null);
         email = sharedPreferences.getString(TAG_EMAIL, null);
         name = sharedPreferences.getString(TAG_NAME, null);
@@ -148,6 +191,8 @@ public class PayoutFragment extends Fragment {
         access = sharedPreferences.getString(TAG_ACCESS, null);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
+
+        imgHeader = (ImageView) view.findViewById(R.id.imgHeaderLogo);
 
         recyclerViewPayout = (RecyclerView) view.findViewById(R.id.recyclerViewPayout);
         recyclerViewPayout.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -160,6 +205,10 @@ public class PayoutFragment extends Fragment {
         calender = Calendar.getInstance();
         simpledateformat = new SimpleDateFormat("EEE, dd-MM-yyyy HH:mm:ss");
         date = simpledateformat.format(calender.getTime());
+
+        calenderTTD = Calendar.getInstance();
+        simpledateformatTTD = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        dateTTD = simpledateformatTTD.format(calenderTTD.getTime());
 
         ImageButton imgBtnAddPay = (ImageButton) view.findViewById(R.id.imgButtonAddPayout);
         imgBtnAddPay.setOnClickListener(new View.OnClickListener() {
@@ -204,6 +253,7 @@ public class PayoutFragment extends Fragment {
 
         //Fetch Data Payout
         getPayout();
+        detailComp();
 
         swipeRefreshPayout = (SwipeRefreshLayout)view.findViewById(R.id.swipeRefreshPayout);
         swipeRefreshPayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -217,6 +267,7 @@ public class PayoutFragment extends Fragment {
             private void refreshItem() {
                 //Fetch Data Payout
                 getPayout();
+                detailComp();
 
                 onItemLoad();
 
@@ -232,13 +283,58 @@ public class PayoutFragment extends Fragment {
         return view;
     }
 
+    private void verifyStoragePermission(Activity activity) {
+    int permission = ActivityCompat.checkSelfPermission(activity, WRITE_EXTERNAL_STORAGE);
+    if(SDK_INT >= Build.VERSION_CODES.R){
+        if(!Environment.isExternalStorageManager() && permission != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISION_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+
+            Intent intent = new Intent();
+            intent.setAction(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+            intent.setData(uri);
+            startActivity(intent);
+        }
+    }
+    }
+
+    // Access pdf from storage and using to Intent get options to view application in available applications.
+    private void openPDF(String pdfname) {
+
+        // Get the File location and file name.
+        File file = new File(Environment.getExternalStorageDirectory(), "POSBaraka/"+pdfname);
+        Log.d("pdfFIle", "" + file);
+
+        // Get the URI Path of file.
+        Uri uriPdfPath = FileProvider.getUriForFile(getActivity(), getActivity().getApplicationContext().getPackageName() + ".provider", file);
+        Log.d("pdfPath", "" + uriPdfPath);
+
+        // Start Intent to View PDF from the Installed Applications.
+        Intent pdfOpenIntent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenIntent.setClipData(ClipData.newRawUri("", uriPdfPath));
+        pdfOpenIntent.setDataAndType(uriPdfPath, "application/pdf");
+        pdfOpenIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |  Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        try {
+            startActivity(pdfOpenIntent);
+        } catch (ActivityNotFoundException activityNotFoundException) {
+            Toast.makeText(getContext(),"There is no app to load corresponding PDF",Toast.LENGTH_LONG).show();
+
+        }
+    }
+
     private void getPayout() {
         ProgressDialog progressDialog = new ProgressDialog(this.getContext());
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Memuat Data..");
         progressDialog.show();
 
-        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, MODE_PRIVATE);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
         AndroidNetworking.post(URL_PAYOUT)
@@ -291,7 +387,7 @@ public class PayoutFragment extends Fragment {
         progressDialog.setMessage("Memuat Data..");
         progressDialog.show();
 
-        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, MODE_PRIVATE);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
         AndroidNetworking.post(URL_PAYOUT_ADD)
@@ -356,13 +452,7 @@ public class PayoutFragment extends Fragment {
                 });
     }
 
-    private void createPdf() throws FileNotFoundException, DocumentException {
-//        File pdfFolder = new File(Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_DOCUMENTS), "POSBaraka/");
-//        if (!pdfFolder.exists()) {
-//            pdfFolder.mkdir();
-//            Log.i("Print", "Pdf Directory created");
-//        }
+    private void createPdf() throws IOException, DocumentException {
 
         File docsFolder = new File(Environment.getExternalStorageDirectory() + "/POSBaraka");
         if (!docsFolder.exists()) {
@@ -380,6 +470,17 @@ public class PayoutFragment extends Fragment {
 
         Document document = new Document(PageSize.A4);
 
+        Bitmap bmp = ((BitmapDrawable)imgHeader.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        Image image = Image.getInstance(stream.toByteArray());
+        image.scaleToFit(60, 60);
+        image.setWidthPercentage(100);
+        image.setAlignment(Element.ALIGN_LEFT);
+//        document.add(image);
+
+//        Font regularReport = new Font(baseFont, 30,Font.BOLD, BaseColor.BLACK);
+
         PdfPTable table = new PdfPTable(new float[]{1, 3, 3, 3, 3});
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.getDefaultCell().setFixedHeight(50);
@@ -393,10 +494,42 @@ public class PayoutFragment extends Fragment {
         table.addCell("Di Bayar Oleh");
         table.setHeaderRows(1);
 
+        Font o = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.BOLD);
+        Font z = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.NORMAL);
+
+        Paragraph header = new Paragraph(nameCompany,o);
+        header.add(new Paragraph("\n"+addrComp,z));
+
+
+        PdfPTable tableHeader = new PdfPTable(new float[]{0.5f, 3});
+        tableHeader.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        tableHeader.getDefaultCell().setFixedHeight(60);
+        tableHeader.setTotalWidth(PageSize.A4.getWidth());
+        tableHeader.setWidthPercentage(100);
+        tableHeader.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+        tableHeader.addCell(image);
+        tableHeader.addCell(header);
+
         PdfPCell[] cells = table.getRow(0).getCells();
+        PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
+
+        Paragraph tglTTD = new Paragraph(addrComp+", "+dateTTD);
+        tglTTD.setAlignment(Element.ALIGN_RIGHT);
+
+        Paragraph userTTD = new Paragraph(name);
+        userTTD.setAlignment(Element.ALIGN_RIGHT);
+        userTTD.setIndentationRight(60);
+        userTTD.setSpacingBefore(60);
+
+
         for (int j = 0; j < cells.length; j++) {
             cells[j].setBackgroundColor(BaseColor.PINK);
         }
+
+        for (int j = 0; j < cellsHeader.length; j++) {
+            cellsHeader[j].setBorder(Rectangle.NO_BORDER);
+        }
+
         for (int i = 0; i < payoutViewModelLists.size(); i++) {
             ValuePayout = payoutViewModelLists.get(i);
             DescPayout = payoutViewModelLists.get(i);
@@ -418,37 +551,27 @@ public class PayoutFragment extends Fragment {
 
         //Step 3
         document.open();
+        document.add(tableHeader);
 
 
+        LineSeparator ls = new LineSeparator();
 
-        //set image for PDF Create
-//        try {
-//        InputStream ims = context.getResources().getAssets().open("images/header_pdf_app.png");
-//        Bitmap bmp = BitmapFactory.decodeStream(ims);
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        Image image = Image.getInstance(stream.toByteArray());
-//        image.scaleToFit(2000, 120);
-////            image.setWidthPercentage(100);
-////            image.scaleToFit(150.0f, 150.0f);
-//        image.setAlignment(Element.ALIGN_CENTER);
-//        document.add(image);
-//        } catch (IOException ex) {
-//            //Do something with the exception
-//            ex.printStackTrace();
-//        }
 
         //Step 4 Add content
-//        document.add((Element) new Paragraph("Test"));
-//        document.add((Element) new Paragraph("Test Test Test Test Test Test Test Test "));
 
-        Font f = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.UNDERLINE);
-        Font g = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.NORMAL);
-        Font h = new Font(Font.FontFamily.TIMES_ROMAN, 30.0f, Font.NORMAL);
-        document.add(new Paragraph("Laporan Pengeluaran ", f));
-        document.add(new Paragraph(nameCompany, g));
+        Font f = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.UNDERLINE);
+        Font g = new Font(Font.FontFamily.TIMES_ROMAN, 10.0f, Font.NORMAL);
+        Font h = new Font(Font.FontFamily.TIMES_ROMAN, 5.0f, Font.NORMAL);
         document.add(new Paragraph(" ", h));
+        document.add(new Chunk(ls));
+        ls.setOffset(5);
+        document.add(new Paragraph("Laporan Pengeluaran ", f));
+        document.add(new Paragraph(" ", g));
         document.add(table);
+        document.add(tglTTD);
+        document.add(userTTD);
+
+
 
         //Step 5: Close the document
         document.close();
@@ -457,11 +580,9 @@ public class PayoutFragment extends Fragment {
         Toast.makeText(getContext(), "Pdf Generate!", Toast.LENGTH_SHORT).show();
 
         checkPermission();
-        previewPdf();
+        openPDF(pdfname);
     }
 
-    private void previewPdf() {
-    }
 
     private boolean checkPermission() {
         // checking of permissions.
@@ -496,6 +617,48 @@ public class PayoutFragment extends Fragment {
         }
     }
 
+    // Detail CompPro
+    public void detailComp(){
+
+        AndroidNetworking.post(urlCompProDetail)
+                .addBodyParameter("idComp", idCompany.toString())
+                .addBodyParameter("codeComp", codeComp.toString())
+                .setTag("Load Data..")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            int success = response.getInt("success");
+                            if (success==1){
+                                JSONArray jsonArray = response.getJSONArray("data"); // mengambil [data] dari json
+//                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                jsonObject.getString("logoComp");
+
+                                Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
+                                        .resize(30, 30)
+                                        .centerCrop()
+                                        .into(imgHeader);
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.d("ERROR","error => "+ anError.toString());
+
+                    }
+                });
+    }
+
     @Override
     public void onCreateOptionsMenu(
             Menu menu, MenuInflater inflater) {
@@ -512,6 +675,8 @@ public class PayoutFragment extends Fragment {
                     e.printStackTrace();
                 } catch (DocumentException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 return true;
             default:
@@ -525,4 +690,6 @@ public class PayoutFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 }

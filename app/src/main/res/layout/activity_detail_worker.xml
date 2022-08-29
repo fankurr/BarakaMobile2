@@ -270,9 +270,11 @@
             android:text="Berhentikan"
             android:textColor="@color/colorDark"
             android:textSize="15sp"
+            android:visibility="gone"
             app:backgroundTint="@color/white"
             app:cornerRadius="9dp"
             app:strokeColor="@color/colorPrimary"
-            app:strokeWidth="2dp" />
+            app:strokeWidth="2dp"
+            tools:visibility="gone" />
     </LinearLayout>
 </ScrollView>
