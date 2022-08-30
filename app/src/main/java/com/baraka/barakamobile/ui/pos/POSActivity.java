@@ -114,6 +114,7 @@ public class POSActivity extends AppCompatActivity {
     private String TX = DbConfig.URL_TX + "addTx.php";
     private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
     private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
+    private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
 
     public static final String ID_PRDCT_POS = "idProduct";
     public static final String NAME_PRDCT_POS = "namePrdct";
@@ -154,6 +155,7 @@ public class POSActivity extends AppCompatActivity {
     String totalPrdctPrice;
     EditText inputJumlah;
     TextView totalTxt;
+    ImageView imgPosInput;
 
     POSOutputViewModel IdPrdct;
     POSOutputViewModel NamePrdct;
@@ -313,6 +315,7 @@ public class POSActivity extends AppCompatActivity {
                     txtStockPrdct = dialogPosInput.findViewById(R.id.textViewStokPrdctPosInput);
                     totalPrdctIn = dialogPosInput.findViewById(R.id.txtTotalPrdctPosInput);
                     inputJumlah = dialogPosInput.findViewById(R.id.inputJumlahPembelianPrdct);
+                    imgPosInput = dialogPosInput.findViewById(R.id.imgPOSInput);
 
 
                     txtIdPrdct.setText(String.valueOf(posViewModelList.get(position).getIdPrdct()));
@@ -320,6 +323,14 @@ public class POSActivity extends AppCompatActivity {
                     txtPricePrdct.setText(posViewModelList.get(position).getUnitPrice());
                     txtUnitPrdct.setText(posViewModelList.get(position).getUnitPrdct());
                     txtStockPrdct.setText(posViewModelList.get(position).getStockPrdct());
+
+                    Picasso.get().load(URL_PRDCT_IMG+posViewModelList.get(position).getImgPrdct())
+                            .fit()
+                            .centerCrop()
+                            .placeholder(R.drawable.default_image_small)
+                            .error(R.drawable.default_image_small)
+                            .into(imgPosInput);
+
 
                     Button btnTambahPos = dialogPosInput.findViewById(R.id.btnTambahPosInput);
                     btnTambahPos.setOnClickListener(new View.OnClickListener() {
