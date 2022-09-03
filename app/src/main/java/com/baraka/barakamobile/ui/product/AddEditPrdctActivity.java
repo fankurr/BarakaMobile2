@@ -474,6 +474,7 @@ public class AddEditPrdctActivity extends AppCompatActivity {
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
 
         AndroidNetworking.upload(URL_PRDCT_ADD_EDIT)
+                .addMultipartParameter("idPrdct", idPrdct.toString())
                 .addMultipartParameter("idCompPrdct", idCompany.toString())
                 .addMultipartParameter("catPrdct", txtIdCateAddPrdct.getText().toString())
                 .addMultipartParameter("namePrdct", inputNamePrdct.getText().toString())
@@ -574,9 +575,10 @@ public class AddEditPrdctActivity extends AppCompatActivity {
                                 inputStokPrdct.setText(jsonObject.getString("stockPrdct"));
                                 inputDescPrdct.setText(jsonObject.getString("descPrdct"));
 
-
+                                txtIdCateAddPrdct.setText(jsonObject.getString("idCategory"));
                                 txtCateEditPrdct.setText(jsonObject.getString("nameCategory"));
 
+                                textIdSplrAddPrdct.setText(jsonObject.getString("idSupplier"));
                                 txtSplrEditPrdct.setText(jsonObject.getString("nameSupplier"));
 
                                 Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imgPrdct"))

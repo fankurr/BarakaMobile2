@@ -1,7 +1,9 @@
 package com.baraka.barakamobile.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,6 +54,14 @@ public class SignupActivity extends AppCompatActivity {
     String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
 
     int SELECT_PICTURE = 200;
+
+    // constant code for runtime permissions
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISION_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
 
     int success;
     ConnectivityManager connectivityManager;
@@ -172,6 +182,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                requestPermission();
                 imageChooser();
 
 //                intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -231,6 +242,7 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+
     void imageChooser() {
 
         // create an instance of the
@@ -260,6 +272,10 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    private void requestPermission() {
+        // requesting permissions if not provided.
+        ActivityCompat.requestPermissions(SignupActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
 
     // this function is triggered when user
     // selects the image from the imageChooser
@@ -527,52 +543,4 @@ public class SignupActivity extends AppCompatActivity {
             progressDialog.dismiss();
     }
 
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//        textPath = (TextView)findViewById(R.id.textViewPhotoRegist);
-//
-//        switch (requestCode) {
-//            case 7:
-//                if (resultCode==RESULT_OK) {
-//                    String PathHolder = data.getData().getPath();
-//                    textPath.setText(PathHolder);
-//                }
-//                break;
-//        }
-//
-//        // Check that it is the SecondActivity with an OK result
-//        if (requestCode == SIGNUP_COMP_REQUEST_CODE) {
-//            if (resultCode == RESULT_OK) {
-//
-////                checkComp();
-//
-////                Intent intentComp = getIntent();
-//                idComp = data.getStringExtra(ID_COMP);
-//                nameComp = data.getStringExtra(NAME_COMP);
-//                codeComp = data.getStringExtra(CODE_COMP);
-//                addrComp = data.getStringExtra(ADDR_COMP);
-//                phoneComp = data.getStringExtra(PHONE_COMP);
-//                emailComp = data.getStringExtra(EMAIL_COMP);
-//                logoComp = data.getStringExtra(LOGO_COMP);
-//
-//                Log.e("Comp: ", "Data: "+idComp+", "
-//                        +nameComp+", "
-//                        +codeComp+", "
-//                        +addrComp+", "
-//                        +phoneComp+", "
-//                        +emailComp+", "
-//                        +logoComp);
-//
-//                // Get String data from Intent
-//                String returnString = data.getStringExtra(CODE_COMP);
-//
-//                inputCompRegist = (EditText) findViewById(R.id.inputCompRegist);
-//                inputCompRegist.setText(returnString);
-//                inputCompRegist.setEnabled(false);
-//            }
-//        }
-//    }
 }

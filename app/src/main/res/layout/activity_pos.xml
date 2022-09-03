@@ -81,23 +81,12 @@
                 android:textSize="21sp" />
 
             <TextView
-                android:id="@+id/textView30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu_mono_bold"
-                android:text="Rp"
-                android:textColor="@color/colorDark"
-                android:textSize="21sp" />
-
-            <TextView
                 android:id="@+id/textViewPosTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="@font/ubuntu_mono_bold"
-                android:text="00.000"
+                android:text="000"
                 android:textColor="@color/colorDark"
                 android:textSize="21sp" />
 

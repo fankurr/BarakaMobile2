@@ -7,5 +7,17 @@
         android:icon="@drawable/ic_twotone_print_w_24"
         android:title="@string/action_print"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/printISort"
+        android:icon="@drawable/ic_twotone_sort_24"
+        android:title="@string/action_print"
+        app:showAsAction="always"/>
+    <item  android:id="@+id/print_month"
+        android:title="Bulan"
+        />
+
+    <item  android:id="@+id/print_all"
+        android:title="Semua"
+        />
 
 </menu>

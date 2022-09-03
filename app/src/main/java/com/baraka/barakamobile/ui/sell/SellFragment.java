@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -83,6 +85,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,6 +102,7 @@ import static android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMI
 public class SellFragment extends Fragment {
 
     private String URL_SELL = DbConfig.URL_SELL + "allTx.php";
+    private String URL_SELL_MONTH = DbConfig.URL_SELL + "monthTx.php";
     private String urlCompProDetail = DbConfig.URL_COMP + "idComp.php";
     private String URL_COMP_IMG_DETAIL = DbConfig.URL_COMP + "imgComp/";
 
@@ -115,18 +119,11 @@ public class SellFragment extends Fragment {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
-
-//    private final static String TAG_ID = "idUser";
-//    private final static String TAG_EMAIL = "emailUser";
-//    private final static String TAG_NAME = "nameUser";
-//    private final static String TAG_LEVEL = "lvlUser";
-//    private final static String TAG_ACCESS = "loginUser";
-//    private final static String TAG_IDCOMP = "compUser";
-//    private final static String TAG_COMP = "nameComp";
 
     private final static String TAG_ID = "id";
     private final static String TAG_EMAIL = "email";
@@ -137,7 +134,7 @@ public class SellFragment extends Fragment {
     private final static String TAG_COMP = "nameCompany";
 
     String id, email, name, level, access, idCompany, nameCompany;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
     private TxCardAdapter txCardAdapter;
 
     SharedPreferences sharedPreferences;
@@ -151,6 +148,7 @@ public class SellFragment extends Fragment {
     TxViewModel NamePrdct;
     TxViewModel QtyTX;
     TxViewModel DateTimeTx;
+    TxViewModel ValueTx;
 
     private File pdfFile;
     String pdfname;
@@ -201,6 +199,7 @@ public class SellFragment extends Fragment {
         level = sharedPreferences.getString(TAG_LEVEL, level);
         idComp = sharedPreferences.getString(ID_COMP, idComp);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        cityComp = sharedPreferences.getString(CITY_COMP, cityComp);
         addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
 
@@ -315,6 +314,74 @@ public class SellFragment extends Fragment {
 
                         Log.i("Info", "Data: " + response.toString());
                         try {
+                            int status = response.getInt("success");
+                            if (status == 1) {
+
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    TxViewModel txViewModel = new TxViewModel(
+                                            jsonObject.getInt("idTransaction"),
+                                            jsonObject.getInt("idCompTransaction"),
+                                            jsonObject.getString("CompTransaction"),
+                                            jsonObject.getInt("idProduct"),
+                                            jsonObject.getString("Product"),
+                                            jsonObject.getString("qtyTransaction"),
+                                            jsonObject.getString("unit"),
+                                            jsonObject.getString("valueTx"),
+                                            jsonObject.getString("dateTime"),
+                                            jsonObject.getString("imageProduct")
+
+                                    );
+                                    txViewModelList.add(txViewModel);
+                                    TxCardAdapter txCardAdapter = new TxCardAdapter(getContext(), txViewModelList);
+                                    recyclerViewTx.setAdapter(txCardAdapter);
+//                                txCardAdapter.setOnItemClickListener(SupplierFragment.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Data Penjualan Tidak Ada!", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            progressDialog.dismiss();
+                        }
+                        txCardAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(getContext(), "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+                        Log.d("ERROR","error => "+ anError.toString());
+                        progressDialog.dismiss();
+                    }
+                });
+    }
+
+
+    public void getTxMonth() {
+        ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Memuat Data..");
+        progressDialog.show();
+
+        sharedPreferences = this.getActivity().getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
+
+        AndroidNetworking.post(URL_SELL_MONTH)
+                .addBodyParameter("idCompTx", idCompany)
+                .setTag(this)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        txViewModelList.clear();
+
+                        Log.i("Info", "Data: " + response.toString());
+                        try {
                             JSONArray jsonArray = response.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -347,13 +414,14 @@ public class SellFragment extends Fragment {
                     @Override
                     public void onError(ANError anError) {
                         Toast.makeText(getContext(), "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-                        Log.d("ERROR","error => "+ anError.toString());
+                        Log.d("ERROR", "error => " + anError.toString());
                         progressDialog.dismiss();
                     }
                 });
     }
 
     private void createPdf() throws IOException, DocumentException {
+        requestPermission();
 
         File docsFolder = new File(Environment.getExternalStorageDirectory() + "/POSBaraka");
         if (!docsFolder.exists()) {
@@ -383,7 +451,7 @@ public class SellFragment extends Fragment {
 
 //        Font regularReport = new Font(baseFont, 30,Font.BOLD, BaseColor.BLACK);
 
-        PdfPTable table = new PdfPTable(new float[]{1, 3, 3, 3});
+        PdfPTable table = new PdfPTable(new float[]{1, 3, 3, 3, 3});
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.getDefaultCell().setFixedHeight(50);
         table.setTotalWidth(PageSize.A4.getWidth());
@@ -393,6 +461,7 @@ public class SellFragment extends Fragment {
         table.addCell("Nama Produk");
         table.addCell("Jumlah");
         table.addCell("Tanggal & Waktu");
+        table.addCell("Harga");
         table.setHeaderRows(1);
 
         Font o = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.BOLD);
@@ -414,7 +483,7 @@ public class SellFragment extends Fragment {
         PdfPCell[] cells = table.getRow(0).getCells();
         PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
 
-        Paragraph tglTTD = new Paragraph(addrComp+", "+dateTTD);
+        Paragraph tglTTD = new Paragraph(cityComp+", "+dateTTD);
         tglTTD.setAlignment(Element.ALIGN_RIGHT);
 
         Paragraph userTTD = new Paragraph(name);
@@ -435,13 +504,18 @@ public class SellFragment extends Fragment {
             NamePrdct = txViewModelList.get(i);
             QtyTX = txViewModelList.get(i);
             DateTimeTx = txViewModelList.get(i);
+            ValueTx = txViewModelList.get(i);
             String namePrdctL = NamePrdct.getNamePrdct();
             String qtyTxL = QtyTX.getQtyTx();
             String datetimeTxL = DateTimeTx.getDatetimeTx();
+            String valueTxL = ValueTx.getValueTx();
             table.addCell(String.valueOf(i+1));
             table.addCell(String.valueOf(namePrdctL));
             table.addCell(String.valueOf(qtyTxL));
             table.addCell(String.valueOf(datetimeTxL));
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+            double formatRpPrintSell = Double.parseDouble(String.valueOf(valueTxL));
+            table.addCell(formatRupiah.format(formatRpPrintSell));
         }
 
         //Step 2
@@ -464,6 +538,140 @@ public class SellFragment extends Fragment {
         document.add(new Chunk(ls));
         ls.setOffset(5);
         document.add(new Paragraph("Laporan Penjualan ", f));
+        document.add(new Paragraph(" ", g));
+        document.add(table);
+        document.add(tglTTD);
+        document.add(userTTD);
+
+        //Step 5: Close the document
+        document.close();
+        Log.e("List: ", txViewModelList.toString());
+
+        Toast.makeText(getContext(), "Pdf Generate!", Toast.LENGTH_SHORT).show();
+
+        checkPermission();
+        openPDF(pdfname);
+    }
+
+    private void createPdfMonth() throws IOException, DocumentException {
+
+        requestPermission();
+
+        File docsFolder = new File(Environment.getExternalStorageDirectory() + "/POSBaraka");
+        if (!docsFolder.exists()) {
+            docsFolder.mkdir();
+            Log.i("Print: ", "Created a new directory for PDF");
+        }
+
+        Date date = new Date() ;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date);
+
+        pdfname = "LaporanPenjualan_" + nameCompany + "_" + timeStamp + ".pdf";
+        pdfFile = new File(docsFolder.getAbsolutePath(), pdfname);
+
+//        pdfFile = new File(pdfFolder + "_LaporanLoginKaryawan_" + nameCompany + "_" + timeStamp + ".pdf");
+
+        OutputStream output = new FileOutputStream(pdfFile);
+
+        Document document = new Document(PageSize.A4);
+        Bitmap bmp = ((BitmapDrawable)imgCompHeaderSell.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        Image image = Image.getInstance(stream.toByteArray());
+        image.scaleToFit(60, 60);
+        image.setWidthPercentage(100);
+        image.setAlignment(Element.ALIGN_LEFT);
+//        document.add(image);
+
+//        Font regularReport = new Font(baseFont, 30,Font.BOLD, BaseColor.BLACK);
+
+        PdfPTable table = new PdfPTable(new float[]{1, 3, 3, 3, 3});
+        table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        table.getDefaultCell().setFixedHeight(50);
+        table.setTotalWidth(PageSize.A4.getWidth());
+        table.setWidthPercentage(100);
+        table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+        table.addCell("No.");
+        table.addCell("Nama Produk");
+        table.addCell("Jumlah");
+        table.addCell("Tanggal & Waktu");
+        table.addCell("Harga");
+        table.setHeaderRows(1);
+
+        Font o = new Font(Font.FontFamily.TIMES_ROMAN, 20.0f, Font.BOLD);
+        Font z = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.NORMAL);
+
+        Paragraph header = new Paragraph(nameCompany,o);
+        header.add(new Paragraph("\n"+addrComp,z));
+
+
+        PdfPTable tableHeader = new PdfPTable(new float[]{0.5f, 3});
+        tableHeader.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        tableHeader.getDefaultCell().setFixedHeight(60);
+        tableHeader.setTotalWidth(PageSize.A4.getWidth());
+        tableHeader.setWidthPercentage(100);
+        tableHeader.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+        tableHeader.addCell(image);
+        tableHeader.addCell(header);
+
+        PdfPCell[] cells = table.getRow(0).getCells();
+        PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
+
+        Paragraph tglTTD = new Paragraph(cityComp+", "+dateTTD);
+        tglTTD.setAlignment(Element.ALIGN_RIGHT);
+
+        Paragraph userTTD = new Paragraph(name);
+        userTTD.setAlignment(Element.ALIGN_RIGHT);
+        userTTD.setIndentationRight(60);
+        userTTD.setSpacingBefore(60);
+
+        for (int j = 0; j < cells.length; j++) {
+            cells[j].setBackgroundColor(new BaseColor(0, 206, 137));
+        }
+
+
+        for (int j = 0; j < cellsHeader.length; j++) {
+            cellsHeader[j].setBorder(Rectangle.NO_BORDER);
+        }
+
+        for (int i = 0; i < txViewModelList.size(); i++) {
+            NamePrdct = txViewModelList.get(i);
+            QtyTX = txViewModelList.get(i);
+            DateTimeTx = txViewModelList.get(i);
+            ValueTx = txViewModelList.get(i);
+            String namePrdctL = NamePrdct.getNamePrdct();
+            String qtyTxL = QtyTX.getQtyTx();
+            String datetimeTxL = DateTimeTx.getDatetimeTx();
+            String valueTxL = ValueTx.getValueTx();
+            table.addCell(String.valueOf(i+1));
+            table.addCell(String.valueOf(namePrdctL));
+            table.addCell(String.valueOf(qtyTxL));
+            table.addCell(String.valueOf(datetimeTxL));
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+            double formatRpPrintSell = Double.parseDouble(String.valueOf(valueTxL));
+            table.addCell(formatRupiah.format(formatRpPrintSell));
+        }
+
+        //Step 2
+        PdfWriter.getInstance(document, output);
+
+        //Step 3
+        document.open();
+        document.add(tableHeader);
+
+        LineSeparator ls = new LineSeparator();
+
+        //Step 4 Add content
+//        document.add((Element) new Paragraph("Test"));
+//        document.add((Element) new Paragraph("Test Test Test Test Test Test Test Test "));
+
+        Font f = new Font(Font.FontFamily.TIMES_ROMAN, 14.0f, Font.UNDERLINE);
+        Font g = new Font(Font.FontFamily.TIMES_ROMAN, 10.0f, Font.NORMAL);
+        Font h = new Font(Font.FontFamily.TIMES_ROMAN, 5.0f, Font.NORMAL);
+        document.add(new Paragraph(" ", h));
+        document.add(new Chunk(ls));
+        ls.setOffset(5);
+        document.add(new Paragraph("Laporan Penjualan Bulanan ", f));
         document.add(new Paragraph(" ", g));
         document.add(table);
         document.add(tglTTD);
@@ -538,6 +746,8 @@ public class SellFragment extends Fragment {
                                 Picasso.get().load(URL_COMP_IMG_DETAIL+jsonObject.getString("logoComp"))
                                         .resize(30, 30)
                                         .centerCrop()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
                                         .into(imgCompHeaderSell);
 
 
@@ -555,23 +765,92 @@ public class SellFragment extends Fragment {
                 });
     }
 
-    @Override
-    public void onCreateOptionsMenu(
-            Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_print, menu);
+    public void TraditionallistDialogSort() {
+        // setup alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Urutkan");
+        // buat array list
+        String[] options = {"Bulan", "Semua"};
+        //Pass array list di Alert dialog
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: // pilih opsi
+                        getTxMonth();
+                        break;
+                    case 1:
+                        getTx();
+                        break;
+                    default:
+                }
+            }
+        });
+        // buat dan tampilkan alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
+
+    public void TraditionallistDialogPrint() {
+        // setup alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Print");
+        // buat array list
+        String[] options = {"Bulan", "Semua"};
+        //Pass array list di Alert dialog
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: // pilih opsi
+                        try {
+                            createPdfMonth();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (DocumentException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 1:
+                        try {
+                            createPdf();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (DocumentException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
+                }
+            }
+        });
+        // buat dan tampilkan alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_print, menu);
+
+    }
+
+//    try {
+//        createPdf();
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//    } catch (DocumentException e) {
+//        e.printStackTrace();
+//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.printItem:
-                try {
-                    createPdf();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                }
+                TraditionallistDialogPrint();
+                return true;
+            case R.id.printISort:
+                TraditionallistDialogSort();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

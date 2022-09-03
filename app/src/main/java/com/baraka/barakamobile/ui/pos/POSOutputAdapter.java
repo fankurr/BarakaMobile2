@@ -31,8 +31,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class POSOutputAdapter extends RecyclerView.Adapter<POSOutputAdapter.POSOutputViewHolder> {
 
@@ -75,11 +77,21 @@ public class POSOutputAdapter extends RecyclerView.Adapter<POSOutputAdapter.POSO
     public void onBindViewHolder(@NonNull @NotNull POSOutputAdapter.POSOutputViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         holder.IdPrdctOutput.setText(posOutputViewModelList.get(position).getIdPrdct());
+
         holder.namePrdctOutput.setText(posOutputViewModelList.get(position).getNamePrdct());
+
+//        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+//        double formatRpPOSOutput = Float.parseFloat(posOutputViewModelList.get(position).getUnitPrice());
         holder.pricePrdctOutput.setText(posOutputViewModelList.get(position).getUnitPrice());
+
         holder.jmlhPrdctOutput.setText(posOutputViewModelList.get(position).getQtyPrdct());
+
         holder.unitPrdctOutput.setText(posOutputViewModelList.get(position).getUnitPrdct());
-        holder.pricePrdctOutputTotal.setText(posOutputViewModelList.get(position).getTotal());
+
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+        double formatRpPOSOutputTotal =Double.parseDouble(posOutputViewModelList.get(position).getTotal());
+        holder.pricePrdctOutputTotal.setText(formatRupiah.format(formatRpPOSOutputTotal));
+
         holder.delItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

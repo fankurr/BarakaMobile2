@@ -112,23 +112,12 @@
                     android:textSize="21sp" />
 
                 <TextView
-                    android:id="@+id/textView32"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="6dp"
-                    android:layout_weight="0"
-                    android:fontFamily="@font/ubuntu_medium"
-                    android:text="Rp"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/colorDark"
-                    android:textSize="21sp" />
-
-                <TextView
                     android:id="@+id/textViewPricePrdctDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:fontFamily="@font/ubuntu_medium"
+                    android:text="000"
                     android:textAlignment="viewEnd"
                     android:textColor="@color/colorDark"
                     android:textSize="21sp" />

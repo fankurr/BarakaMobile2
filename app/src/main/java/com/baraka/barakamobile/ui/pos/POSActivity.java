@@ -74,6 +74,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,13 +144,14 @@ public class POSActivity extends AppCompatActivity {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
     public static final String LOGO_COMP = "logoComp";
 
     String id, email, name, level, access, idCompany, nameCompany;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
     TextView txtIdTx, txtNamaPrdct,txtPricePrdct,txtUnitPrdct,txtIdPrdct,txtStockPrdct, totalPrdctIn;
     TextView txtIdPrdctOut, txtPricePrdctOut, txtQtyOut, txtTotalOut;
     String totalPrdctPrice;
@@ -219,6 +221,7 @@ public class POSActivity extends AppCompatActivity {
         level = sharedPreferences.getString(TAG_LEVEL, level);
         idComp = sharedPreferences.getString(ID_COMP, idComp);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        cityComp = sharedPreferences.getString(CITY_COMP, cityComp);
         addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
 
@@ -230,9 +233,9 @@ public class POSActivity extends AppCompatActivity {
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
 
-
         recyclerView = (RecyclerView) findViewById(R.id.RecyclerViewPOS);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(posCardAdapter);
         recyclerView.setHasFixedSize(true);
         posViewModelList = new ArrayList<>();
@@ -319,9 +322,15 @@ public class POSActivity extends AppCompatActivity {
 
 
                     txtIdPrdct.setText(String.valueOf(posViewModelList.get(position).getIdPrdct()));
+
                     txtNamaPrdct.setText(posViewModelList.get(position).getNamePrdct());
-                    txtPricePrdct.setText(posViewModelList.get(position).getUnitPrice());
+
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+                    double formatRpPOSInput = Double.parseDouble(posViewModelList.get(position).getUnitPrice());
+                    txtPricePrdct.setText(formatRupiah.format(formatRpPOSInput));
+
                     txtUnitPrdct.setText(posViewModelList.get(position).getUnitPrdct());
+
                     txtStockPrdct.setText(posViewModelList.get(position).getStockPrdct());
 
                     Picasso.get().load(URL_PRDCT_IMG+posViewModelList.get(position).getImgPrdct())
@@ -343,10 +352,10 @@ public class POSActivity extends AppCompatActivity {
                                 inputJumlah.requestFocus();
                             }else{
 
-                                float price = Float.parseFloat(posViewModelList.get(position).getUnitPrice());
-                                float input = Float.parseFloat(inputJumlah.getText().toString());
+                                int price = Integer.parseInt(posViewModelList.get(position).getUnitPrice());
+                                int input = Integer.parseInt(inputJumlah.getText().toString());
 
-                                float currTotal = price*input;
+                                int currTotal = price*input;
                                 totalPrdctPrice = String.valueOf(currTotal);
 
                                 POSOutputViewModel posOutputViewModel = new POSOutputViewModel(
@@ -397,7 +406,7 @@ public class POSActivity extends AppCompatActivity {
 //                                                                    @Override
 //                                                                    public void onClick(DialogInterface dialog, int which) {
 //
-////                                                                        Log.e("Input", "Data: "+idCompany+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
+
 //                                                                        Context context = POSActivity.this;
 //                                                                        POSActivity.this.setResult(RESULT_OK);
 //                                                                        android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
@@ -428,7 +437,7 @@ public class POSActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onError(ANError anError) {
-                                                Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
                                                 Log.i("ERROR", "error => " + anError.toString());
                                                 progressDialog.dismiss();
                                             }
@@ -442,28 +451,32 @@ public class POSActivity extends AppCompatActivity {
 
 
 
-                                float totalPrice = 0;
-                                totalPrice += currTotal;
-                                totalTxt.setText(String.valueOf(totalPrice));
-                                for (int i = 0; i<posOutputViewModelList.size(); i++)
-                                {
+                                int totalPrice = 0;
+//                                totalPrice += currTotal;
 
-
-                                        float post = Float.parseFloat(posOutputViewModelList.get(i).getTotal());
-                                        totalPrice += post;
-
-                                        Toast.makeText(POSActivity.this, "Total: " + totalPrice, Toast.LENGTH_SHORT).show();
-
-                                        Log.i("i", "= " + i);
-                                        Log.i("posOutputViewModelList ", "= " + post);
-                                        Log.i("size", "= " + posOutputViewModelList.size());
-
-
-
-                                        totalTxt.setText(String.valueOf(totalPrice));
-                                        posOutputAdapter.notifyDataSetChanged();
-
-                                }
+//                                for (int i = 0; i<posOutputViewModelList.size(); i++)
+//                                {
+//
+//
+//                                        int post = Integer.parseInt(posOutputViewModelList.get(i).getTotal());
+//                                        totalPrice += post;
+//
+//                                        Toast.makeText(POSActivity.this, "Total: " + totalPrice, Toast.LENGTH_SHORT).show();
+//
+//                                        Log.i("i", "= " + i);
+//                                        Log.i("posOutputViewModelList ", "= " + post);
+//                                        Log.i("size", "= " + posOutputViewModelList.size());
+//
+//
+//
+//
+//                                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+//                                        double formatRpPOSTotal = Double.parseDouble(String.valueOf(totalPrice));
+//                                        totalTxt.setText(formatRupiah.format(formatRpPOSTotal));
+//
+//                                        posOutputAdapter.notifyDataSetChanged();
+//
+//                                }
 
 
                                 posOutputViewModelList.add(posOutputViewModel);
@@ -628,16 +641,17 @@ public class POSActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // update TextView here!
-                            float totalPrice = 0;
+                            int totalPrice = 0;
                             //                                totalTxt.setText(String.valueOf(totalPrice));
                             for (int i = 0; i<posOutputViewModelList.size(); i++)
                             {
-                                float post = Float.parseFloat(posOutputViewModelList.get(i).getTotal());
+                                int post = Integer.parseInt(posOutputViewModelList.get(i).getTotal());
                                 totalPrice += post;
                                 posOutputAdapter.notifyDataSetChanged();
                             }
-
-                            totalTxt.setText(String.valueOf(totalPrice));
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+                            double formatRpPOSTotal = Double.parseDouble(String.valueOf(totalPrice));
+                            totalTxt.setText(formatRupiah.format(formatRpPOSTotal));
 
                         }
                     });
@@ -708,95 +722,13 @@ public class POSActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(ANError anError) {
-                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
                         Log.d("ERROR","error => "+ anError.toString());
                         Log.i("Input", "Data: "+idCompany+", "+ finalIdPrdct.toString());
                         progressDialog.dismiss();
                     }
                 });
 
-//        for (int i = 0; i < posOutputViewModelList.size(); i++) {
-//            IdPrdct = posOutputViewModelList.get(i);
-//            NamePrdct = posOutputViewModelList.get(i);
-//            UnitPrice = posOutputViewModelList.get(i);
-//            JmlhPrdct = posOutputViewModelList.get(i);
-//            Total = posOutputViewModelList.get(i);
-//            String IdPrdctL = IdPrdct.getIdPrdct();
-//            String NamePrdctL = NamePrdct.getNamePrdct();
-//            String UnitPriceL = UnitPrice.getUnitPrice();
-//            String TotalL = Total.getTotal();
-//            String JumlahL = JmlhPrdct.getQtyPrdct();
-//        }
-
-//        ProgressDialog progressDialog = new ProgressDialog(POSActivity.this);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setMessage("Proses Checkout..");
-//        progressDialog.show();
-//
-//        sharedPreferences = POSActivity.this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
-//        idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
-//
-//        AndroidNetworking.post(TX)
-//                .addBodyParameter("idCompTx", idCompany)
-//                .addBodyParameter("idPrdctTx", IdPrdct.getIdPrdct())
-//                .addBodyParameter("qtyTx", JmlhPrdct.getQtyPrdct())
-//                .addBodyParameter("valueTx", Total.getTotal())
-//                .addBodyParameter("datetimeTx", date)
-//                .setTag(this)
-//                .setPriority(Priority.MEDIUM)
-//                .build()
-//                .getAsJSONObject(new JSONObjectRequestListener() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        progressDialog.dismiss();
-//                        Log.d("Respon Edit",""+response);
-//
-//                        try {
-//                            Boolean status = response.getBoolean("success");
-//                            if (status == true){
-//                                new android.app.AlertDialog.Builder(POSActivity.this)
-//                                        .setMessage("Checkout Berhasil!")
-//                                        .setCancelable(false)
-//                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                Context context = POSActivity.this;
-//                                                POSActivity.this.setResult(RESULT_OK);
-//                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-//                                                optionDialog.dismiss();
-//                                                Toast.makeText(context, "Berhasil Menambah Data Pengeluaran", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        })
-//                                        .show();
-//                            }else{
-//
-//                                new android.app.AlertDialog.Builder(POSActivity.this)
-//                                        .setMessage("Checkout Gagal!")
-//                                        .setCancelable(false)
-//                                        .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-////                                                Log.i("Input", "Data: "+idCompTx+", "+idCompPay+", "+valPay+", "+descPay+", "+datetimePay+", "+signPay.toString());
-//                                                Context c = POSActivity.this;
-//                                                android.app.AlertDialog optionDialog = new android.app.AlertDialog.Builder(POSActivity.this).create();
-//                                                optionDialog.dismiss();
-//                                            }
-//                                        })
-//                                        .show();
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError anError) {
-//                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
-//                        Log.d("ERROR","error => "+ anError.toString());
-//                        Log.i("Input", "Data: "+idCompany+", "+txtIdPrdctOut+", "+txtQtyOut+", "+txtTotalOut+", "+date.toString());
-//                        progressDialog.dismiss();
-//                    }
-//                });
     }
 
     private void getPrdct() {
@@ -818,61 +750,34 @@ public class POSActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         posViewModelList.clear();
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                POSViewModel posViewModel = new POSViewModel(
+                            int status = response.getInt("code");
+                            if (status == 1) {
 
-                                        jsonObject.getInt("idProduct"),
-                                        jsonObject.getString("nameProduct"),
-                                        jsonObject.getString("price"),
-                                        jsonObject.getString("unit"),
-                                        jsonObject.getString("stock"),
-                                        jsonObject.getString("imageProduct")
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    POSViewModel posViewModel = new POSViewModel(
 
-//                                        jsonObject.getInt("idProduct"),
-//                                        jsonObject.getString("nameProduct"),
-//                                        jsonObject.getString("description"),
-//                                        jsonObject.getString("category"),
-//                                        jsonObject.getString("supplierProduct"),
-//                                        jsonObject.getString("price"),
-//                                        jsonObject.getString("unit"),
-//                                        jsonObject.getString("stock"),
-//                                        jsonObject.getString("imageProduct")
-//
-//                                        jsonObject.getInt("idProduct"),
-//                                        jsonObject.getString("nameProduct"),
-//                                        jsonObject.getString("codeProduct"),
-//                                        jsonObject.getString("supplierProduct"),
-//                                        jsonObject.getString("price"),
-//                                        jsonObject.getString("unit"),
-//                                        jsonObject.getString("stock"),
-//                                        jsonObject.getString("lastUpdate"),
-//                                        jsonObject.getString("qtyUpdate"),
-//                                        jsonObject.getString("updateBy"),
-//                                        jsonObject.getString("description"),
-//                                        jsonObject.getString("imageProduct"),
-//                                        jsonObject.getInt("idCategory"),
-//                                        jsonObject.getString("idCompCategory"),
-//                                        jsonObject.getString("nameCategory"),
-//                                        jsonObject.getString("descCategory"),
-//                                        jsonObject.getString("imageCategory"),
-//                                        jsonObject.getInt("idSupplier"),
-//                                        jsonObject.getString("idCompSupplier"),
-//                                        jsonObject.getString("nameSupplier"),
-//                                        jsonObject.getString("addrSupplier"),
-//                                        jsonObject.getString("phoneSupplier"),
-//                                        jsonObject.getString("emailSupplier"),
-//                                        jsonObject.getString("descSupplier"),
-//                                        jsonObject.getString("imgSupplier")
+                                            jsonObject.getInt("idProduct"),
+                                            jsonObject.getString("nameProduct"),
+                                            jsonObject.getString("price"),
+                                            jsonObject.getString("unit"),
+                                            jsonObject.getString("stock"),
+                                            jsonObject.getString("imageProduct")
 
-                                );
+                                    );
 //                                creating adapter object and setting it to recyclerview
 
-                                posViewModelList.add(posViewModel);
-                                POSCardAdapter posCardAdapter = new POSCardAdapter(posViewModelList, POSActivity.this);
-                                recyclerView.setAdapter(posCardAdapter);
+                                    posViewModelList.add(posViewModel);
+                                    POSCardAdapter posCardAdapter = new POSCardAdapter(posViewModelList, POSActivity.this);
+                                    recyclerView.setAdapter(posCardAdapter);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(POSActivity.this, "Data Produk Tidak Ada!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -883,7 +788,7 @@ public class POSActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(ANError anError) {
-                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(POSActivity.this, "Koneksi Gagal", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
                 });
@@ -948,7 +853,7 @@ public class POSActivity extends AppCompatActivity {
         PdfPCell[] cells = table.getRow(0).getCells();
         PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
 
-        Paragraph tglTTD = new Paragraph(addrComp+", "+dateTTD);
+        Paragraph tglTTD = new Paragraph(cityComp+", "+dateTTD);
         tglTTD.setAlignment(Element.ALIGN_RIGHT);
 
         Paragraph userTTD = new Paragraph(name);
@@ -1006,7 +911,6 @@ public class POSActivity extends AppCompatActivity {
 
         //Step 5: Close the document
         document.close();
-        Log.e("List: ", posOutputViewModelList.toString());
 
         Toast.makeText(this, "Pdf Generate!", Toast.LENGTH_SHORT).show();
 

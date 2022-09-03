@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String my_shared_preferences = "my_shared_preferences";
 
     String id, email, name, address, level, postUser, phone, access, imageUser, idCompany, nameCompany, idLog;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
 
     ImageView imgUser;
 
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         idLog = sharedPreferences.getString(ID_LOG, idLog);
 
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+        cityComp = sharedPreferences.getString(CITY_COMP, cityComp);
         addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
         phoneComp = sharedPreferences.getString(PHONE_COMP, phoneComp);
         emailComp = sharedPreferences.getString(EMAIL_COMP, emailComp);
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 intentProfile.putExtra(TAG_COMP, nameCompany);
 
                 intentProfile.putExtra(CODE_COMP, codeComp);
+                intentProfile.putExtra(CITY_COMP, cityComp);
                 intentProfile.putExtra(ADDR_COMP, addrComp);
                 intentProfile.putExtra(PHONE_COMP, phoneComp);
                 intentProfile.putExtra(EMAIL_COMP, emailComp);
@@ -235,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 intentProfile.putExtra(TAG_COMP, nameCompany);
 
                 intentProfile.putExtra(CODE_COMP, codeComp);
+                intentProfile.putExtra(CITY_COMP, cityComp);
                 intentProfile.putExtra(ADDR_COMP, addrComp);
                 intentProfile.putExtra(PHONE_COMP, phoneComp);
                 intentProfile.putExtra(EMAIL_COMP, emailComp);
@@ -325,8 +329,8 @@ public class MainActivity extends AppCompatActivity {
                                 Picasso.get().load(URL_USER_IMG_DETAIL+jsonObject.getString("imgProfile"))
                                         .resize(50, 50)
                                         .centerCrop()
-                                        .placeholder(R.drawable.default_image_person_small)
-                                        .error(R.drawable.default_image_person_small)
+                                        .placeholder(R.drawable.default_user_header)
+                                        .error(R.drawable.default_user_header)
                                         .into(imgUser);
 
 

@@ -100,8 +100,8 @@ public class WorkerCardAdapter extends RecyclerView.Adapter<WorkerCardAdapter.Wo
         Picasso.get().load(URL_WORKER_IMG+workerViewModelList.get(position).getImgUser())
                 .resize(450, 450)
                 .centerCrop()
-                .placeholder(R.drawable.default_image_comp_small)
-                .error(R.drawable.default_image_comp_small)
+                .placeholder(R.drawable.default_image_person_small)
+                .error(R.drawable.default_image_person_small)
                 .into(holder.imgWorker);
 
         holder.imgTlpWorker.setOnClickListener(new View.OnClickListener() {

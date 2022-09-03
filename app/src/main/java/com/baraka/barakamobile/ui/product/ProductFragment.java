@@ -207,43 +207,51 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
                     public void onResponse(JSONObject response) {
                         prdctViewModelList.clear();
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                PrdctViewModel prdctViewModel = new PrdctViewModel(
+                            int status = response.getInt("code");
+                            if (status == 1) {
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    PrdctViewModel prdctViewModel = new PrdctViewModel(
 
-                                        jsonObject.getString("idProduct"),
-                                        jsonObject.getString("nameProduct"),
-                                        jsonObject.getString("codeProduct"),
-                                        jsonObject.getString("supplierProduct"),
-                                        jsonObject.getString("price"),
-                                        jsonObject.getString("unit"),
-                                        jsonObject.getString("stock"),
-                                        jsonObject.getString("lastUpdate"),
-                                        jsonObject.getString("updateBy"),
-                                        jsonObject.getString("description"),
-                                        jsonObject.getString("imageProduct"),
-                                        jsonObject.getString("idCategory"),
-                                        jsonObject.getString("idCompCategory"),
-                                        jsonObject.getString("nameCategory"),
-                                        jsonObject.getString("descCategory"),
-                                        jsonObject.getString("imageCategory"),
-                                        jsonObject.getString("idSupplier"),
-                                        jsonObject.getString("idCompSupplier"),
-                                        jsonObject.getString("nameSupplier"),
-                                        jsonObject.getString("addrSupplier"),
-                                        jsonObject.getString("phoneSupplier"),
-                                        jsonObject.getString("emailSupplier"),
-                                        jsonObject.getString("descSupplier"),
-                                        jsonObject.getString("imgSupplier")
+                                            jsonObject.getString("idProduct"),
+                                            jsonObject.getString("nameProduct"),
+                                            jsonObject.getString("codeProduct"),
+                                            jsonObject.getString("supplierProduct"),
+                                            jsonObject.getString("price"),
+                                            jsonObject.getString("unit"),
+                                            jsonObject.getString("stock"),
+                                            jsonObject.getString("lastUpdate"),
+                                            jsonObject.getString("updateBy"),
+                                            jsonObject.getString("description"),
+                                            jsonObject.getString("imageProduct"),
+                                            jsonObject.getString("idCategory"),
+                                            jsonObject.getString("idCompCategory"),
+                                            jsonObject.getString("nameCategory"),
+                                            jsonObject.getString("descCategory"),
+                                            jsonObject.getString("imageCategory"),
+                                            jsonObject.getString("idSupplier"),
+                                            jsonObject.getString("idCompSupplier"),
+                                            jsonObject.getString("nameSupplier"),
+                                            jsonObject.getString("addrSupplier"),
+                                            jsonObject.getString("phoneSupplier"),
+                                            jsonObject.getString("emailSupplier"),
+                                            jsonObject.getString("descSupplier"),
+                                            jsonObject.getString("imgSupplier")
 
-                                );
-                                prdctViewModelList.add(prdctViewModel);
-                                PrdctCardAdapter prdctCardAdapter = new PrdctCardAdapter(prdctViewModelList, getContext());
-                                recyclerView1.setAdapter(prdctCardAdapter);
-                                prdctCardAdapter.setOnItemClickListener(ProductFragment.this);
+                                    );
+                                    prdctViewModelList.add(prdctViewModel);
+                                    PrdctCardAdapter prdctCardAdapter = new PrdctCardAdapter(prdctViewModelList, getContext());
+                                    recyclerView1.setAdapter(prdctCardAdapter);
+                                    prdctCardAdapter.setOnItemClickListener(ProductFragment.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Data Produk Tidak Ada!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
@@ -279,20 +287,28 @@ public class ProductFragment extends Fragment implements PrdctCardAdapter.OnItem
                     public void onResponse(JSONObject response) {
                         cateViewModelList.clear();
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                CateViewModel cateViewModel = new CateViewModel(
-                                        jsonObject.getString("idCategory"),
-                                        jsonObject.getString("companyCate"),
-                                        jsonObject.getString("category"),
-                                        jsonObject.getString("descCate"),
-                                        jsonObject.getString("imageCate")
+                            int status = response.getInt("success");
+                            if (status == 1) {
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    CateViewModel cateViewModel = new CateViewModel(
+                                            jsonObject.getString("idCategory"),
+                                            jsonObject.getString("companyCate"),
+                                            jsonObject.getString("category"),
+                                            jsonObject.getString("descCate"),
+                                            jsonObject.getString("imageCate")
 
-                                );
-                                cateViewModelList.add(cateViewModel);
+                                    );
+                                    cateViewModelList.add(cateViewModel);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Data Kategori Tidak Ada!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();

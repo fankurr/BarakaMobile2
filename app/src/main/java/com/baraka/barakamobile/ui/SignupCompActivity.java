@@ -1,7 +1,9 @@
 package com.baraka.barakamobile.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,14 +47,15 @@ public class SignupCompActivity extends AppCompatActivity {
     private String URL_COMP_CEK = DbConfig.URL_COMP + "idComp.php";
     private String URL_COMP_IMG = DbConfig.URL_COMP + "imgUser/";
 
-    EditText inputNameComp, inputCodeComp, inputAddrComp, inputPhoneComp, inputEmailComp;
+    EditText inputNameComp, inputCodeComp, inputCityComp, inputAddrComp, inputPhoneComp, inputEmailComp;
     Button btnUploadPhotoComp, btnBackSignupComp, btnDaftarSignupComp;
     TextView textPathComp, txtGenerateCodeComp;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
 
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
@@ -63,6 +66,14 @@ public class SignupCompActivity extends AppCompatActivity {
     private static final int RANDOM_STR_LENGTH = 9;
 
     int SELECT_PICTURE = 200;
+
+    // constant code for runtime permissions
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final String[] PERMISION_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    };
 
     ProgressDialog progressDialog;
     ConnectivityManager connectivityManager;
@@ -97,6 +108,7 @@ public class SignupCompActivity extends AppCompatActivity {
 
         inputNameComp = findViewById(R.id.inputNameCompRegist);
         inputCodeComp = findViewById(R.id.inputCodeCompRegist);
+        inputCityComp = findViewById(R.id.inputCityCompRegist);
         inputAddrComp = findViewById(R.id.inputAddrCompRegist);
         inputPhoneComp = findViewById(R.id.inputPhoneCompRegist);
         inputEmailComp = findViewById(R.id.inputEmailCompRegist);
@@ -118,7 +130,7 @@ public class SignupCompActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                imageChooser();
+                requestPermission();
 
 //                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //                intent.setType("*/*");
@@ -143,6 +155,8 @@ public class SignupCompActivity extends AppCompatActivity {
                     inputNameComp.setError("Harap Masukan Nama Toko!");
                     inputNameComp.requestFocus();
                     inputCodeComp.setError("Harap Masukan Code Toko! Jika Anda bingung, Click 'Generate!'");
+                    inputCityComp.requestFocus();
+                    inputCityComp.setError("Harap Masukan Kota Domisili Toko!");
                     inputCodeComp.requestFocus();
                     inputAddrComp.setError("Harap Masukan Alamat Toko!");
                     inputAddrComp.requestFocus();
@@ -162,8 +176,15 @@ public class SignupCompActivity extends AppCompatActivity {
         });
     }
 
-    void imageChooser() {
 
+    private void requestPermission() {
+        // requesting permissions if not provided.
+        ActivityCompat.requestPermissions(SignupCompActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+
+        imageChooser();
+    }
+
+    void imageChooser() {
         // create an instance of the
         // intent of the type image
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -250,6 +271,7 @@ public class SignupCompActivity extends AppCompatActivity {
 
         nameComp = inputNameComp.getText().toString();
         codeComp = inputCodeComp.getText().toString();
+        cityComp = inputCityComp.getText().toString();
         addrComp = inputAddrComp.getText().toString();
         phoneComp = inputPhoneComp.getText().toString();
         emailComp = inputEmailComp.getText().toString();
@@ -262,6 +284,7 @@ public class SignupCompActivity extends AppCompatActivity {
         AndroidNetworking.upload(URL_COMP_REG)
                 .addMultipartParameter("nameComp", nameComp)
                 .addMultipartParameter("codeComp", codeComp)
+                .addMultipartParameter("cityComp", cityComp)
                 .addMultipartParameter("addrComp", addrComp)
                 .addMultipartParameter("phoneComp", phoneComp)
                 .addMultipartParameter("emailComp", emailComp)
@@ -288,6 +311,7 @@ public class SignupCompActivity extends AppCompatActivity {
                                                 intentComp.putExtra(ID_COMP, idComp);
                                                 intentComp.putExtra(NAME_COMP, nameComp);
                                                 intentComp.putExtra(CODE_COMP, codeComp);
+                                                intentComp.putExtra(CITY_COMP, cityComp);
                                                 intentComp.putExtra(ADDR_COMP, addrComp);
                                                 intentComp.putExtra(PHONE_COMP, phoneComp);
                                                 intentComp.putExtra(EMAIL_COMP, emailComp);

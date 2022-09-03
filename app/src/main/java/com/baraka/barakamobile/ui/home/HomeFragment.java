@@ -39,8 +39,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -89,6 +91,8 @@ public class HomeFragment extends Fragment {
 
     TextView txtHomeTotalPayout, txtHomeTotalSell;
 
+    NumberFormat rupiah;
+
     String id, email, name, level, access, idCompany, nameCompany;
     String idPay, idCompPay,valPay,descPay, datetimePay, signPay;
 
@@ -110,6 +114,8 @@ public class HomeFragment extends Fragment {
 
         txtHomeTotalPayout = (TextView) view.findViewById(R.id.txtHomeTotalPayout);
         txtHomeTotalSell = (TextView) view.findViewById(R.id.txtHomeTotalSell);
+
+        rupiah = NumberFormat.getNumberInstance(new Locale("In", "ID"));
 
         rViewHome = (RecyclerView) view.findViewById(R.id.recyclerViewHome);
         rViewHome.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -169,7 +175,17 @@ public class HomeFragment extends Fragment {
 //                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                txtHomeTotalSell.setText(jsonObject.getString("sumValTx"));
+
+                                if(jsonObject.getString("sumValTx") == "null"){
+                                    txtHomeTotalSell.setText("000");
+                                }else{
+                                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+                                    double formatRpSumValTx = Double.parseDouble(jsonObject.getString("sumValTx"));
+
+                                    txtHomeTotalSell.setText(formatRupiah.format(formatRpSumValTx));
+                                }
+
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -205,7 +221,17 @@ public class HomeFragment extends Fragment {
 //                                Log.d("idUser", jsonArray.getJSONObject(0).getString("idUser")); //mengambil data username dari json yg sudah diinput
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                txtHomeTotalPayout.setText(jsonObject.getString("sumValPay"));
+
+                                if(jsonObject.getString("sumValPay") == "null"){
+                                    txtHomeTotalPayout.setText("000");
+                                }else{
+                                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+                                    double formatRpSumValPay = Double.parseDouble(jsonObject.getString("sumValPay"));
+
+                                    txtHomeTotalPayout.setText(formatRupiah.format(formatRpSumValPay));
+
+                                }
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -245,30 +271,34 @@ public class HomeFragment extends Fragment {
 
                         Log.i("Info", "Data: " + response.toString());
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                HomeViewModelList homeViewModelList = new HomeViewModelList(
-                                        jsonObject.getInt("idTx"),
-                                        jsonObject.getInt("idCompTx"),
-                                        jsonObject.getString("namePrdct"),
-                                        jsonObject.getString("imageProduct"),
-                                        jsonObject.getString("qtyTx"),
-                                        jsonObject.getString("valueTx"),
-                                        jsonObject.getString("datetimeTx"),
-                                        jsonObject.getString("idPay"),
-                                        jsonObject.getString("valuePay"),
-                                        jsonObject.getString("descPay"),
-                                        jsonObject.getString("datetimePay"),
-                                        jsonObject.getString("signPay")
+                            int status = response.getInt("code");
+                            if (status == 1) {
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    HomeViewModelList homeViewModelList = new HomeViewModelList(
+                                            jsonObject.getInt("idTx"),
+                                            jsonObject.getInt("idCompTx"),
+                                            jsonObject.getString("namePrdct"),
+                                            jsonObject.getString("imageProduct"),
+                                            jsonObject.getString("qtyTx"),
+                                            jsonObject.getString("valueTx"),
+                                            jsonObject.getString("datetimeTx"),
+                                            jsonObject.getString("dt")
 
-                                );
-                                homeViewModelLists.add(homeViewModelList);
-                                HomeCardAdapter homeCardAdapter = new HomeCardAdapter(getContext(), homeViewModelLists);
-                                rViewHome.setAdapter(homeCardAdapter);
+                                    );
+                                    homeViewModelLists.add(homeViewModelList);
+                                    HomeCardAdapter homeCardAdapter = new HomeCardAdapter(getContext(), homeViewModelLists);
+                                    rViewHome.setAdapter(homeCardAdapter);
 //                                txCardAdapter.setOnItemClickListener(SupplierFragment.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Anda Belum Memiliki Data Transaksi Terbaru!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();

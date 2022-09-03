@@ -13,7 +13,9 @@ import com.baraka.barakamobile.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class PayoutCardAdapter extends RecyclerView.Adapter<PayoutCardAdapter.PayoutViewHolder> {
 
@@ -36,9 +38,15 @@ public class PayoutCardAdapter extends RecyclerView.Adapter<PayoutCardAdapter.Pa
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull PayoutCardAdapter.PayoutViewHolder holder, int position) {
-        holder.valpayout.setText(payoutViewModelLists.get(position).getValPay());
+
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+        double formatRpPayout = Double.parseDouble(payoutViewModelLists.get(position).getValPay());
+        holder.valpayout.setText(formatRupiah.format(formatRpPayout));
+
         holder.descPayout.setText(payoutViewModelLists.get(position).getDescPay());
+
         holder.datetimePayout.setText(payoutViewModelLists.get(position).getDatetimePay());
+
         holder.signPayout.setText(payoutViewModelLists.get(position).getNameUser());
     }
 

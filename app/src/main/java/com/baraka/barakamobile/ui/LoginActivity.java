@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
@@ -104,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     Boolean session = false;
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
     String idLog;
@@ -159,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
 
         codeComp = sharedPreferences.getString(CODE_COMP, null);
+        cityComp = sharedPreferences.getString(ADDR_COMP, null);
         addrComp = sharedPreferences.getString(ADDR_COMP, null);
         phoneComp = sharedPreferences.getString(PHONE_COMP, null);
         emailComp = sharedPreferences.getString(EMAIL_COMP, null);
@@ -183,6 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra(TAG_COMP, nameCompany);
 
             intent.putExtra(CODE_COMP, codeComp);
+            intent.putExtra(CITY_COMP, cityComp);
             intent.putExtra(ADDR_COMP, addrComp);
             intent.putExtra(PHONE_COMP, phoneComp);
             intent.putExtra(EMAIL_COMP, emailComp);
@@ -233,6 +236,7 @@ public class LoginActivity extends AppCompatActivity {
                                             idCompany =  jsonObject.getString("company");
                                             nameCompany = jsonObject.getString("nameCompany");
                                             codeComp = jsonObject.getString("codeComp");
+                                            cityComp = jsonObject.getString("cityComp");
                                             addrComp = jsonObject.getString("addrComp");
                                             phoneComp = jsonObject.getString("phoneComp");
                                             emailComp = jsonObject.getString("emailComp");
@@ -258,6 +262,7 @@ public class LoginActivity extends AppCompatActivity {
                                             editor.putString(TAG_IDCOMP, idCompany);
                                             editor.putString(TAG_COMP, nameCompany);
                                             editor.putString(CODE_COMP, codeComp);
+                                            editor.putString(CITY_COMP, cityComp);
                                             editor.putString(ADDR_COMP, addrComp);
                                             editor.putString(PHONE_COMP, phoneComp);
                                             editor.putString(EMAIL_COMP, emailComp);
@@ -281,15 +286,16 @@ public class LoginActivity extends AppCompatActivity {
                                             addLog(idLog, idCompany, id);
 
                                             intent.putExtra(CODE_COMP, codeComp);
+                                            intent.putExtra(CITY_COMP, cityComp);
                                             intent.putExtra(ADDR_COMP, addrComp);
                                             intent.putExtra(PHONE_COMP, phoneComp);
                                             intent.putExtra(EMAIL_COMP, emailComp);
                                             finish();
                                             startActivity(intent);
 
-                                            Log.e("Successfully Login!", response.toString());
+                                            Log.i("Successfully Login!", response.toString());
 
-                                            Log.e("Profile: ", "ID User: " + id +
+                                            Log.i("Profile: ", "ID User: " + id +
                                                     ", Name: " + name +
                                                     ", Address: " +address+
                                                     ", Email: " + email +

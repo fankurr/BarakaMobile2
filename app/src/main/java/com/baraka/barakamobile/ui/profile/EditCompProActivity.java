@@ -39,8 +39,8 @@ import java.io.File;
 
 public class EditCompProActivity extends AppCompatActivity {
     String id, email, name, address, level, postUser, phone, access, idCompany, nameCompany;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
-    EditText inputNameComp, inputAddrComp, inputTlpComp, inputEmailCOmp, inputCodeComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
+    EditText inputNameComp, inputCityComp, inputAddrComp, inputTlpComp, inputEmailCOmp, inputCodeComp;
     ProgressDialog progressDialog;
     SharedPreferences sharedPreferences;
     Button btnBackEditCompPro, btnSaveEditCompPro;
@@ -67,6 +67,7 @@ public class EditCompProActivity extends AppCompatActivity {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
@@ -88,6 +89,8 @@ public class EditCompProActivity extends AppCompatActivity {
         idComp = sharedPreferences.getString(ID_COMP, idComp);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
+        cityComp = sharedPreferences.getString(CITY_COMP, cityComp);
+        addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
 
         Intent intent = getIntent();
         id = intent.getStringExtra(TAG_ID);
@@ -95,11 +98,13 @@ public class EditCompProActivity extends AppCompatActivity {
         idCompany = intent.getStringExtra(TAG_IDCOMP);
         nameCompany = intent.getStringExtra(TAG_COMP);
         codeComp = intent.getStringExtra(CODE_COMP);
+        cityComp = intent.getStringExtra(CITY_COMP);
         addrComp = intent.getStringExtra(ADDR_COMP);
         phoneComp = intent.getStringExtra(PHONE_COMP);
         emailComp = intent.getStringExtra(EMAIL_COMP);
 
         inputNameComp = findViewById(R.id.editTxtNameCompProEdit);
+        inputCityComp = findViewById(R.id.editTxtCityCompProEdit);
         inputAddrComp = findViewById(R.id.editTxtAddrCompProEdit);
         inputTlpComp = findViewById(R.id.editTxtTlpCompProEdit);
         inputEmailCOmp = findViewById(R.id.editTxtEmailCompProEdit);
@@ -217,6 +222,7 @@ public class EditCompProActivity extends AppCompatActivity {
         AndroidNetworking.upload(urlCompProEdit)
                 .addMultipartParameter("idComp", idCompany.toString())
                 .addMultipartParameter("nameComp", inputNameComp.getText().toString())
+                .addMultipartParameter("cityComp", inputCityComp.getText().toString())
                 .addMultipartParameter("addrComp", inputAddrComp.getText().toString())
                 .addMultipartParameter("phoneComp", inputTlpComp.getText().toString())
                 .addMultipartParameter("emailComp", inputEmailCOmp.getText().toString())
@@ -308,6 +314,7 @@ public class EditCompProActivity extends AppCompatActivity {
 
                                 JSONObject jsonObject = jsonArray.getJSONObject(0);
                                 inputNameComp.setText(jsonObject.getString("nameComp"));
+                                inputCityComp.setText(jsonObject.getString("cityComp"));
                                 inputAddrComp.setText(jsonObject.getString("addrComp"));
                                 inputTlpComp.setText(jsonObject.getString("phoneComp"));
                                 inputEmailCOmp.setText(jsonObject.getString("emailComp"));

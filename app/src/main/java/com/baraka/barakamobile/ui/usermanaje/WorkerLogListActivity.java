@@ -105,6 +105,7 @@ public class WorkerLogListActivity extends AppCompatActivity {
     public static final String ID_COMP = "idComp";
     public static final String NAME_COMP = "nameComp";
     public static final String CODE_COMP = "codeComp";
+    public static final String CITY_COMP = "cityComp";
     public static final String ADDR_COMP = "addrComp";
     public static final String PHONE_COMP = "phoneComp";
     public static final String EMAIL_COMP = "emailComp";
@@ -112,7 +113,7 @@ public class WorkerLogListActivity extends AppCompatActivity {
 
     String id, email, name, level, access, idCompany, nameCompany;
     String idLog, nameUser, datetimeLogin, datetimeLogout;
-    String idComp, nameComp, codeComp, addrComp, phoneComp, emailComp, logoComp;
+    String idComp, nameComp, codeComp, cityComp, addrComp, phoneComp, emailComp, logoComp;
 
     WorkerLogViewModel NameUser;
     WorkerLogViewModel EmailUser;
@@ -159,10 +160,12 @@ public class WorkerLogListActivity extends AppCompatActivity {
 
 
         sharedPreferences = this.getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
+
         id = sharedPreferences.getString(TAG_ID, id);
         level = sharedPreferences.getString(TAG_LEVEL, level);
         idComp = sharedPreferences.getString(ID_COMP, idComp);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, idCompany);
+        cityComp = sharedPreferences.getString(CITY_COMP, cityComp);
         addrComp = sharedPreferences.getString(ADDR_COMP, addrComp);
         codeComp = sharedPreferences.getString(CODE_COMP, codeComp);
 
@@ -173,6 +176,7 @@ public class WorkerLogListActivity extends AppCompatActivity {
         access = sharedPreferences.getString(TAG_ACCESS, null);
         idCompany = sharedPreferences.getString(TAG_IDCOMP, null);
         nameCompany = sharedPreferences.getString(TAG_COMP, null);
+
 
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -369,7 +373,7 @@ public class WorkerLogListActivity extends AppCompatActivity {
 
         PdfPTable tableHeader = new PdfPTable(new float[]{0.5f, 3});
         tableHeader.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-        tableHeader.getDefaultCell().setFixedHeight(50);
+        tableHeader.getDefaultCell().setFixedHeight(60);
         tableHeader.setTotalWidth(PageSize.A4.getWidth());
         tableHeader.setWidthPercentage(100);
         tableHeader.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -380,7 +384,7 @@ public class WorkerLogListActivity extends AppCompatActivity {
         PdfPCell[] cells = table.getRow(0).getCells();
         PdfPCell[] cellsHeader = tableHeader.getRow(0).getCells();
 
-        Paragraph tglTTD = new Paragraph(addrComp+", "+dateTTD);
+        Paragraph tglTTD = new Paragraph(cityComp+", "+dateTTD);
         tglTTD.setAlignment(Element.ALIGN_RIGHT);
 
         Paragraph userTTD = new Paragraph(name);

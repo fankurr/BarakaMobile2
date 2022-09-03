@@ -17,10 +17,6 @@
         android:layout_marginRight="6dp"
         android:orientation="vertical">
 
-        <SearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

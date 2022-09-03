@@ -202,29 +202,38 @@ public class UserManajeFragment extends Fragment{
                         Log.i("Info", "Data: " + response.toString());
 
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                WorkerViewModel workerViewModel = new WorkerViewModel(
-                                        jsonObject.getString("id"),
-                                        jsonObject.getString("email"),
-                                        jsonObject.getString("name"),
-                                        jsonObject.getString("address"),
-                                        jsonObject.getString("level"),
-                                        jsonObject.getString("phone"),
-                                        jsonObject.getString("access"),
-                                        jsonObject.getString("imgWorker"),
-                                        jsonObject.getString("company"),
-                                        jsonObject.getString("nameCompany")
-                                );
+                            int status = response.getInt("code");
+                            if (status == 1) {
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++){
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    WorkerViewModel workerViewModel = new WorkerViewModel(
+                                            jsonObject.getString("id"),
+                                            jsonObject.getString("email"),
+                                            jsonObject.getString("name"),
+                                            jsonObject.getString("address"),
+                                            jsonObject.getString("level"),
+                                            jsonObject.getString("phone"),
+                                            jsonObject.getString("access"),
+                                            jsonObject.getString("imgWorker"),
+                                            jsonObject.getString("company"),
+                                            jsonObject.getString("nameCompany")
+                                    );
 
 
-                                workerViewModelList.add(workerViewModel);
-                                WorkerCardAdapter workerCardAdapter = new WorkerCardAdapter(workerViewModelList, getContext());
-                                recyclerView.setAdapter(workerCardAdapter);
+                                    workerViewModelList.add(workerViewModel);
+                                    WorkerCardAdapter workerCardAdapter = new WorkerCardAdapter(workerViewModelList, getContext());
+                                    recyclerView.setAdapter(workerCardAdapter);
 //                                workerCardAdapter.setOnItemClickListener(UserManajeFragment.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Data Karyawan Tidak Ada!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();

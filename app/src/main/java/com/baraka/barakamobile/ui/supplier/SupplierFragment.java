@@ -37,7 +37,7 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.baraka.barakamobile.R;
-import com.baraka.barakamobile.databinding.FragmentSupplierBinding;
+//import com.baraka.barakamobile.databinding.FragmentSupplierBinding;
 import com.baraka.barakamobile.ui.product.PrdctCardAdapter;
 import com.baraka.barakamobile.ui.product.PrdctViewModel;
 import com.baraka.barakamobile.ui.product.ProductFragment;
@@ -190,24 +190,32 @@ public class SupplierFragment extends Fragment implements SplrCardAdapter.OnItem
 
                         Log.i("Info", "Data: " + response.toString());
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                SplrViewModel splrViewModel = new SplrViewModel(
-                                        jsonObject.getString("idSupplier"),
-                                        jsonObject.getInt("idCompSupplier"),
-                                        jsonObject.getString("nameSupplier"),
-                                        jsonObject.getString("addrSupplier"),
-                                        jsonObject.getString("phoneSupplier"),
-                                        jsonObject.getString("emailSupplier"),
-                                        jsonObject.getString("descSupplier"),
-                                        jsonObject.getString("imgSupplier")
+                            int status = response.getInt("code");
+                            if (status == 1) {
 
-                                );
-                                splrViewModelList.add(splrViewModel);
-                                SplrCardAdapter splrCardAdapter = new SplrCardAdapter(splrViewModelList, getContext());
-                                recyclerView.setAdapter(splrCardAdapter);
-                                splrCardAdapter.setOnItemClickListener(SupplierFragment.this);
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    SplrViewModel splrViewModel = new SplrViewModel(
+                                            jsonObject.getString("idSupplier"),
+                                            jsonObject.getInt("idCompSupplier"),
+                                            jsonObject.getString("nameSupplier"),
+                                            jsonObject.getString("addrSupplier"),
+                                            jsonObject.getString("phoneSupplier"),
+                                            jsonObject.getString("emailSupplier"),
+                                            jsonObject.getString("descSupplier"),
+                                            jsonObject.getString("imgSupplier")
+
+                                    );
+                                    splrViewModelList.add(splrViewModel);
+                                    SplrCardAdapter splrCardAdapter = new SplrCardAdapter(splrViewModelList, getContext());
+                                    recyclerView.setAdapter(splrCardAdapter);
+                                    splrCardAdapter.setOnItemClickListener(SupplierFragment.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(getContext(), "Data Supplier Tidak Ada!", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                             }
                         } catch (JSONException e) {

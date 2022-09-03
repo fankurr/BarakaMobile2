@@ -84,17 +84,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView90"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginRight="3dp"
-                    android:fontFamily="@font/ubuntu"
-                    android:text="Rp "
-                    android:textColor="@color/colorDark"
-                    android:textSize="18sp" />
-
-                <TextView
                     android:id="@+id/textViewValTx"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

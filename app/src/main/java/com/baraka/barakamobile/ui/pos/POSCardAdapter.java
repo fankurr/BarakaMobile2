@@ -19,7 +19,9 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class POSCardAdapter extends RecyclerView.Adapter<POSCardAdapter.POSViewHolder> {
 
@@ -71,17 +73,24 @@ public class POSCardAdapter extends RecyclerView.Adapter<POSCardAdapter.POSViewH
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull POSCardAdapter.POSViewHolder holder, @SuppressLint("RecyclerView") int position) {
+
         holder.txtIdPrdct.setText(String.valueOf(posViewModelList.get(position).getIdPrdct()));
+
         holder.namePrdct.setText(posViewModelList.get(position).getNamePrdct());
-        holder.unitPrice.setText(posViewModelList.get(position).getUnitPrice());
+
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+        double formatRpPOS = Double.parseDouble(posViewModelList.get(position).getUnitPrice());
+        holder.unitPrice.setText(formatRupiah.format(formatRpPOS));
+
         holder.unitPrdct.setText(posViewModelList.get(position).getUnitPrdct());
+
         holder.stockPrct.setText(posViewModelList.get(position).getStockPrdct());
 
         Picasso.get().load(URL_PRDCT_IMG+posViewModelList.get(position).getImgPrdct())
                 .resize(450, 450)
                 .centerCrop()
-                .placeholder(R.drawable.default_image_comp_small)
-                .error(R.drawable.default_image_comp_small)
+                .placeholder(R.drawable.default_image_small)
+                .error(R.drawable.default_image_small)
                 .into(holder.imgPOSPrdct);
     }
 

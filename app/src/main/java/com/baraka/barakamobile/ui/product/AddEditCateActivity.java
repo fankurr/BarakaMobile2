@@ -352,10 +352,11 @@ public class AddEditCateActivity extends AppCompatActivity {
                                         .setPositiveButton("Kembali", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = new Intent(AddEditCateActivity.this, CateListActivity.class);
-                                                intent.putExtra(ID_CATE, idCat);
-                                                finish();
-                                                startActivity(intent);
+//                                                Intent intent = new Intent(AddEditCateActivity.this, CateListActivity.class);
+//                                                intent.putExtra(ID_CATE, idCat);
+//                                                finish();
+//                                                startActivity(intent);
+                                                onBackPressed();
                                             }
                                         })
                                         .show();

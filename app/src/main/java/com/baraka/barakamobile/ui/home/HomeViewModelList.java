@@ -23,6 +23,7 @@ public class HomeViewModelList {
     private String qtyTx;
     private String valueTx;
     private String datetimeTx;
+    private String dt;
 
     private int idComp;
     private String nameComp;
@@ -53,11 +54,7 @@ public class HomeViewModelList {
                              String qtyTx,
                              String valueTx,
                              String datetimeTx,
-                             String idPay,
-                             String valPay,
-                             String descPay,
-                             String datetimePay,
-                             String nameUser){
+                             String dt){
         this.idPay = idPay;
         this.valPay = valPay;
         this.descPay = descPay;
@@ -71,14 +68,12 @@ public class HomeViewModelList {
         this.unitPrdct = unitPrdct;
         this.valueTx = valueTx;
         this.datetimeTx = datetimeTx;
+        this.dt = dt;
         this.nameComp = nameComp;
         this.namePrdct = namePrdct;
         this.imgPrdct = imgPrdct;
 
     }
-
-    //Getter Setter
-
 
     public String getIdPay() {
         return idPay;
@@ -222,6 +217,14 @@ public class HomeViewModelList {
 
     public void setDatetimeTx(String datetimeTx) {
         this.datetimeTx = datetimeTx;
+    }
+
+    public String getDt() {
+        return dt;
+    }
+
+    public void setDt(String dt) {
+        this.dt = dt;
     }
 
     public int getIdComp() {

@@ -46,7 +46,7 @@ public class EditProfileActivity extends AppCompatActivity {
     int SELECT_PICTURE = 200;
 
     EditText inputNameProfileEdit, inputPostProfileEdit, inputAddrProfileEdit, inputTlpProfileEdit, inputEmailProfileEdit;
-    TextView txtViewCompProfileEdit;
+    TextView txtViewCompProfileEdit, idUser;
     ImageView imgUser;
     Uri selectedImageUri;
     File imgProfile;
@@ -112,6 +112,7 @@ public class EditProfileActivity extends AppCompatActivity {
         inputTlpProfileEdit = findViewById(R.id.editTxtTlpProfileEdit);
         inputEmailProfileEdit = findViewById(R.id.editTxtEmailProfileEdit);
         imgUser = findViewById(R.id.imgUserEdit);
+
 
         imgUser.setOnClickListener(new View.OnClickListener() {
             @Override

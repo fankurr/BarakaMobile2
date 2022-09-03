@@ -51,23 +51,12 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView19"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:layout_weight="0"
-                android:fontFamily="@font/ubuntu"
-                android:text="Rp"
-                android:textColor="@color/colorDark"
-                android:textSize="15sp" />
-
-            <TextView
                 android:id="@+id/textViewUnitPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="@font/ubuntu"
-                android:text="00.000"
+                android:text="000"
                 android:textColor="@color/colorDark"
                 android:textSize="15sp" />
 

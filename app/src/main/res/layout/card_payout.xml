@@ -26,16 +26,6 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/textView79"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:fontFamily="@font/ubuntu_mono"
-            android:text="Rp "
-            android:textColor="@color/colorDark"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/textViewValPayoutList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

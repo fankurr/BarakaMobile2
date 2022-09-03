@@ -157,29 +157,38 @@ public class CateListActivity extends AppCompatActivity implements CateListAdapt
                     public void onResponse(JSONObject response) {
                         cateViewModelList.clear();
                         try {
-                            JSONArray jsonArray = response.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                CateViewModel cateViewModel = new CateViewModel(
-                                        jsonObject.getString("idCategory"),
-                                        jsonObject.getString("companyCate"),
-                                        jsonObject.getString("category"),
-                                        jsonObject.getString("descCate"),
-                                        jsonObject.getString("imageCate")
+                            int status = response.getInt("success");
+                            if (status == 1) {
 
-                                );
+                                JSONArray jsonArray = response.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    CateViewModel cateViewModel = new CateViewModel(
+                                            jsonObject.getString("idCategory"),
+                                            jsonObject.getString("companyCate"),
+                                            jsonObject.getString("category"),
+                                            jsonObject.getString("descCate"),
+                                            jsonObject.getString("imageCate")
 
-                                cateViewModelList.add(cateViewModel);
-                                CateListAdapter cateListAdapter = new CateListAdapter(CateListActivity.this, cateViewModelList);
-                                recyclerView.setAdapter(cateListAdapter);
-                                cateListAdapter.setOnItemClickListener(CateListActivity.this);
+                                    );
+
+                                    cateViewModelList.add(cateViewModel);
+                                    CateListAdapter cateListAdapter = new CateListAdapter(CateListActivity.this, cateViewModelList);
+                                    recyclerView.setAdapter(cateListAdapter);
+                                    cateListAdapter.setOnItemClickListener(CateListActivity.this);
+                                    progressDialog.dismiss();
+                                }
+                            }
+                            if (status == 0) {
+                                Toast.makeText(CateListActivity.this, "Data Produk Tidak Ada!", Toast.LENGTH_SHORT).show();
+
                                 progressDialog.dismiss();
                             }
+                            cateListAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
                         }
-                        cateListAdapter.notifyDataSetChanged();
                     }
 
                     @Override

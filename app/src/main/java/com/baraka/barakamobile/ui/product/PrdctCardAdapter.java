@@ -22,8 +22,10 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.PrdctViewHolder> {
     private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
@@ -60,15 +62,20 @@ public class PrdctCardAdapter extends RecyclerView.Adapter<PrdctCardAdapter.Prdc
     @Override
     public void onBindViewHolder(@NonNull @NotNull PrdctViewHolder holder, int position) {
         holder.namePrdct.setText(prdctViewModelList.get(position).getNamePrdct());
-        holder.unitPrice.setText(prdctViewModelList.get(position).getUnitPrice());
+
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+        double formatRpPrdct = Double.parseDouble(prdctViewModelList.get(position).getUnitPrice());
+        holder.unitPrice.setText(formatRupiah.format(formatRpPrdct));
+
         holder.unitPrdct.setText(prdctViewModelList.get(position).getUnitPrdct());
+
         holder.stockPrct.setText(prdctViewModelList.get(position).getStockPrdct());
 
         Picasso.get().load(URL_PRDCT_IMG+prdctViewModelList.get(position).getImgPrdct())
                 .resize(450, 450)
                 .centerCrop()
-                .placeholder(R.drawable.default_image_comp_small)
-                .error(R.drawable.default_image_comp_small)
+                .placeholder(R.drawable.default_image_small)
+                .error(R.drawable.default_image_small)
                 .into(holder.imgPrdct);
 
         Log.e("ImgSplr", "Image: "+URL_PRDCT_IMG+prdctViewModelList.get(position).getImgPrdct());

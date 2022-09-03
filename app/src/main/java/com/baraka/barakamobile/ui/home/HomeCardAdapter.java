@@ -14,13 +14,19 @@ import com.baraka.barakamobile.R;
 import com.baraka.barakamobile.ui.util.DbConfig;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeViewHolder> {
 
     List<HomeViewModelList> homeViewModelLists;
     Context contextHome;
     private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
+
+    final int EMPTY_VIEW = 77777;
+
+    NumberFormat rupiah;
 
     public HomeCardAdapter(Context contextHome, List<HomeViewModelList> homeViewHolderList){
         this.homeViewModelLists = homeViewHolderList;
@@ -42,8 +48,12 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeVi
         holder.title.setText(homeViewModelLists.get(position).getNamePrdct());
 //        holder.title.setText(homeViewModelLists.get(position).getDescPay());
 
-        holder.value.setText(homeViewModelLists.get(position).getValueTx());
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+        double formatRpHome = Double.parseDouble(homeViewModelLists.get(position).getValueTx());
+
+        holder.value.setText(formatRupiah.format(formatRpHome));
 //        holder.value.setText(homeViewModelLists.get(position).getValPay());
+
 
         holder.dateTime.setText(homeViewModelLists.get(position).getDatetimeTx());
 //        holder.dateTime.setText(homeViewModelLists.get(position).getDatetimePay());
@@ -51,9 +61,11 @@ public class HomeCardAdapter extends RecyclerView.Adapter<HomeCardAdapter.HomeVi
         Picasso.get().load(URL_PRDCT_IMG+homeViewModelLists.get(position).getImgPrdct())
                 .resize(450, 450)
                 .centerCrop()
-                .placeholder(R.drawable.default_image_comp_small)
-                .error(R.drawable.default_image_comp_small)
+                .placeholder(R.drawable.default_image_small)
+                .error(R.drawable.default_image_small)
                 .into(holder.imgTxHome);
+
+
     }
 
     @Override

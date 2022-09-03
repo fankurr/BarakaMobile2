@@ -58,6 +58,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class PrdctDetail extends AppCompatActivity {
 
     private final static String TAG_ID = "id";
@@ -100,6 +103,7 @@ public class PrdctDetail extends AppCompatActivity {
     private String urlPrdctDetail = DbConfig.URL_PRDCT + "idPrdct.php";
     private String urlPrdctDel = DbConfig.URL_PRDCT + "delPrdct.php";
     private String URL_PRDCT_IMG = DbConfig.URL_PRDCT + "imgPrdct/";
+    private String URL_SPLR_IMG = DbConfig.URL_SPLR + "imgSplr/";
 
     String messagesWaSplr = " ";
     String id, email, name, level, access, idCompany, nameCompany;
@@ -108,8 +112,10 @@ public class PrdctDetail extends AppCompatActivity {
     String idSplr, nameSplr, descSplr, addrSplr, phoneSplr, emailSplr;
 
     TextView textViewIdPrdct, textViewNamePrdct, textViewCodePrdct, textViewDescPrdct, textViewPricePrdct, textViewUnitPricePrdct, textViewUnitStockPrdct, textViewStockPrdct, textViewCatPrdct, textViewNameSplr;
-    ImageView imgPrdctDetail;
+    ImageView imgPrdctDetail, imgSplrPrdctDetail;
     Button btnEdit, btnDell;
+
+    NumberFormat rupiah;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -168,7 +174,10 @@ public class PrdctDetail extends AppCompatActivity {
         textViewCatPrdct = findViewById(R.id.textViewNameCatePrdctDetail);
         textViewNameSplr = findViewById(R.id.textViewNameSplrPrdctDetail);
 
+        rupiah = NumberFormat.getNumberInstance(new Locale("In", "ID"));
+
         imgPrdctDetail = findViewById(R.id.imgPrdctDetail);
+        imgSplrPrdctDetail = findViewById(R.id.imgSplrPrdctDetail);
 
         prdctDetail();
 
@@ -362,12 +371,24 @@ public class PrdctDetail extends AppCompatActivity {
                                 textViewNamePrdct.setText(jsonObject.getString("namePrdct"));
                                 textViewCodePrdct.setText(jsonObject.getString("codePrdct"));
                                 textViewDescPrdct.setText(jsonObject.getString("descPrdct"));
-                                textViewPricePrdct.setText(jsonObject.getString("unitPrice"));
+
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("In","ID"));
+                                double formatRpPrdct = Double.parseDouble(jsonObject.getString("unitPrice"));
+
+
+                                textViewPricePrdct.setText(formatRupiah.format(formatRpPrdct));
                                 textViewUnitPricePrdct.setText(jsonObject.getString("unitPrdct"));
                                 textViewUnitStockPrdct.setText(jsonObject.getString("unitPrdct"));
                                 textViewStockPrdct.setText(jsonObject.getString("stockPrdct"));
                                 textViewCatPrdct.setText(jsonObject.getString("nameCategory"));
                                 textViewNameSplr.setText(jsonObject.getString("nameSupplier"));
+
+                                Picasso.get().load(URL_SPLR_IMG+jsonObject.getString("imgSupplier"))
+                                        .resize(450, 450)
+                                        .centerCrop()
+                                        .placeholder(R.drawable.default_image_comp_small)
+                                        .error(R.drawable.default_image_comp_small)
+                                        .into(imgSplrPrdctDetail);
 
                                 Picasso.get().load(URL_PRDCT_IMG+jsonObject.getString("imgPrdct"))
                                         .resize(450, 450)
